@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# Data (large / not committed)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Results (regenerate, don't commit binary outputs)
+results/figures/*.png
+results/figures/*.pdf
+results/tables/*.csv
+
+# Env / secrets
+.env
+
+# OS
+.DS_Store
+
+
+*.md

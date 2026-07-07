@@ -1,0 +1,11 @@
+moabb
+mne
+braindecode
+torch
+scikit-learn
+transformers
+scipy
+matplotlib
+sentence-transformers
+numpy
+pandas
