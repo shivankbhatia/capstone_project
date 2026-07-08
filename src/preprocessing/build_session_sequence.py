@@ -1,71 +1,70 @@
-"""
-Reconstructs the full ground-truth spelled sequence across an entire
-session by processing every Train*.edf file in order (Train01, Train02,
-...) and concatenating the single character each file yields, per the
-discovery that one file = one character trial (repeated across many
-sequences for a robust averaged ERP), not one file = one full phrase.
+import json
+import os
 
-Also stacks all epochs + labels across files into one combined array,
-ready for Day 3 classifier training.
-
-Usage:
-    python -m src.preprocessing.build_session_sequence /path/to/.../Train/CB
-"""
-
-import re
-import sys
-from pathlib import Path
-
-import numpy as np
-
-from src.preprocessing.epoching import parse_bigp3bci_studyb
-
-
-def natural_sort_key(path: Path):
-    match = re.search(r"(\d+)\.edf$", path.name)
-    return int(match.group(1)) if match else 0
-
-
-def main():
-    if len(sys.argv) < 2:
-        print("Usage: python -m src.preprocessing.build_session_sequence /path/to/Train/CB")
-        sys.exit(1)
-
-    session_dir = Path(sys.argv[1]).expanduser().resolve()
-    edf_files = sorted(session_dir.glob("*.edf"), key=natural_sort_key)
-
-    if not edf_files:
-        print(f"No .edf files found in {session_dir}")
-        sys.exit(1)
-
-    print(f"Found {len(edf_files)} files, processing in order...\n")
-
-    all_X, all_y, spelled_chars, low_agreement_files = [], [], [], []
-
-    for f in edf_files:
-        print(f"--- {f.name} ---")
-        epochs, char, _ = parse_bigp3bci_studyb(str(f))
-        all_X.append(epochs.get_data())
-        all_y.append(epochs.events[:, 2])
-        spelled_chars.append(char)
-        print()
-
-    X = np.concatenate(all_X, axis=0)
-    y = np.concatenate(all_y, axis=0)
-    full_sequence = "".join(spelled_chars)
-
-    print("=" * 70)
-    print(f"Reconstructed spelled sequence across session: '{full_sequence}'")
-    print(f"Combined epochs shape: {X.shape}")
-    print(f"Combined label distribution: {dict(zip(*np.unique(y, return_counts=True)))}")
-    print("=" * 70)
-    print("Sanity check: does the reconstructed sequence look like plausible")
-    print("text (a real word/phrase), or garbled? If garbled, the per-file")
-    print("majority-vote agreement fraction printed above for each file will")
-    print("point to which specific file(s) are ambiguous.")
-
-    return X, y, full_sequence
-
-
-if __name__ == "__main__":
-    main()
+def yield_character_trials(registry_path="data/processed/ground_truth_registry.json", dataset_dir=None):
+    """
+    Yields character trials for the end-to-end replay loop.
+    
+    If the processed registry exists, it yields real dataset targets.
+    If not, it falls back to a mock sequence so the Day 8 ablation 
+    pipeline can be tested immediately.
+    
+    Args:
+        registry_path: Path to the JSON registry of sessions.
+        dataset_dir: Optional base directory for the dataset.
+        
+    Yields:
+        dict: Containing 'target_char' and 'context_so_far' (previously spelled chars)
+    """
+    if os.path.exists(registry_path):
+        with open(registry_path, 'r') as f:
+            registry = json.load(f)
+        
+        total_yielded = 0
+        
+        if isinstance(registry, dict):
+            # FIX: Iterate directly over the key-value pairs
+            # Key = session_id (e.g., "D_15_SE001_Dyn_Test01")
+            # Value = target_word (e.g., "C")
+            for session_id, target_word in registry.items():
+                if not isinstance(target_word, str):
+                    continue
+                
+                # Reconstruct the filename based on your screenshot structure
+                file_name = f"{session_id}-epo.fif"
+                
+                # Attempt to build the full path if dataset_dir is provided
+                file_path = file_name
+                if dataset_dir:
+                    # Check inside StudyD subfolder just in case
+                    studyd_path = os.path.join(dataset_dir, "StudyD", file_name)
+                    if os.path.exists(studyd_path):
+                        file_path = studyd_path
+                    else:
+                        file_path = os.path.join(dataset_dir, file_name)
+                
+                for i, char in enumerate(target_word):
+                    total_yielded += 1
+                    yield {
+                        'target_char': char,
+                        'context_so_far': target_word[:i],
+                        'eeg_data_path': file_path
+                    }
+        else:
+            print(f"⚠️ Warning: Unexpected JSON structure in {registry_path}. Expected a dictionary.")
+            
+        if total_yielded == 0:
+            print(f"\n⚠️ ERROR: Found registry at {registry_path} but extracted 0 characters!")
+            print(f"⚠️ Check if the JSON is completely empty.\n")
+            
+    else:
+        # MOCK MODE: Ensures the pipeline runs even if data isn't fully preprocessed yet
+        print("⚠️ ground_truth_registry.json not found. Using MOCK sequence for pipeline testing.")
+        mock_words = ["WATER", "HELLO", "YES"]
+        for word in mock_words:
+            for i, char in enumerate(word):
+                yield {
+                    'target_char': char,
+                    'context_so_far': word[:i],
+                    'eeg_data_path': 'mock_path'
+                }
