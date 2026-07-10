@@ -1,151 +1,288 @@
-import numpy as np
+import json
 import time
-from src.models.decoder import P300Decoder, calculate_itr
-from src.models.llm_predictor import DistilGPT2Predictor
-from src.models.fusion import BayesianFusionEngine
-from src.preprocessing.build_session_sequence import yield_character_trials
-from src.evaluation.metrics import SpellerMetrics, AblationTracker
+import os
+import numpy as np
+import mne
+import joblib
 
-# 6x6 Standard Grid for bigP3BCI Study D
-STUDY_D_GRID = [
-    ['A', 'B', 'C', 'D', 'E', 'F'],
-    ['G', 'H', 'I', 'J', 'K', 'L'],
-    ['M', 'N', 'O', 'P', 'Q', 'R'],
-    ['S', 'T', 'U', 'V', 'W', 'X'],
-    ['Y', 'Z', '1', '2', '3', '4'],
-    ['5', '6', '7', '8', '9', '_']
-]
+from src.models.decoder import P300Decoder, calculate_itr
+from src.models.fusion import BayesianFusionEngine
+from src.models.llm_predictor import LLMPredictor
+from src.preprocessing.build_session_sequence import yield_character_trials
+
+# -----------------------------------------------------------------------------
+# GRID LAYOUT — built from the ACTUAL parsed grid, not a hardcoded 6x6
+# -----------------------------------------------------------------------------
+def load_spelling_matrix(grid_layout_path, study_name="StudyD"):
+    """
+    Builds the real spelling matrix from grid_layout.json (written by
+    batch_preprocess.py from the actual channel-derived grid_map). Replaces
+    the previous hardcoded 6x6/36-class matrix, which didn't match Study D's
+    real 9x8/72-key extended keyboard layout.
+    """
+    with open(grid_layout_path) as f:
+        layouts = json.load(f)
+
+    if study_name not in layouts:
+        raise ValueError(f"No grid layout recorded for {study_name} in {grid_layout_path}. "
+                          f"Run batch_preprocess.py on at least one {study_name} file first.")
+
+    info = layouts[study_name]
+    n_rows, n_cols = info["n_rows"], info["n_cols"]
+    grid_map = info["grid_map"]  # {label: [row, col]}
+
+    # Must match the SAME idx = (row-1)*n_cols + col convention used in
+    # epoching.py, so char_list[idx] lines up with StimulusCode values.
+    matrix = np.full((n_rows, n_cols), "", dtype=object)
+    for label, (row, col) in grid_map.items():
+        matrix[row - 1, col - 1] = label
+
+    if np.any(matrix == ""):
+        missing = np.argwhere(matrix == "")
+        print(f"WARNING: {len(missing)} grid cell(s) have no label — check grid_map completeness.")
+
+    return matrix, n_rows, n_cols
+
+
+# -----------------------------------------------------------------------------
+# ABLATION TRACKER UTILITY
+# -----------------------------------------------------------------------------
+class SimpleAblationTracker:
+    def __init__(self):
+        self.results = {}
+
+    def record_run(self, name, metrics, itr):
+        wpm = itr / 5.0 if itr > 0 else 0.0  # Standard rough approx: 5 bits per word
+
+        self.results[name] = {
+            'accuracy': metrics.accuracy,
+            'flashes_per_char': metrics.total_flashes_used / max(1, metrics.total_characters),
+            'itr': itr,
+            'wpm': wpm
+        }
+
+    def print_summary(self):
+        print("\n" + "="*50)
+        print("ABLATION STUDY RESULTS SUMMARY")
+        print("="*50)
+        for name, data in self.results.items():
+            print(f"\nCondition: [{name}]")
+            print(f"  Accuracy (%): {data['accuracy']:.2f}")
+            print(f"  Flashes/Char: {data['flashes_per_char']:.2f}")
+            print(f"  ITR (bits/min): {data['itr']:.2f}")
+        print("="*50 + "\n")
+
+
+# -----------------------------------------------------------------------------
+# REAL CLASSIFIER STREAM
+# -----------------------------------------------------------------------------
+_epoch_cache = {}
+
+def real_eeg_classifier_stream(eeg_data_path, char_idx, sequence_num, clf, char_list,
+                                n_rows, n_cols, flashes_per_seq, max_seqs_per_char=15):
+    """
+    Loads real EEG data, runs it through the calibrated SWLDA,
+    and returns the posterior over the full grid (n_rows * n_cols classes,
+    NOT hardcoded to 36 -- must match the actual grid, e.g. 72 for Study D).
+    """
+    global _epoch_cache
+
+    if eeg_data_path not in _epoch_cache:
+        _epoch_cache[eeg_data_path] = mne.read_epochs(eeg_data_path, preload=True, verbose=False)
+
+    epochs = _epoch_cache[eeg_data_path]
+
+    if epochs.metadata is None or "stimulus_code" not in epochs.metadata.columns:
+        raise ValueError(
+            f"{eeg_data_path} has no stimulus_code metadata -- it was likely "
+            f"processed with an older version of epoching.py. Re-run "
+            f"batch_preprocess.py to regenerate it with the metadata fix."
+        )
+
+    flashes_per_char = flashes_per_seq * max_seqs_per_char
+
+    start_idx = (char_idx * flashes_per_char) + ((sequence_num - 1) * flashes_per_seq)
+    end_idx = start_idx + flashes_per_seq
+
+    seq_epochs = epochs[start_idx:end_idx]
+
+    if len(seq_epochs) == 0:
+        return np.ones(n_rows * n_cols) / (n_rows * n_cols)
+
+    seq_epochs.pick_types(eeg=True, meg=False, exclude='bads')
+
+    X = seq_epochs.get_data(copy=False)
+    flash_probs = clf.predict_proba(X)[:, 1]
+
+    # Row/column identity comes from the preserved stimulus_code metadata,
+    # NOT from epochs.events[:, 2] (which only holds the binary
+    # target/non-target label used to build the epochs' event_id).
+    stim_codes = seq_epochs.metadata["stimulus_code"].to_numpy()
+
+    row_probs = np.ones(n_rows)
+    col_probs = np.ones(n_cols)
+
+    for prob, code in zip(flash_probs, stim_codes):
+        if 1 <= code <= n_rows:
+            row_probs[code - 1] = prob
+        elif n_rows < code <= n_rows + n_cols:
+            col_probs[code - n_rows - 1] = prob
+
+    grid_probs = np.outer(row_probs, col_probs).flatten()
+    normalized_probs = grid_probs / np.sum(grid_probs)
+    return normalized_probs
+
 
 def mock_eeg_classifier_stream(target_char, char_list):
-    """
-    Simulates the output of a calibrated SWLDA classifier.
-    Safely handles characters that might not exist in the 36-class grid.
-    """
-    import numpy as np
+    """Fallback simulated data if model is missing."""
     probs = np.random.uniform(0.01, 0.05, len(char_list))
-    
     char_upper = target_char.upper()
-    
     if char_upper in char_list:
         target_idx = char_list.index(char_upper)
-        probs[target_idx] = 0.85  # Simulate high classifier confidence
-    else:
-        # If a character (like '0' or space) isn't in the default grid, 
-        # we skip boosting it so the script doesn't crash.
-        pass 
-        
+        probs[target_idx] = 0.85
     probs /= probs.sum()
     return probs
 
-def run_evaluation(
-    decoder: P300Decoder, 
-    llm: DistilGPT2Predictor, 
-    fusion_engine: BayesianFusionEngine, 
-    max_flashes: int = 15, 
-    confidence_threshold: float = 0.85
-) -> tuple:
-    """Runs the end-to-end replay evaluation over the dataset."""
-    metrics = SpellerMetrics()
-    char_list = decoder.char_list
-    
-    # 1. Initialize trial generator
-    metadata_path = "data/processed/ground_truth_registry.json"
-    dataset_dir = "data/raw/bigP3BCI_dataset/"
-    trials = yield_character_trials(metadata_path, dataset_dir)
-    
+# -----------------------------------------------------------------------------
+# EVALUATION LOOP
+# -----------------------------------------------------------------------------
+def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
+                    confidence_threshold=0.85, max_sequences=15, min_flashes=2, clf=None):
+    """Runs the dataset through the spelling simulation."""
+
+    class Metrics:
+        total_characters = 0
+        correct_characters = 0
+        total_time_seconds = 0.0
+        total_flashes_used = 0
+        accuracy = 0.0
+
+    metrics = Metrics()
+
+    trials = list(yield_character_trials("data/processed/ground_truth_registry.json", "data/processed"))
+    char_list = llm.char_list
+
     for trial in trials:
         target = trial['target_char']
         context = trial['context_so_far']
-        
+        eeg_path = trial['eeg_data_path']
+        char_idx = len(context)
+
+        decoder.reset()
+        llm_prior = llm.predict_next_char(context)
+
         start_time = time.time()
-        
-        # 2. Get Linguistic Prior (Run once per character)
-        llm_prior = llm.get_prior(context)
-        
-        # 3. Flash Sequence Accumulation Loop
-        accumulated_evidence = np.ones(decoder.num_classes) / decoder.num_classes
         flashes_used = 0
         predicted_char = None
-        
-        for flash_idx in range(1, max_flashes + 1):
+
+        for seq in range(1, max_sequences + 1):
             flashes_used += 1
-            
-            # Simulated EEG inference (replace with real epoching & classifier.predict_proba)
-            eeg_posteriors = mock_eeg_classifier_stream(target, char_list)
-            
-            # Accumulate EEG evidence in log domain
-            accumulated_evidence = np.log(accumulated_evidence) + np.log(eeg_posteriors)
-            accumulated_evidence = np.exp(accumulated_evidence - np.max(accumulated_evidence))
-            accumulated_evidence = accumulated_evidence / np.sum(accumulated_evidence)
-            
-            # 4. Bayesian Fusion
-            fused_probs = fusion_engine.fuse(accumulated_evidence, llm_prior)
-            
-            # 5. Adaptive Stopping Check
-            best_char, confidence = decoder.decode_character(fused_probs)
-            if confidence >= confidence_threshold:
-                predicted_char = best_char
+
+            resolved_path = None
+            studyd_candidate = eeg_path.replace("processed/", "processed/StudyD/")
+
+            if os.path.exists(studyd_candidate):
+                resolved_path = studyd_candidate
+
+            if clf is not None and resolved_path:
+                eeg_posteriors = real_eeg_classifier_stream(
+                    resolved_path, char_idx, seq, clf, char_list,
+                    n_rows, n_cols, flashes_per_seq, max_seqs_per_char=max_sequences
+                )
+            else:
+                if seq == 1:
+                    print(f"⚠️ Warning: Could not find EEG file for {eeg_path} in StudyD. Falling back to mock data.")
+                eeg_posteriors = mock_eeg_classifier_stream(target, char_list)
+
+            fused_probs = fusion_engine.fuse(eeg_posteriors, llm_prior)
+            decoder.accumulate_evidence(fused_probs)
+
+            current_prediction, current_confidence = decoder.decode_character()
+            if current_confidence >= confidence_threshold and flashes_used >= min_flashes:
+                predicted_char = current_prediction
                 break
-                
-        # Fallback if threshold never reached
+
         if not predicted_char:
-            predicted_char, _ = decoder.decode_character(fused_probs)
-            
-        # 6. Record Metrics
-        elapsed_time = time.time() - start_time
+            predicted_char, _ = decoder.decode_character()
+
         metrics.total_characters += 1
-        metrics.total_time_seconds += elapsed_time
+        metrics.total_time_seconds += (time.time() - start_time)
         metrics.total_flashes_used += flashes_used
-        if predicted_char == target:
+        if predicted_char.upper() == target.upper():
             metrics.correct_characters += 1
-            
-    # Calculate Final ITR
-    # Note: Using standard 2.0 seconds per flash sequence as time metric
-    avg_time_per_char = (metrics.total_flashes_used / max(1, metrics.total_characters)) * 2.0 
+
+    if metrics.total_characters > 0:
+        metrics.accuracy = (metrics.correct_characters / metrics.total_characters) * 100
+        avg_time_per_char = (metrics.total_flashes_used / metrics.total_characters) * 2.0
+    else:
+        metrics.accuracy = 0.0
+        avg_time_per_char = 0.0
+
     if avg_time_per_char <= 0:
         print("⚠️ Failed to calculate time per char. Returning 0 ITR.")
         return metrics, 0.0
+
     itr = calculate_itr(decoder.num_classes, metrics.accuracy, avg_time_per_char)
-    
     return metrics, itr
 
+# -----------------------------------------------------------------------------
+# MAIN EXECUTION
+# -----------------------------------------------------------------------------
 if __name__ == "__main__":
-    print("Initializing components for Phase 6 Evaluation...")
-    decoder = P300Decoder(STUDY_D_GRID)
-    
-    # Init LLM (MPS/CUDA if available, else CPU)
-    import torch
-    device = "mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu"
-    llm = DistilGPT2Predictor(decoder.char_list, device=device)
-    
-    tracker = AblationTracker()
-    
+    print("Initializing components for Phase 6 Evaluation (REAL DATA - StudyD only)...\n")
+
+    # 1. Setup Matrix & LLM — built from the REAL grid, not a hardcoded 6x6.
+    spelling_matrix, n_rows, n_cols = load_spelling_matrix(
+        "data/processed/grid_layout.json", study_name="StudyD"
+    )
+    num_classes = n_rows * n_cols
+    # Study D's RC (row-column) condition: one flash per row + one per column.
+    flashes_per_seq = n_rows + n_cols
+    print(f"Loaded grid: {n_rows}x{n_cols} ({num_classes} classes), "
+          f"{flashes_per_seq} flashes/sequence")
+
+    decoder = P300Decoder(spelling_matrix)
+    llm = LLMPredictor(spelling_matrix)
+    tracker = SimpleAblationTracker()
+
+    # 2. Load Real SWLDA Classifier
+    MODEL_PATH = 'data/processed/swlda_model.pkl'
+    if os.path.exists(MODEL_PATH):
+        print(f"Loading SWLDA Classifier from {MODEL_PATH}...")
+        clf = joblib.load(MODEL_PATH)
+    else:
+        raise FileNotFoundError(f"⚠️ Real model NOT FOUND at {MODEL_PATH}. "
+                                "Please update MODEL_PATH to point to your saved .pkl file.")
+
+    eval_kwargs = dict(n_rows=n_rows, n_cols=n_cols, flashes_per_seq=flashes_per_seq,
+                        confidence_threshold=0.85, clf=clf)
+
     # ---------------------------------------------------------
-    # EXPERIMENT 1: Standard Baseline (No Fusion)
+    # EXPERIMENT 1: Baseline (No LLM, EEG Only)
     # ---------------------------------------------------------
     print("\nRunning Baseline (EEG Only)...")
-    baseline_fusion = BayesianFusionEngine(mode='fixed', base_alpha=0.0)
+    baseline_fusion = BayesianFusionEngine(num_classes=num_classes, mode='fixed', base_alpha=0.0)
     baseline_fusion.toggle(False)
-    
-    base_metrics, base_itr = run_evaluation(decoder, llm, baseline_fusion, confidence_threshold=0.95)
+
+    base_metrics, base_itr = run_evaluation(decoder, llm, baseline_fusion, **eval_kwargs)
     tracker.record_run("Baseline (No LLM)", base_metrics, base_itr)
-    
+
     # ---------------------------------------------------------
-    # EXPERIMENT 2: Fixed Weight Fusion (alpha=1.0)
+    # EXPERIMENT 2: Fixed Weight Fusion
     # ---------------------------------------------------------
     print("\nRunning Fixed Weight Fusion...")
-    fixed_fusion = BayesianFusionEngine(mode='fixed', base_alpha=1.0)
-    
-    fixed_metrics, fixed_itr = run_evaluation(decoder, llm, fixed_fusion, confidence_threshold=0.85)
-    tracker.record_run("Fusion (Fixed a=1.0)", fixed_metrics, fixed_itr)
-    
+    fixed_fusion = BayesianFusionEngine(num_classes=num_classes, mode='fixed', base_alpha=0.15, epsilon=0.02)
+
+    fixed_metrics, fixed_itr = run_evaluation(decoder, llm, fixed_fusion, **eval_kwargs)
+    tracker.record_run("Fusion (Fixed a=0.15)", fixed_metrics, fixed_itr)
+
     # ---------------------------------------------------------
     # EXPERIMENT 3: Adaptive Entropy Fusion
     # ---------------------------------------------------------
     print("\nRunning Adaptive Entropy Fusion...")
-    adaptive_fusion = BayesianFusionEngine(mode='adaptive', base_alpha=1.5)
-    
-    adapt_metrics, adapt_itr = run_evaluation(decoder, llm, adaptive_fusion, confidence_threshold=0.85)
+    adaptive_fusion = BayesianFusionEngine(num_classes=num_classes, mode='adaptive', base_alpha=0.25, epsilon=0.02)
+
+    adapt_metrics, adapt_itr = run_evaluation(decoder, llm, adaptive_fusion, **eval_kwargs)
     tracker.record_run("Fusion (Adaptive)", adapt_metrics, adapt_itr)
-    
+
     tracker.print_summary()

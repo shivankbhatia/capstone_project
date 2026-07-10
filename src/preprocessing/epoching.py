@@ -1,31 +1,45 @@
 """
 Day 2 — Preprocessing
 Bandpass/notch filtering, epoching (-100 to 800 ms around stimulus onset),
-baseline correction. Parses bigP3BCI Study B (Condition CB) EDF files
-directly into epoched EEG data + ground-truth spelled text for LLM context.
+baseline correction. Parses bigP3BCI EDF files directly into epoched EEG
+data + ground-truth spelled text for LLM context.
+
+IMPORTANT: sequences_per_selection=20 is only valid for FIXED-sequence
+conditions (RC/Train calibration, confirmed empirically). Study D's
+Dyn/DynBigram conditions use ADAPTIVE stopping -- a variable number of
+sequences per character -- so this block-based segmentation will silently
+produce wrong ground truth on those files. Don't run this on Dyn/DynBigram
+paths until we've built proper variable-length segmentation for them.
 """
 
-import re
 import numpy as np
+import pandas as pd
 import mne
 
 def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
                            notch_freq=None, sequences_per_selection=20):
     """
-    Parses bigP3BCI Study B (Condition CB) EDF files into epoched EEG data.
+    Parses bigP3BCI EDF files into epoched EEG data.
 
     notch_freq: line-noise frequency to notch out (50 or 60 Hz). Left as
     None by default -- confirm which applies to this dataset's recording
     site before setting it, rather than guessing.
 
     sequences_per_selection: number of consecutive target flashes that
-    belong to one character selection (confirmed empirically at 20 across
-    all files checked so far -- each file contains multiple characters,
-    each selected via this many sequences, back-to-back).
+    belong to one character selection. Confirmed at 20 for FIXED-sequence
+    conditions (RC/Train) only -- do NOT use this for Dyn/DynBigram
+    (adaptive stopping) files, see module docstring.
     """
     print(f"Loading EDF: {edf_path}")
     raw = mne.io.read_raw_edf(edf_path, preload=True, verbose=False)
     all_channels_raw = raw.ch_names
+
+    if "Dyn" in str(edf_path):
+        print("WARNING: filename contains 'Dyn' -- this looks like an "
+              "adaptive-stopping condition. Fixed-block segmentation "
+              "(sequences_per_selection) is known to be WRONG for these "
+              "files. Ground truth extracted below should be treated as "
+              "unreliable until variable-length segmentation is implemented.")
 
     # -------------------------------------------------------------------------
     # 1. CHANNEL RENAMING & CLASSIFICATION
@@ -61,9 +75,10 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
 
     stim_begin_ch = next((ch for ch in all_channels_raw if ch.strip().lower() == 'stimulusbegin'), None)
     stim_type_ch = next((ch for ch in all_channels_raw if ch.strip().lower() == 'stimulustype'), None)
+    stim_code_ch = next((ch for ch in all_channels_raw if ch.strip().lower() == 'stimuluscode'), None)
     current_target_ch = next((ch for ch in all_channels_raw if ch.strip().lower() == 'currenttarget'), None)
 
-    if not all([stim_begin_ch, stim_type_ch, current_target_ch]):
+    if not all([stim_begin_ch, stim_type_ch, stim_code_ch, current_target_ch]):
         raise ValueError("Missing essential trigger channels in the EDF file.")
 
     montage = mne.channels.make_standard_montage('standard_1020')
@@ -84,16 +99,20 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
     # -------------------------------------------------------------------------
     stim_begin = raw.get_data(picks=[stim_begin_ch])[0]
     stim_type = raw.get_data(picks=[stim_type_ch])[0]
+    stim_code = raw.get_data(picks=[stim_code_ch])[0]
 
     threshold = 0.5
     rising_edges = np.where((stim_begin[:-1] <= threshold) & (stim_begin[1:] > threshold))[0] + 1
 
     events = []
+    stimulus_codes_per_event = []
     for sample_idx in rising_edges:
         is_target = int(stim_type[sample_idx] > 0.5)
         events.append([sample_idx, 0, is_target])
+        stimulus_codes_per_event.append(int(np.round(stim_code[sample_idx])))
 
     events = np.array(events, dtype=int)
+    stimulus_codes_per_event = np.array(stimulus_codes_per_event, dtype=int)
     print(f"Extracted {len(events)} flash events ({np.sum(events[:, 2] == 1)} Targets, {np.sum(events[:, 2] == 0)} Non-Targets).")
 
     # -------------------------------------------------------------------------
@@ -107,19 +126,19 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
     # E_1_5->5 matches the spelled word "THE". Index 0 is unreachable under
     # this formula (min is row=1,col=1 -> 1), so a CurrentTarget of 0 means
     # "no active target" (idle/reset), not a real character.
+    n_rows = max(row for row, col in grid_map.values())
     n_cols = max(col for row, col in grid_map.values())
     idx_to_char = {
         (row - 1) * n_cols + col: label
         for label, (row, col) in grid_map.items()
     }
 
-    # Each file contains MULTIPLE characters, each selected via a fixed
-    # number of consecutive sequences (confirmed empirically: every file's
-    # target-flash count divides evenly into groups of `sequences_per_selection`
-    # with each group showing near-100% code agreement). Segment by position
-    # in chronological order, NOT by aggregating votes across the whole file
-    # (order matters -- e.g. "THE" vs sorting the codes numerically) and NOT
-    # by "did the code change" (which would merge a genuine repeated letter).
+    # Each file (in FIXED-sequence conditions) contains MULTIPLE characters,
+    # each selected via a fixed number of consecutive sequences. Segment by
+    # position in chronological order, NOT by aggregating votes across the
+    # whole file (order matters -- e.g. "THE" vs sorting codes numerically)
+    # and NOT by "did the code change" (which would merge a genuine repeated
+    # letter). SEE MODULE DOCSTRING: invalid for Dyn/DynBigram files.
     current_target_trace = raw.get_data(picks=[current_target_ch])[0]
     target_indices = events[events[:, 2] == 1, 0]
     target_codes_raw = np.round(current_target_trace[target_indices]).astype(int)
@@ -164,16 +183,30 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
         verbose=False
     )
 
-    return epochs, spelled_string, grid_map
+    # CRITICAL: preserve StimulusCode (which row/col physically flashed) as
+    # metadata. epochs.events[:, 2] only holds the binary target/non-target
+    # label used for event_id above -- without this, downstream code (e.g.
+    # run_pipeline.py's grid reconstruction) has no way to know which grid
+    # cell each epoch corresponds to. mne.Epochs can silently drop epochs
+    # too close to the recording edges, so index back via epochs.selection
+    # rather than assuming a 1:1 match with the original events array.
+    metadata = pd.DataFrame({
+        "stimulus_code": stimulus_codes_per_event,
+        "stimulus_type": events[:, 2],
+    }).iloc[epochs.selection].reset_index(drop=True)
+    epochs.metadata = metadata
+
+    return epochs, spelled_string, {"grid_map": grid_map, "n_rows": n_rows, "n_cols": n_cols}
 
 
 if __name__ == "__main__":
     sample_edf = "./data/raw/bigP3BCI_dataset/bigP3BCI-data/StudyD/D_09/SE001/Test/Dyn/D_09_SE001_Dyn_Test04.edf"
 
-    epochs, ground_truth_text, char_grid = parse_bigp3bci_edf(sample_edf)
+    epochs, ground_truth_text, grid_info = parse_bigp3bci_edf(sample_edf)
 
     print("\n--- Parser Output Summary ---")
     print(f"Epochs shape: {epochs.get_data().shape} (Trials x Channels x Timepoints)")
     print(f"EEG Channels: {epochs.ch_names}")
     print(f"Target Ratio: {len(epochs['target'])} / {len(epochs)}")
     print(f"Text for LLM Context: '{ground_truth_text}'")
+    print(f"Grid: {grid_info['n_rows']} rows x {grid_info['n_cols']} cols")

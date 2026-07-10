@@ -3,19 +3,25 @@ from scipy.special import logsumexp
 from scipy.stats import entropy
 
 class BayesianFusionEngine:
-    def __init__(self, mode='fixed', base_alpha=1.0, epsilon=1e-9):
+    def __init__(self, num_classes, mode='fixed', base_alpha=1.0, epsilon=1e-9):
         """
         Initializes the fusion engine to combine EEG posteriors with LLM priors.
+
+        num_classes: MUST match the actual grid size being decoded (e.g. 72
+        for Study D's full keyboard, not the 36-class 6x6 default used
+        elsewhere in the pipeline). This directly affects max_entropy, which
+        the 'adaptive' mode uses to normalize alpha -- a wrong value here
+        silently miscalibrates every adaptive-mode fusion result.
         """
         if mode not in ['fixed', 'adaptive']:
             raise ValueError("Mode must be either 'fixed' or 'adaptive'")
-            
+
         self.mode = mode
         self.base_alpha = base_alpha
         self.epsilon = epsilon
-        self.is_active = True  
-        
-        self.num_classes = 36
+        self.is_active = True
+
+        self.num_classes = num_classes
         self.max_entropy = np.log(self.num_classes)
 
     def _safe_log(self, probabilities):
@@ -43,6 +49,6 @@ class BayesianFusionEngine:
         normalized_log_posterior = unnormalized_log_posterior - log_z
 
         return np.exp(normalized_log_posterior)
-    
+
     def toggle(self, state: bool):
         self.is_active = state

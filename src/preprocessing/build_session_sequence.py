@@ -32,6 +32,13 @@ def yield_character_trials(registry_path="data/processed/ground_truth_registry.j
                 
                 # Reconstruct the filename based on your screenshot structure
                 file_name = f"{session_id}-epo.fif"
+
+                studyd_path = os.path.join(dataset_dir, "StudyD", file_name)
+                if os.path.exists(studyd_path):
+                    file_path = studyd_path
+                else:
+                    # If it's not in StudyD, we skip this character trial
+                    continue 
                 
                 # Attempt to build the full path if dataset_dir is provided
                 file_path = file_name

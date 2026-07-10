@@ -5,97 +5,81 @@ conditioned on real previously-decoded context. Retrieval layer over a
 public AAC/common-phrase corpus for simulated personalization.
 Fill in during Day 5.
 """
-import numpy as np
 import torch
-try:
-    from transformers import GPT2LMHeadModel, GPT2TokenizerFast
-except ImportError:
-    # Fallback/mock if transformers isn't installed locally yet
-    GPT2LMHeadModel = None
+import numpy as np
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
-class DistilGPT2Predictor:
-    def __init__(self, grid_characters: list, temperature: float = 1.5, device: str = 'cpu'):
+class LLMPredictor:
+    def __init__(self, spelling_matrix, model_name='distilgpt2', temperature=1.5):
         """
-        Generates next-character probabilities based on linguistic context.
-        
-        Parameters:
-        - grid_characters: 1D list of characters supported by the current BCI grid.
-        - temperature: Softmax temperature (higher = flatter distribution, less overconfident).
-        - device: 'cpu', 'cuda', or 'mps' (Apple Silicon).
+        Initializes the lightweight language model for next-character prediction.
         """
-        self.grid_characters = grid_characters
-        self.num_classes = len(grid_characters)
+        self.grid_matrix = spelling_matrix
+        self.char_list = list(self.grid_matrix.flatten())
         self.temperature = temperature
-        self.device = device
         
-        # Mapping from characters to their grid index
-        self.char_to_idx = {char: idx for idx, char in enumerate(self.grid_characters)}
+        # Load lightweight LM
+        # Suppress the warning logs from transformers
+        import logging
+        logging.getLogger("transformers").setLevel(logging.ERROR)
         
-        if GPT2LMHeadModel is not None:
-            self.tokenizer = GPT2TokenizerFast.from_pretrained("distilgpt2")
-            self.model = GPT2LMHeadModel.from_pretrained("distilgpt2").to(self.device)
-            self.model.eval()
-            self._map_grid_to_tokens()
-        else:
-            print("WARNING: Transformers not installed. LLM Predictor will return uniform distribution.")
-            self.model = None
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.model = AutoModelForCausalLM.from_pretrained(model_name)
+        self.model.eval()
+        
+        # Create a mapping from characters to token IDs
+        self.token_mapping = self._build_token_mapping()
 
-    def _map_grid_to_tokens(self):
-        """
-        Maps our specific grid characters to the LLM's token IDs.
-        GPT-2 tokenization is quirky (spaces matter). We map the raw character 
-        as well as common prefixes (like space + char).
-        """
-        self.grid_token_ids = {}
-        for char in self.grid_characters:
-            # We look up the token ID for the character itself (lower and upper)
-            # as well as with a leading space (standard GPT-2 BPE behavior)
-            tokens = [
-                self.tokenizer.encode(char, add_special_tokens=False)[0],
-                self.tokenizer.encode(char.lower(), add_special_tokens=False)[0],
-                self.tokenizer.encode(" " + char, add_special_tokens=False)[0],
-                self.tokenizer.encode(" " + char.lower(), add_special_tokens=False)[0]
-            ]
-            # Store unique valid tokens for this character
-            self.grid_token_ids[char] = list(set(tokens))
-
-    def get_prior(self, context: str) -> np.ndarray:
-        """
-        Given the current spelled context, returns a normalized probability 
-        distribution over the specific grid characters.
-        """
-        if not self.model or not context:
-            # Return uniform if no context or no model
-            return np.ones(self.num_classes) / self.num_classes
+    def _build_token_mapping(self):
+        """Maps 36-grid characters to GPT-2 token IDs."""
+        mapping = {}
+        for char in self.char_list:
+            # P300 datasets often use '_' to represent a space character
+            mapped_char = ' ' if char == '_' else char
             
-        inputs = self.tokenizer(context, return_tensors="pt").to(self.device)
+            # Encode character and grab the primary token ID
+            tokens = self.tokenizer.encode(mapped_char, add_special_tokens=False)
+            if tokens:
+                mapping[char] = tokens[0]
+        return mapping
+
+    def predict_next_char(self, context_so_far):
+        """
+        Takes the spelled string context and returns a 36-element probability 
+        distribution over the spelling matrix.
+        """
+        # If no context (start of word), return a flat, uniform distribution
+        if not context_so_far:
+            probs = np.ones(len(self.char_list))
+            return probs / probs.sum()
+
+        # Tokenize context
+        clean_context = context_so_far.replace('_', ' ')
+        input_ids = self.tokenizer.encode(clean_context, return_tensors='pt')
         
+        # Run inference
         with torch.no_grad():
-            outputs = self.model(**inputs)
-            # Get logits for the next token prediction
+            outputs = self.model(input_ids)
+            # Get logits for the very last token in the sequence
             next_token_logits = outputs.logits[0, -1, :]
-            
-        # Scale by temperature
-        scaled_logits = next_token_logits / self.temperature
         
-        # Convert all vocab logits to probabilities
-        probs = torch.nn.functional.softmax(scaled_logits, dim=-1).cpu().numpy()
+        # Apply temperature scaling (higher temperature = flatter, less overconfident distribution)
+        next_token_logits = next_token_logits / self.temperature
         
-        # Slice out only the probabilities for our grid characters
-        grid_probs = np.zeros(self.num_classes)
-        for char, token_ids in self.grid_token_ids.items():
-            idx = self.char_to_idx[char]
-            # Sum probabilities of all BPE token variants for this character
-            grid_probs[idx] = sum([probs[tid] for tid in token_ids])
-            
-        # Re-normalize over just our grid
-        sum_probs = np.sum(grid_probs)
-        if sum_probs > 0:
-            grid_probs = grid_probs / sum_probs
-        else:
-            # Fallback if no probability mass landed on valid chars (rare)
-            grid_probs = np.ones(self.num_classes) / self.num_classes
-            
-        # Integrate TF-IDF RAG here later in the sprint
-        # For now, return pure LLM prior
-        return grid_probs
+        # Extract logits specifically for our 36 characters
+        grid_logits = np.zeros(len(self.char_list))
+        
+        for idx, char in enumerate(self.char_list):
+            if char in self.token_mapping:
+                token_id = self.token_mapping[char]
+                grid_logits[idx] = next_token_logits[token_id].item()
+            else:
+                grid_logits[idx] = -100.0 # Extremely low probability if character isn't mapped
+                
+        # Convert logits to normalized probabilities using Softmax
+        # Subtract max for numerical stability before applying exp()
+        grid_logits = grid_logits - np.max(grid_logits)
+        probs = np.exp(grid_logits)
+        probs = probs / np.sum(probs)
+        
+        return probs

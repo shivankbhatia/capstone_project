@@ -2,6 +2,7 @@ import numpy as np
 from pathlib import Path
 import gc
 import mne
+import joblib
 from sklearn.pipeline import make_pipeline
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.calibration import CalibratedClassifierCV
@@ -113,6 +114,12 @@ if __name__ == "__main__":
         print("Posterior probabilities for first 5 trials [P(Non-Target), P(Target)]:")
         for i, p in enumerate(probs):
             print(f"Trial {i+1}: [{p[0]:.4f}, {p[1]:.4f}] (True Label: {y[i]})")
+        
+        # 4. Save the trained model to disk
+            model_save_path = f"{processed_dir}/swlda_model.pkl"
+            print(f"\nSaving trained model to {model_save_path}...")
+            joblib.dump(clf, model_save_path)
+            print("Model saved successfully! You are ready to run the pipeline.")
             
     except Exception as e:
         print(f"Training Failed: {e}")
