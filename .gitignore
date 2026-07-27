@@ -12,6 +12,7 @@ data/processed/*
 !data/processed/.gitkeep
 
 # Results (regenerate, don't commit binary outputs)
+results/.matplotlib-cache/
 results/figures/*.png
 results/figures/*.pdf
 results/tables/*.csv
