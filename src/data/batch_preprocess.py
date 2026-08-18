@@ -43,6 +43,32 @@ mne.set_log_level('ERROR')
 LOW_ADAPTIVE_AGREEMENT_THRESHOLD = 0.50
 
 
+def _annotate_adaptive_event_indices(events, pulse_edges, n_chars, flashes_per_seq):
+    """Map each flash event to adaptive character/sequence indices.
+
+    char_index is 0-based and increments after each SelectedTarget pulse.
+    sequence_in_char is 1-based and increments every flashes_per_seq flashes
+    within a character block.
+    """
+    event_samples = events[:, 0]
+    char_index = np.searchsorted(pulse_edges, event_samples, side="right")
+
+    # Events after the final pulse are outside any character selection block.
+    valid = char_index < n_chars
+    char_index = np.where(valid, char_index, -1)
+
+    sequence_in_char = np.full(len(events), -1, dtype=int)
+    per_char_flash_counts = np.zeros(n_chars, dtype=int)
+
+    for i, cidx in enumerate(char_index):
+        if cidx < 0:
+            continue
+        sequence_in_char[i] = (per_char_flash_counts[cidx] // flashes_per_seq) + 1
+        per_char_flash_counts[cidx] += 1
+
+    return char_index.astype(int), sequence_in_char
+
+
 def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
                            notch_freq=None, sequences_per_selection=20, verbose=False):
     """
@@ -170,6 +196,8 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
         "is_adaptive": is_adaptive,
         "target_flash_count": int(n_targets),
     }
+    adaptive_char_index = None
+    adaptive_sequence_in_char = None
 
     if is_adaptive:
         # SelectedTarget pulses to a nonzero code exactly once per finalized
@@ -182,6 +210,14 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
         selected_target = np.round(raw.get_data(picks=[selected_target_ch])[0]).astype(int)
         pulse_edges = np.where((selected_target[:-1] == 0) & (selected_target[1:] != 0))[0] + 1
         sequence_codes = selected_target[pulse_edges].tolist()
+
+        flashes_per_seq = n_rows + n_cols
+        adaptive_char_index, adaptive_sequence_in_char = _annotate_adaptive_event_indices(
+            events=events,
+            pulse_edges=pulse_edges,
+            n_chars=len(sequence_codes),
+            flashes_per_seq=flashes_per_seq,
+        )
 
         agreement_info.update({
             "n_characters_detected": len(sequence_codes),
@@ -238,7 +274,13 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
     metadata = pd.DataFrame({
         "stimulus_code": stimulus_codes_per_event,
         "stimulus_type": events[:, 2],
-    }).iloc[epochs.selection].reset_index(drop=True)
+    })
+
+    if is_adaptive:
+        metadata["char_index"] = adaptive_char_index
+        metadata["sequence_in_char"] = adaptive_sequence_in_char
+
+    metadata = metadata.iloc[epochs.selection].reset_index(drop=True)
     epochs.metadata = metadata
 
     return epochs, spelled_string, {"grid_map": grid_map, "n_rows": n_rows, "n_cols": n_cols, "agreement": agreement_info}

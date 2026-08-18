@@ -77,6 +77,26 @@ class SimpleAblationTracker:
 # REAL CLASSIFIER STREAM
 # -----------------------------------------------------------------------------
 _epoch_cache = {}
+_adaptive_index_cache = {}
+_legacy_index_warning_paths = set()
+
+
+def _build_adaptive_index_map(epochs):
+    """Build (char_idx, sequence_num) -> epoch-row indices from metadata."""
+    if epochs.metadata is None:
+        return None
+
+    required = {"char_index", "sequence_in_char"}
+    if not required.issubset(set(epochs.metadata.columns)):
+        return None
+
+    md = epochs.metadata
+    valid = (md["char_index"] >= 0) & (md["sequence_in_char"] > 0)
+    if not valid.any():
+        return None
+
+    grouped = md[valid].groupby(["char_index", "sequence_in_char"]).indices
+    return {key: np.asarray(idx, dtype=int) for key, idx in grouped.items()}
 
 def real_eeg_classifier_stream(eeg_data_path, char_idx, sequence_num, clf, char_list,
                                 n_rows, n_cols, flashes_per_seq, max_seqs_per_char=15):
@@ -85,12 +105,20 @@ def real_eeg_classifier_stream(eeg_data_path, char_idx, sequence_num, clf, char_
     and returns the posterior over the full grid (n_rows * n_cols classes,
     NOT hardcoded to 36 -- must match the actual grid, e.g. 72 for Study D).
     """
-    global _epoch_cache
+    global _epoch_cache, _adaptive_index_cache
 
     if eeg_data_path not in _epoch_cache:
-        _epoch_cache[eeg_data_path] = mne.read_epochs(eeg_data_path, preload=True, verbose=False)
+        _epoch_cache.clear()
+        _adaptive_index_cache.clear()
+        import gc
+        gc.collect()
+
+        epochs = mne.read_epochs(eeg_data_path, preload=True, verbose=False)
+        _epoch_cache[eeg_data_path] = epochs
+        _adaptive_index_cache[eeg_data_path] = _build_adaptive_index_map(epochs)
 
     epochs = _epoch_cache[eeg_data_path]
+    adaptive_index_map = _adaptive_index_cache.get(eeg_data_path)
 
     if epochs.metadata is None or "stimulus_code" not in epochs.metadata.columns:
         raise ValueError(
@@ -99,17 +127,31 @@ def real_eeg_classifier_stream(eeg_data_path, char_idx, sequence_num, clf, char_
             f"batch_preprocess.py to regenerate it with the metadata fix."
         )
 
-    flashes_per_char = flashes_per_seq * max_seqs_per_char
+    if adaptive_index_map is not None:
+        key = (char_idx, sequence_num)
+        epoch_rows = adaptive_index_map.get(key)
+        if epoch_rows is None or len(epoch_rows) == 0:
+            return np.ones(n_rows * n_cols) / (n_rows * n_cols)
+        seq_epochs = epochs[epoch_rows]
+    else:
+        is_adaptive = "Dyn" in str(eeg_data_path)
+        if is_adaptive and eeg_data_path not in _legacy_index_warning_paths:
+            print(
+                f"⚠️ Warning: {eeg_data_path} has no adaptive char/sequence metadata. "
+                "Using legacy fixed-block flash indexing. Re-run batch preprocessing "
+                "to regenerate .fif files with adaptive metadata columns."
+            )
+            _legacy_index_warning_paths.add(eeg_data_path)
 
-    start_idx = (char_idx * flashes_per_char) + ((sequence_num - 1) * flashes_per_seq)
-    end_idx = start_idx + flashes_per_seq
-
-    seq_epochs = epochs[start_idx:end_idx]
+        flashes_per_char = flashes_per_seq * max_seqs_per_char
+        start_idx = (char_idx * flashes_per_char) + ((sequence_num - 1) * flashes_per_seq)
+        end_idx = start_idx + flashes_per_seq
+        seq_epochs = epochs[start_idx:end_idx]
 
     if len(seq_epochs) == 0:
         return np.ones(n_rows * n_cols) / (n_rows * n_cols)
 
-    seq_epochs.pick_types(eeg=True, meg=False, exclude='bads')
+    seq_epochs.pick('eeg', exclude='bads')
 
     X = seq_epochs.get_data(copy=False)
     flash_probs = clf.predict_proba(X)[:, 1]
@@ -129,7 +171,11 @@ def real_eeg_classifier_stream(eeg_data_path, char_idx, sequence_num, clf, char_
             col_probs[code - n_rows - 1] = prob
 
     grid_probs = np.outer(row_probs, col_probs).flatten()
-    normalized_probs = grid_probs / np.sum(grid_probs)
+    sum_probs = np.sum(grid_probs)
+    if sum_probs > 0:
+        normalized_probs = grid_probs / sum_probs
+    else:
+        normalized_probs = np.ones(n_rows * n_cols) / (n_rows * n_cols)
     return normalized_probs
 
 
@@ -179,10 +225,12 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
             flashes_used += 1
 
             resolved_path = None
-            studyd_candidate = eeg_path.replace("processed/", "processed/StudyD/")
-
-            if os.path.exists(studyd_candidate):
-                resolved_path = studyd_candidate
+            if os.path.exists(eeg_path):
+                resolved_path = eeg_path
+            else:
+                studyd_candidate = eeg_path.replace("processed/", "processed/StudyD/")
+                if os.path.exists(studyd_candidate):
+                    resolved_path = studyd_candidate
 
             if clf is not None and resolved_path:
                 eeg_posteriors = real_eeg_classifier_stream(
