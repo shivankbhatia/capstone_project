@@ -6,18 +6,74 @@ data + ground-truth spelled text for LLM context.
 
 IMPORTANT: sequences_per_selection=20 is only valid for FIXED-sequence
 conditions (RC/Train calibration, confirmed empirically). Study D's
-Dyn/DynBigram conditions use ADAPTIVE stopping -- a variable number of
-sequences per character -- so this block-based segmentation will silently
-produce wrong ground truth on those files. Don't run this on Dyn/DynBigram
-paths until we've built proper variable-length segmentation for them.
+Dyn/DynBigram conditions use ADAPTIVE stopping -- CurrentTarget changes
+value MID-FILE (confirmed via low whole-file vote agreement -- 18-39%
+across every adaptive file inspected, with vote distributions showing
+multiple comparable-sized clusters rather than one dominant code with
+noise). Each Dyn/DynBigram file contains MULTIPLE character selections,
+not one -- segment by CurrentTarget transitions (see
+segment_by_target_transitions) and vote WITHIN each run, not across the
+whole file.
 """
+
+import json
+import traceback
+from collections import Counter
+from datetime import datetime
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import mne
 
+import warnings
+warnings.filterwarnings(
+    "ignore",
+    message="Channels contain different (highpass|lowpass) filters.*",
+    category=RuntimeWarning,
+)
+
+from tqdm import tqdm
+
+mne.set_log_level('ERROR')
+
+LOW_ADAPTIVE_AGREEMENT_THRESHOLD = 0.50
+
+
+def segment_by_target_transitions(target_codes_raw, min_run_length=1):
+    """
+    Splits a Dyn/DynBigram file's per-flash CurrentTarget codes into
+    contiguous runs, each run corresponding to one character selection
+    (confirmed: whole-file majority voting produced 18-39% agreement with
+    multiple comparable-sized vote clusters -- consistent with several
+    distinct characters being spelled per file, not one).
+
+    Returns a list of (code, run_length, agreement_frac) tuples, one per
+    detected character, using majority vote WITHIN each run rather than
+    across the whole file.
+    """
+    runs = []
+    current_run = [int(target_codes_raw[0])]
+    for code in target_codes_raw[1:]:
+        code = int(code)
+        if code == current_run[-1]:
+            current_run.append(code)
+        else:
+            runs.append(current_run)
+            current_run = [code]
+    runs.append(current_run)
+
+    results = []
+    for run in runs:
+        if len(run) < min_run_length:
+            continue
+        code, agreement_count = Counter(run).most_common(1)[0]
+        results.append((code, len(run), agreement_count / len(run)))
+    return results
+
+
 def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
-                           notch_freq=None, sequences_per_selection=20):
+                           notch_freq=None, sequences_per_selection=20, verbose=False):
     """
     Parses bigP3BCI EDF files into epoched EEG data.
 
@@ -27,19 +83,20 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
 
     sequences_per_selection: number of consecutive target flashes that
     belong to one character selection. Confirmed at 20 for FIXED-sequence
-    conditions (RC/Train) only -- do NOT use this for Dyn/DynBigram
-    (adaptive stopping) files, see module docstring.
+    conditions (RC/Train) only -- Dyn/DynBigram (adaptive stopping) files
+    use segment_by_target_transitions instead, see module docstring.
     """
-    print(f"Loading EDF: {edf_path}")
+    if verbose:
+        print(f"Loading EDF: {edf_path}")
     raw = mne.io.read_raw_edf(edf_path, preload=True, verbose=False)
     all_channels_raw = raw.ch_names
 
     is_adaptive = "Dyn" in str(edf_path)  # covers both Dyn and DynBigram
     if is_adaptive:
         print("NOTE: filename contains 'Dyn' -- adaptive-stopping condition. "
-              "Treating this file as ONE character trial (variable sequence "
-              "count), using whole-file majority vote instead of fixed "
-              "block segmentation.")
+              "Segmenting by CurrentTarget transitions (multiple characters "
+              "per file, variable sequence count per character), NOT a "
+              "single whole-file majority vote.")
 
     # -------------------------------------------------------------------------
     # 1. CHANNEL RENAMING & CLASSIFICATION
@@ -87,11 +144,13 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
     # -------------------------------------------------------------------------
     # 2. FILTERING
     # -------------------------------------------------------------------------
-    print(f"Applying bandpass filter ({l_freq}-{h_freq} Hz) to {len(actual_eeg_channels)} EEG channels...")
+    if verbose:
+        print(f"Applying bandpass filter ({l_freq}-{h_freq} Hz) to {len(actual_eeg_channels)} EEG channels...")
     raw.filter(l_freq=l_freq, h_freq=h_freq, picks=actual_eeg_channels, verbose=False)
 
     if notch_freq is not None:
-        print(f"Applying notch filter at {notch_freq} Hz...")
+        if verbose:
+            print(f"Applying notch filter at {notch_freq} Hz...")
         raw.notch_filter(freqs=notch_freq, picks=actual_eeg_channels, verbose=False)
 
     # -------------------------------------------------------------------------
@@ -113,7 +172,8 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
 
     events = np.array(events, dtype=int)
     stimulus_codes_per_event = np.array(stimulus_codes_per_event, dtype=int)
-    print(f"Extracted {len(events)} flash events ({np.sum(events[:, 2] == 1)} Targets, {np.sum(events[:, 2] == 0)} Non-Targets).")
+    if verbose:
+        print(f"Extracted {len(events)} flash events ({np.sum(events[:, 2] == 1)} Targets, {np.sum(events[:, 2] == 0)} Non-Targets).")
 
     # -------------------------------------------------------------------------
     # 4. LLM CONTEXT EXTRACTION
@@ -133,31 +193,41 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
         for label, (row, col) in grid_map.items()
     }
 
-    # Each file (in FIXED-sequence conditions) contains MULTIPLE characters,
-    # each selected via a fixed number of consecutive sequences. Segment by
-    # position in chronological order, NOT by aggregating votes across the
-    # whole file (order matters -- e.g. "THE" vs sorting codes numerically)
-    # and NOT by "did the code change" (which would merge a genuine repeated
-    # letter). SEE MODULE DOCSTRING: invalid for Dyn/DynBigram files.
     current_target_trace = raw.get_data(picks=[current_target_ch])[0]
     target_indices = events[events[:, 2] == 1, 0]
     target_codes_raw = np.round(current_target_trace[target_indices]).astype(int)
 
-    from collections import Counter
     n_targets = len(target_codes_raw)
+    agreement_info = {
+        "is_adaptive": is_adaptive,
+        "target_flash_count": int(n_targets),
+    }
 
     if is_adaptive:
-        # Adaptive-stopping files: one file = one character trial, decoded
-        # over a VARIABLE number of sequences (that's the entire point of
-        # adaptive stopping) -- NOT multiple fixed-size blocks. Whole-file
-        # majority vote, not block chunking.
-        code, agreement_count = Counter(target_codes_raw.tolist()).most_common(1)[0]
-        agreement_frac = agreement_count / n_targets if n_targets else 0.0
-        print(f"  Whole-file vote: code={code}, agreement={agreement_frac:.1%} "
+        # Adaptive-stopping files: CurrentTarget changes value mid-file --
+        # each contiguous run is one character selection, decoded over a
+        # VARIABLE number of sequences (that's the entire point of adaptive
+        # stopping). Vote WITHIN each run, not across the whole file. See
+        # module docstring for how this was confirmed.
+        char_runs = segment_by_target_transitions(target_codes_raw)
+        sequence_codes = [code for code, _, _ in char_runs]
+
+        per_char_agreement = [agreement for _, _, agreement in char_runs]
+        min_agreement = min(per_char_agreement) if per_char_agreement else 0.0
+        agreement_info.update({
+            "n_characters_detected": len(char_runs),
+            "run_lengths": [run_len for _, run_len, _ in char_runs],
+            "per_char_agreement": per_char_agreement,
+            "min_char_agreement": float(min_agreement),
+            "below_threshold": bool(min_agreement < LOW_ADAPTIVE_AGREEMENT_THRESHOLD),
+        })
+
+        print(f"  Detected {len(char_runs)} character(s) via transition segmentation "
               f"over {n_targets} target flashes")
-        if agreement_frac < 0.9:
-            print(f"    LOW agreement -- votes: {dict(Counter(target_codes_raw.tolist()))}")
-        sequence_codes = [code] if n_targets else []
+        for i, (code, run_len, agreement) in enumerate(char_runs):
+            if agreement < LOW_ADAPTIVE_AGREEMENT_THRESHOLD:
+                print(f"    Char {i}: code={code}, run_length={run_len}, "
+                      f"LOW agreement ({agreement:.1%})")
     else:
         if n_targets % sequences_per_selection != 0:
             print(f"WARNING: {n_targets} target flashes doesn't divide evenly by "
@@ -177,8 +247,8 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
     spelled_string = "".join(
         idx_to_char.get(code, f"[{code}]") for code in sequence_codes
     )
-
-    print(f"Extracted Ground-Truth Spelled String: '{spelled_string}'")
+    if verbose:
+        print(f"Extracted Ground-Truth Spelled String: '{spelled_string}'")
 
     # -------------------------------------------------------------------------
     # 5. EPOCHING
@@ -210,17 +280,152 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
     }).iloc[epochs.selection].reset_index(drop=True)
     epochs.metadata = metadata
 
-    return epochs, spelled_string, {"grid_map": grid_map, "n_rows": n_rows, "n_cols": n_cols}
+    return epochs, spelled_string, {"grid_map": grid_map, "n_rows": n_rows, "n_cols": n_cols, "agreement": agreement_info}
+
+
+def _study_d_quality_context(edf_path):
+    path = Path(edf_path)
+    parts = path.parts
+    study = next((part for part in parts if part in {"StudyD", "StudyE"}), "Unknown")
+    study_index = parts.index(study) if study in parts else -1
+
+    subject = parts[study_index + 1] if study_index >= 0 and study_index + 1 < len(parts) else "Unknown"
+    session = parts[study_index + 2] if study_index >= 0 and study_index + 2 < len(parts) else "Unknown"
+    phase = next((part for part in parts if part in {"Train", "Test"}), "Unknown")
+
+    condition = path.parent.name
+    if condition in {"Train", "Test"}:
+        condition = "Unspecified"
+
+    return {
+        "study": study,
+        "subject": subject,
+        "session": session,
+        "phase": phase,
+        "condition": condition,
+    }
+
+
+def _quality_flag_row(edf_path, flag_type, detail):
+    path = Path(edf_path)
+    return {
+        **_study_d_quality_context(path),
+        "file": str(path),
+        "file_name": path.name,
+        "flag_type": flag_type,
+        "detail": detail,
+    }
+
+
+def _write_json(path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as handle:
+        json.dump(data, handle, indent=2, sort_keys=True)
+        handle.write("\n")
+
+
+def _append_failure_log(log_path, edf_path, exc):
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    with log_path.open("a", encoding="utf-8") as handle:
+        handle.write(f"[{datetime.utcnow().isoformat(timespec='seconds')}Z] {edf_path}\n")
+        handle.write(f"{type(exc).__name__}: {exc}\n")
+        handle.write(traceback.format_exc())
+        handle.write("\n")
 
 
 if __name__ == "__main__":
-    sample_edf = "./data/raw/bigP3BCI_dataset/bigP3BCI-data/StudyD/D_09/SE001/Test/Dyn/D_09_SE001_Dyn_Test04.edf"
+    project_root = Path(__file__).resolve().parents[2]
+    raw_root = project_root / "data" / "raw" / "bigP3BCI_dataset" / "bigP3BCI-data" / "StudyD"
+    processed_root = project_root / "data" / "processed"
+    study_processed_root = processed_root / "StudyD"
+    grid_layout_path = processed_root / "grid_layout.json"
+    registry_path = processed_root / "ground_truth_registry.json"
+    quality_flags_path = processed_root / "quality_flags.csv"
+    failure_log_path = processed_root / "batch_preprocess_failures.log"
 
-    epochs, ground_truth_text, grid_info = parse_bigp3bci_edf(sample_edf)
+    edf_files = sorted(raw_root.rglob("*.[eE][dD][fF]"))
+    if not edf_files:
+        raise FileNotFoundError(f"No Study D EDF files found under {raw_root}")
 
-    print("\n--- Parser Output Summary ---")
-    print(f"Epochs shape: {epochs.get_data().shape} (Trials x Channels x Timepoints)")
-    print(f"EEG Channels: {epochs.ch_names}")
-    print(f"Target Ratio: {len(epochs['target'])} / {len(epochs)}")
-    print(f"Text for LLM Context: '{ground_truth_text}'")
-    print(f"Grid: {grid_info['n_rows']} rows x {grid_info['n_cols']} cols")
+    processed_count = 0
+    failed_count = 0
+    adaptive_file_count = 0
+    low_agreement_count = 0
+
+    grid_layouts = json.loads(grid_layout_path.read_text()) if grid_layout_path.exists() else {}
+    ground_truth_registry = json.loads(registry_path.read_text()) if registry_path.exists() else {}
+    quality_flags = []
+
+    print(f"Found {len(edf_files)} Study D EDF files under {raw_root}")
+    for edf_path in tqdm(edf_files, desc="Preprocessing", unit="file"):
+        output_path = study_processed_root / f"{edf_path.stem}-epo.fif"
+
+        if output_path.exists():
+            continue
+
+        try:
+            epochs, ground_truth_text, grid_info = parse_bigp3bci_edf(str(edf_path), verbose=False)
+
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            epochs.save(str(output_path), overwrite=True)
+
+            static_info = {"grid_map": grid_info["grid_map"], "n_rows": grid_info["n_rows"], "n_cols": grid_info["n_cols"]}
+            if "StudyD" not in grid_layouts:
+                grid_layouts["StudyD"] = static_info
+            elif grid_layouts["StudyD"] != static_info:
+                quality_flags.append(_quality_flag_row(
+                    edf_path,
+                    "grid_layout_mismatch",
+                    "Grid layout differs from the first observed Study D layout; "
+                    "continuing preprocessing and retaining the original canonical layout in grid_layout.json.",
+                ))
+
+            ground_truth_registry[edf_path.stem] = ground_truth_text
+
+            agreement = grid_info.get("agreement", {})
+            if agreement.get("is_adaptive"):
+                adaptive_file_count += 1
+                n_chars = int(agreement.get("n_characters_detected", 0))
+                min_agreement = float(agreement.get("min_char_agreement", 0.0))
+                quality_flags.append(_quality_flag_row(
+                    edf_path,
+                    "adaptive_multi_character_segmentation",
+                    f"Detected {n_chars} character(s) via CurrentTarget transitions; "
+                    f"min per-character agreement {min_agreement:.1%}.",
+                ))
+                if agreement.get("below_threshold"):
+                    low_agreement_count += 1
+                    quality_flags.append(_quality_flag_row(
+                        edf_path,
+                        "low_currenttarget_agreement",
+                        f"Min per-character agreement {min_agreement:.1%} is below "
+                        f"{LOW_ADAPTIVE_AGREEMENT_THRESHOLD:.0%} for at least one character.",
+                    ))
+
+            _write_json(grid_layout_path, grid_layouts)
+            _write_json(registry_path, ground_truth_registry)
+
+            processed_count += 1
+            tqdm.write(f"Saved epochs to {output_path}")
+        except Exception as exc:
+            failed_count += 1
+            _append_failure_log(failure_log_path, edf_path, exc)
+            tqdm.write(f"FAILED: {edf_path.name} ({type(exc).__name__}: {exc})")
+
+    if quality_flags:
+        pd.DataFrame(quality_flags).to_csv(quality_flags_path, index=False)
+
+    print("\n--- Batch Preprocess Summary ---")
+    print(f"Processed: {processed_count}")
+    print(f"Failed: {failed_count}")
+    print(f"Grid layout: {grid_layout_path}")
+    print(f"Ground-truth registry: {registry_path}")
+    if adaptive_file_count:
+        print(
+            f"Adaptive files with a low-agreement character: "
+            f"{low_agreement_count}/{adaptive_file_count} "
+            f"({(low_agreement_count / adaptive_file_count):.1%})"
+        )
+        print(f"Quality flags: {quality_flags_path}")
+    if failed_count:
+        print(f"Failure log: {failure_log_path}")
