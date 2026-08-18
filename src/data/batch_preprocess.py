@@ -7,13 +7,16 @@ data + ground-truth spelled text for LLM context.
 IMPORTANT: sequences_per_selection=20 is only valid for FIXED-sequence
 conditions (RC/Train calibration, confirmed empirically). Study D's
 Dyn/DynBigram conditions use ADAPTIVE stopping -- CurrentTarget changes
-value MID-FILE (confirmed via low whole-file vote agreement -- 18-39%
-across every adaptive file inspected, with vote distributions showing
-multiple comparable-sized clusters rather than one dominant code with
-noise). Each Dyn/DynBigram file contains MULTIPLE character selections,
-not one -- segment by CurrentTarget transitions (see
-segment_by_target_transitions) and vote WITHIN each run, not across the
-whole file.
+value MID-FILE, and consecutive identical selections (e.g. a doubled
+letter) can't be distinguished by CurrentTarget alone. Ground truth is now
+read directly from the SelectedTarget channel, which pulses once per
+finalized character selection regardless of whether the code repeats.
+
+This means each Dyn/DynBigram file can contain multiple character
+selections, but the boundary between them is defined by SelectedTarget
+pulses rather than by CurrentTarget transitions alone. We decode each
+selection by its finalized target code and keep the true per-character
+sequence, including repeated characters.
 """
 
 import json
@@ -40,38 +43,6 @@ mne.set_log_level('ERROR')
 LOW_ADAPTIVE_AGREEMENT_THRESHOLD = 0.50
 
 
-def segment_by_target_transitions(target_codes_raw, min_run_length=1):
-    """
-    Splits a Dyn/DynBigram file's per-flash CurrentTarget codes into
-    contiguous runs, each run corresponding to one character selection
-    (confirmed: whole-file majority voting produced 18-39% agreement with
-    multiple comparable-sized vote clusters -- consistent with several
-    distinct characters being spelled per file, not one).
-
-    Returns a list of (code, run_length, agreement_frac) tuples, one per
-    detected character, using majority vote WITHIN each run rather than
-    across the whole file.
-    """
-    runs = []
-    current_run = [int(target_codes_raw[0])]
-    for code in target_codes_raw[1:]:
-        code = int(code)
-        if code == current_run[-1]:
-            current_run.append(code)
-        else:
-            runs.append(current_run)
-            current_run = [code]
-    runs.append(current_run)
-
-    results = []
-    for run in runs:
-        if len(run) < min_run_length:
-            continue
-        code, agreement_count = Counter(run).most_common(1)[0]
-        results.append((code, len(run), agreement_count / len(run)))
-    return results
-
-
 def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
                            notch_freq=None, sequences_per_selection=20, verbose=False):
     """
@@ -92,12 +63,6 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
     all_channels_raw = raw.ch_names
 
     is_adaptive = "Dyn" in str(edf_path)  # covers both Dyn and DynBigram
-    if is_adaptive:
-        print("NOTE: filename contains 'Dyn' -- adaptive-stopping condition. "
-              "Segmenting by CurrentTarget transitions (multiple characters "
-              "per file, variable sequence count per character), NOT a "
-              "single whole-file majority vote.")
-
     # -------------------------------------------------------------------------
     # 1. CHANNEL RENAMING & CLASSIFICATION
     # -------------------------------------------------------------------------
@@ -134,9 +99,12 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
     stim_type_ch = next((ch for ch in all_channels_raw if ch.strip().lower() == 'stimulustype'), None)
     stim_code_ch = next((ch for ch in all_channels_raw if ch.strip().lower() == 'stimuluscode'), None)
     current_target_ch = next((ch for ch in all_channels_raw if ch.strip().lower() == 'currenttarget'), None)
+    selected_target_ch = next((ch for ch in all_channels_raw if ch.strip().lower() == 'selectedtarget'), None)
 
     if not all([stim_begin_ch, stim_type_ch, stim_code_ch, current_target_ch]):
         raise ValueError("Missing essential trigger channels in the EDF file.")
+    if is_adaptive and selected_target_ch is None:
+        raise ValueError(f"Missing SelectedTarget channel needed for adaptive-file segmentation: {edf_path}")
 
     montage = mne.channels.make_standard_montage('standard_1020')
     raw.set_montage(montage, on_missing='ignore')
@@ -204,30 +172,23 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
     }
 
     if is_adaptive:
-        # Adaptive-stopping files: CurrentTarget changes value mid-file --
-        # each contiguous run is one character selection, decoded over a
-        # VARIABLE number of sequences (that's the entire point of adaptive
-        # stopping). Vote WITHIN each run, not across the whole file. See
-        # module docstring for how this was confirmed.
-        char_runs = segment_by_target_transitions(target_codes_raw)
-        sequence_codes = [code for code, _, _ in char_runs]
+        # SelectedTarget pulses to a nonzero code exactly once per finalized
+        # character selection -- the system's own record of what was
+        # selected, read directly rather than inferred via CurrentTarget
+        # voting or run-segmentation. Confirmed: correctly captures doubled
+        # letters (e.g. BUTTON's two T's) that CurrentTarget-based
+        # segmentation silently merged into one, since each pulse is a
+        # distinct event regardless of whether consecutive codes repeat.
+        selected_target = np.round(raw.get_data(picks=[selected_target_ch])[0]).astype(int)
+        pulse_edges = np.where((selected_target[:-1] == 0) & (selected_target[1:] != 0))[0] + 1
+        sequence_codes = selected_target[pulse_edges].tolist()
 
-        per_char_agreement = [agreement for _, _, agreement in char_runs]
-        min_agreement = min(per_char_agreement) if per_char_agreement else 0.0
         agreement_info.update({
-            "n_characters_detected": len(char_runs),
-            "run_lengths": [run_len for _, run_len, _ in char_runs],
-            "per_char_agreement": per_char_agreement,
-            "min_char_agreement": float(min_agreement),
-            "below_threshold": bool(min_agreement < LOW_ADAPTIVE_AGREEMENT_THRESHOLD),
+            "n_characters_detected": len(sequence_codes),
+            "detection_method": "selected_target_pulse",
         })
-
-        print(f"  Detected {len(char_runs)} character(s) via transition segmentation "
+        print(f"  Detected {len(sequence_codes)} character(s) via SelectedTarget pulses "
               f"over {n_targets} target flashes")
-        for i, (code, run_len, agreement) in enumerate(char_runs):
-            if agreement < LOW_ADAPTIVE_AGREEMENT_THRESHOLD:
-                print(f"    Char {i}: code={code}, run_length={run_len}, "
-                      f"LOW agreement ({agreement:.1%})")
     else:
         if n_targets % sequences_per_selection != 0:
             print(f"WARNING: {n_targets} target flashes doesn't divide evenly by "
@@ -369,16 +330,23 @@ if __name__ == "__main__":
             output_path.parent.mkdir(parents=True, exist_ok=True)
             epochs.save(str(output_path), overwrite=True)
 
-            static_info = {"grid_map": grid_info["grid_map"], "n_rows": grid_info["n_rows"], "n_cols": grid_info["n_cols"]}
+            # Coordinates are tuples from live parsing but lists after a JSON
+            # round-trip (grid_layout.json) -- normalize both to lists before
+            # comparing, or every file spuriously "mismatches" on type alone
+            # (confirmed: 205/205 false positives were tuple-vs-list, not a
+            # real layout difference).
+            static_info = {
+                "grid_map": {label: list(coord) for label, coord in grid_info["grid_map"].items()},
+                "n_rows": grid_info["n_rows"],
+                "n_cols": grid_info["n_cols"],
+            }
             if "StudyD" not in grid_layouts:
                 grid_layouts["StudyD"] = static_info
             elif grid_layouts["StudyD"] != static_info:
-                quality_flags.append(_quality_flag_row(
-                    edf_path,
-                    "grid_layout_mismatch",
-                    "Grid layout differs from the first observed Study D layout; "
-                    "continuing preprocessing and retaining the original canonical layout in grid_layout.json.",
-                ))
+                raise ValueError(
+                    f"Grid layout mismatch at {edf_path} — expected constant 9x8 layout "
+                    f"across all Study D files. This should never happen; investigate before continuing."
+                )
 
             ground_truth_registry[edf_path.stem] = ground_truth_text
 
@@ -386,22 +354,11 @@ if __name__ == "__main__":
             if agreement.get("is_adaptive"):
                 adaptive_file_count += 1
                 n_chars = int(agreement.get("n_characters_detected", 0))
-                min_agreement = float(agreement.get("min_char_agreement", 0.0))
                 quality_flags.append(_quality_flag_row(
                     edf_path,
                     "adaptive_multi_character_segmentation",
-                    f"Detected {n_chars} character(s) via CurrentTarget transitions; "
-                    f"min per-character agreement {min_agreement:.1%}.",
+                    f"Detected {n_chars} character(s) via SelectedTarget pulses.",
                 ))
-                if agreement.get("below_threshold"):
-                    low_agreement_count += 1
-                    quality_flags.append(_quality_flag_row(
-                        edf_path,
-                        "low_currenttarget_agreement",
-                        f"Min per-character agreement {min_agreement:.1%} is below "
-                        f"{LOW_ADAPTIVE_AGREEMENT_THRESHOLD:.0%} for at least one character.",
-                    ))
-
             _write_json(grid_layout_path, grid_layouts)
             _write_json(registry_path, ground_truth_registry)
 
