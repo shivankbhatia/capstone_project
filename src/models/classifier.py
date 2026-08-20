@@ -8,7 +8,7 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.preprocessing import StandardScaler
 from mne.decoding import Vectorizer, Scaler
 
-def train_calibrated_batch(processed_dir, glob_pattern):
+def train_calibrated_batch(processed_dir, glob_pattern, epochs=5):
     """
     Trains an SGDClassifier (logistic regression) file-by-file to avoid
     loading multiple files or the entire dataset into memory at once.
@@ -36,7 +36,7 @@ def train_calibrated_batch(processed_dir, glob_pattern):
         X_scaled = scaler.fit_transform(X)
         X_vec = vectorizer.fit_transform(X_scaled)
         std_scaler.partial_fit(X_vec)
-        if (i + 1) % 10 == 0 or (i + 1) == len(subject_files):
+        if (i + 1) % 20 == 0 or (i + 1) == len(subject_files):
             print(f"  Processed {i + 1}/{len(subject_files)} files for scaling...")
         del ep, X, X_scaled, X_vec
         gc.collect()
@@ -52,22 +52,23 @@ def train_calibrated_batch(processed_dir, glob_pattern):
         random_state=42
     )
     
-    print("\nPass 2: Incrementally training SGDClassifier...")
-    for i, f in enumerate(subject_files):
-        ep = mne.read_epochs(f, preload=True, verbose=False)
-        X = ep.get_data(copy=False)
-        y = ep.events[:, 2]
-        
-        X_scaled = scaler.fit_transform(X)
-        X_vec = vectorizer.fit_transform(X_scaled)
-        X_std = std_scaler.transform(X_vec)
-        
-        base_clf.partial_fit(X_std, y, classes=[0, 1])
-        
-        if (i + 1) % 10 == 0 or (i + 1) == len(subject_files):
-            print(f"  Processed {i + 1}/{len(subject_files)} files for training...")
+    print(f"\nPass 2: Incrementally training SGDClassifier for {epochs} epochs...")
+    for epoch in range(epochs):
+        print(f"--- Epoch {epoch + 1}/{epochs} ---")
+        for i, f in enumerate(subject_files):
+            ep = mne.read_epochs(f, preload=True, verbose=False)
+            X = ep.get_data(copy=False)
+            y = ep.events[:, 2]
             
-        del ep, X, X_scaled, X_vec, X_std
+            X_scaled = scaler.fit_transform(X)
+            X_vec = vectorizer.fit_transform(X_scaled)
+            X_std = std_scaler.transform(X_vec)
+            
+            base_clf.partial_fit(X_std, y, classes=[0, 1])
+                
+            del ep, X, X_scaled, X_vec, X_std
+            
+        print(f"  Epoch {epoch + 1} complete.")
         gc.collect()
 
     # Wrap the transformers and base classifier in a pipeline
@@ -85,7 +86,7 @@ if __name__ == "__main__":
     glob_pattern = "D_*_SE001*Train*-epo.fif"
     
     try:
-        clf = train_calibrated_batch(processed_dir, glob_pattern)
+        clf = train_calibrated_batch(processed_dir, glob_pattern, epochs=5)
         
         # Save the trained model to disk
         model_save_path = f"{processed_dir}/swlda_model.pkl"
