@@ -59,13 +59,16 @@ def train_calibrated_batch(processed_dir, glob_pattern, epochs=5):
             ep = mne.read_epochs(f, preload=True, verbose=False)
             X = ep.get_data(copy=False)
             y = ep.events[:, 2]
-            
-            X_scaled = scaler.fit_transform(X)
-            X_vec = vectorizer.fit_transform(X_scaled)
+
+            # Use .transform() only — scaler/vectorizer were fitted in Pass 1.
+            # Using fit_transform here would re-fit on each batch, destroying
+            # the globally-consistent statistics built in the first pass.
+            X_scaled = scaler.transform(X)
+            X_vec = vectorizer.transform(X_scaled)
             X_std = std_scaler.transform(X_vec)
-            
+
             base_clf.partial_fit(X_std, y, classes=[0, 1])
-                
+
             del ep, X, X_scaled, X_vec, X_std
             
         print(f"  Epoch {epoch + 1} complete.")

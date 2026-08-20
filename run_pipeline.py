@@ -217,6 +217,13 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
         decoder.reset()
         llm_prior = llm.predict_next_char(context)
 
+        # Apply the LM prior ONCE as an initial belief bias -- not per-sequence.
+        decoder.accumulated_log_probs += fusion_engine.get_initial_log_bias(llm_prior)
+
+        if trial is trials[0]:  # temporary debug check, remove after verifying
+            print("DEBUG initial bias sample:", decoder.accumulated_log_probs[:5],
+                  "active:", fusion_engine.is_active)
+
         start_time = time.time()
         flashes_used = 0
         predicted_char = None
@@ -242,8 +249,7 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
                     print(f"⚠️ Warning: Could not find EEG file for {eeg_path} in StudyD. Falling back to mock data.")
                 eeg_posteriors = mock_eeg_classifier_stream(target, char_list)
 
-            fused_probs = fusion_engine.fuse(eeg_posteriors, llm_prior)
-            decoder.accumulate_evidence(fused_probs)
+            decoder.accumulate_evidence(eeg_posteriors)
 
             current_prediction, current_confidence = decoder.decode_character()
             if current_confidence >= confidence_threshold and flashes_used >= min_flashes:
@@ -316,19 +322,20 @@ if __name__ == "__main__":
     tracker.record_run("Baseline (No LLM)", base_metrics, base_itr)
 
     # ---------------------------------------------------------
-    # EXPERIMENT 2: Fixed Weight Fusion
+    # EXPERIMENT 2: Fixed Weight Fusion (optimal alpha=0.01 from sweep)
     # ---------------------------------------------------------
     print("\nRunning Fixed Weight Fusion...")
-    fixed_fusion = BayesianFusionEngine(num_classes=num_classes, mode='fixed', base_alpha=0.15, epsilon=0.02)
-
-    fixed_metrics, fixed_itr = run_evaluation(decoder, llm, fixed_fusion, **eval_kwargs)
-    tracker.record_run("Fusion (Fixed a=0.15)", fixed_metrics, fixed_itr)
+    for test_alpha in [0.01]:
+        print(f"\nRunning Fixed Fusion (a={test_alpha})...")
+        sweep_fusion = BayesianFusionEngine(num_classes=num_classes, mode='fixed', base_alpha=test_alpha)
+        m, i = run_evaluation(decoder, llm, sweep_fusion, **eval_kwargs)
+        tracker.record_run(f"Fusion (Fixed a={test_alpha})", m, i)
 
     # ---------------------------------------------------------
-    # EXPERIMENT 3: Adaptive Entropy Fusion
+    # EXPERIMENT 3: Adaptive Entropy Fusion (base_alpha=0.01 from sweep)
     # ---------------------------------------------------------
     print("\nRunning Adaptive Entropy Fusion...")
-    adaptive_fusion = BayesianFusionEngine(num_classes=num_classes, mode='adaptive', base_alpha=0.25, epsilon=0.02)
+    adaptive_fusion = BayesianFusionEngine(num_classes=num_classes, mode='adaptive', base_alpha=0.01)
 
     adapt_metrics, adapt_itr = run_evaluation(decoder, llm, adaptive_fusion, **eval_kwargs)
     tracker.record_run("Fusion (Adaptive)", adapt_metrics, adapt_itr)

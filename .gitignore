@@ -26,3 +26,5 @@ results/tables/*.csv
 
 
 *.md
+
+*.log
