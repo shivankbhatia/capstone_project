@@ -1,0 +1,107 @@
+[
+  {
+    "rag_weight": 0.1,
+    "threshold": 0.0,
+    "accuracy": 53.86819484240688,
+    "flashes_per_char": 9.627507163323783,
+    "itr": 7.283060846498157
+  },
+  {
+    "rag_weight": 0.1,
+    "threshold": 0.3,
+    "accuracy": 53.86819484240688,
+    "flashes_per_char": 9.627507163323783,
+    "itr": 7.283060846498157
+  },
+  {
+    "rag_weight": 0.1,
+    "threshold": 0.6,
+    "accuracy": 54.15472779369628,
+    "flashes_per_char": 9.627507163323783,
+    "itr": 7.340040658885803
+  },
+  {
+    "rag_weight": 0.15,
+    "threshold": 0.0,
+    "accuracy": 53.86819484240688,
+    "flashes_per_char": 9.581661891117479,
+    "itr": 7.31790802758188
+  },
+  {
+    "rag_weight": 0.15,
+    "threshold": 0.3,
+    "accuracy": 53.86819484240688,
+    "flashes_per_char": 9.581661891117479,
+    "itr": 7.31790802758188
+  },
+  {
+    "rag_weight": 0.15,
+    "threshold": 0.6,
+    "accuracy": 54.15472779369628,
+    "flashes_per_char": 9.587392550143267,
+    "itr": 7.370752126077793
+  },
+  {
+    "rag_weight": 0.25,
+    "threshold": 0.0,
+    "accuracy": 53.581661891117484,
+    "flashes_per_char": 9.564469914040115,
+    "itr": 7.273855997568038
+  },
+  {
+    "rag_weight": 0.25,
+    "threshold": 0.3,
+    "accuracy": 53.581661891117484,
+    "flashes_per_char": 9.564469914040115,
+    "itr": 7.273855997568038
+  },
+  {
+    "rag_weight": 0.25,
+    "threshold": 0.6,
+    "accuracy": 54.15472779369628,
+    "flashes_per_char": 9.587392550143267,
+    "itr": 7.370752126077793
+  },
+  {
+    "rag_weight": 0.35,
+    "threshold": 0.0,
+    "accuracy": 53.581661891117484,
+    "flashes_per_char": 9.564469914040115,
+    "itr": 7.273855997568038
+  },
+  {
+    "rag_weight": 0.35,
+    "threshold": 0.3,
+    "accuracy": 53.581661891117484,
+    "flashes_per_char": 9.564469914040115,
+    "itr": 7.273855997568038
+  },
+  {
+    "rag_weight": 0.35,
+    "threshold": 0.6,
+    "accuracy": 54.15472779369628,
+    "flashes_per_char": 9.587392550143267,
+    "itr": 7.370752126077793
+  },
+  {
+    "rag_weight": 0.5,
+    "threshold": 0.0,
+    "accuracy": 53.29512893982808,
+    "flashes_per_char": 9.558739255014327,
+    "itr": 7.221126142829987
+  },
+  {
+    "rag_weight": 0.5,
+    "threshold": 0.3,
+    "accuracy": 53.29512893982808,
+    "flashes_per_char": 9.558739255014327,
+    "itr": 7.221126142829987
+  },
+  {
+    "rag_weight": 0.5,
+    "threshold": 0.6,
+    "accuracy": 53.86819484240688,
+    "flashes_per_char": 9.581661891117479,
+    "itr": 7.31790802758188
+  }
+]

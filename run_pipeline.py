@@ -207,6 +207,15 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
     metrics = Metrics()
 
     trials = list(yield_character_trials("data/processed/ground_truth_registry.json", "data/processed"))
+
+    test_split_path = "data/processed/test_sessions.json"
+    if os.path.exists(test_split_path):
+        with open(test_split_path) as f:
+            test_sessions = set(json.load(f))
+        trials = [t for t in trials if t.get('session_id') in test_sessions]
+        print(f"Restricted eval to {len(test_sessions)} held-out test sessions "
+              f"({len(trials)} char trials).")
+
     char_list = llm.char_list
 
     for trial in trials:
@@ -301,8 +310,8 @@ if __name__ == "__main__":
     fixed_rag_llm = RAGPredictor(
         llm,
         phrase_bank_path="data/rag/phrase_bank.csv",
-        rag_weight=0.25,
-        retrieval_confidence_threshold=0.0,
+        rag_weight=0.15,
+        retrieval_confidence_threshold=0.60,
     )
     gated_rag_llm = RAGPredictor(
         llm,

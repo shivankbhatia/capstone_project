@@ -51,7 +51,8 @@ def yield_character_trials(registry_path="data/processed/ground_truth_registry.j
                     yield {
                         'target_char': char,
                         'context_so_far': target_word[:i],
-                        'eeg_data_path': file_path
+                        'eeg_data_path': file_path,
+                        'session_id': session_id
                     }
         else:
             print(f"⚠️ Warning: Unexpected JSON structure in {registry_path}. Expected a dictionary.")

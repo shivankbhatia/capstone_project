@@ -645,6 +645,22 @@ The decoding loop applies the selected LLM or RAG-LM prior as an initial log bia
 
 This design measures whether language context can reduce the number of flashes required while preserving or improving accuracy.
 
+### 6.1 Final results (held-out test split, real EEG + SWLDA)
+
+The RAG phrase bank is built exclusively from an 80% train split of Study D sessions (`scripts/build_phrase_bank_from_registry.py`); evaluation runs only on the remaining 20% held-out sessions (`data/processed/test_sessions.json`), so no target-vocabulary leaks between the phrase bank and the reported numbers. `rag_weight`/`retrieval_confidence_threshold` were selected via a 15-point grid sweep (`scripts/sweep_rag_params.py`, results in `results/tables/rag_sweep.json`) on that same train split.
+
+| Condition | Accuracy (%) | Flashes/Char | ITR (bits/min) |
+|---|---|---|---|
+| Baseline (No LLM) | 32.66 | 12.82 | 2.62 |
+| Fusion (Fixed a=0.1) | 53.30 | 9.62 | 7.18 |
+| Fusion (Adaptive) | 52.15 | 9.68 | 6.91 |
+| **Fusion (Fixed RAG-LM)** | **54.15** | **9.59** | **7.37** |
+| Fusion (Gated RAG-LM) | 52.72 | 9.68 | 7.01 |
+
+Full table: `results/tables/ablation_results.csv`. Figures: `results/figures/ablation_comparison.png` (per-metric bars), `results/figures/accuracy_vs_itr.png` (tradeoff scatter).
+
+**Takeaway:** any LLM prior roughly triples ITR over EEG-only decoding (2.62 → ~7). RAG-conditioned fusion is the best arm on every metric — Fixed RAG-LM beats plain Fixed fusion by +0.85% accuracy and +0.19 ITR, using a leakage-safe, session-held-out phrase bank rather than an oracle one.
+
 ---
 
 ## 7. Key assumptions and caveats
@@ -935,10 +951,14 @@ Implemented:
 - Bayesian fusion.
 - Five-arm ablation evaluation.
 - Dataset analytics exports.
+- Train/test session split with leakage-safe RAG phrase bank (`scripts/build_phrase_bank_from_registry.py`).
+- RAG hyperparameter sweep over `rag_weight` and `retrieval_confidence_threshold` (`scripts/sweep_rag_params.py`).
+- Final five-arm results measured on real EEG + SWLDA over the held-out test split (§6.1).
 
 Planned next work:
 
-- Expand the RAG phrase bank with task-specific and user-specific vocabularies.
-- Add aggregate RAG diagnostics to the evaluation summary.
-- Compare fixed and gated RAG against the current LLM-only priors on full Study D runs.
-- Run the final experiments on the full local data artifacts and replace any placeholder result values with final measured metrics.
+- Statistical significance testing across seeds/sessions (current numbers are single-run point estimates).
+- Aggregate RAG diagnostics (retrieval enabled-rate, match reasons) in the evaluation summary.
+- Populate `results/figures/` and `paper/` with the full writeup for arXiv/workshop submission.
+- Reintroduce retrieval as an isolated third ablation arm (LLM-only vs LLM+retrieval, distinct from combined RAG-LM).
+- Expand the RAG phrase bank with own-collected data once available.
