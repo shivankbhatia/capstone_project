@@ -62,22 +62,21 @@ class BayesianFusionEngine:
         self.is_active = state
     
     def get_initial_log_bias(self, llm_probs):
-        """
-        Returns the LM prior's one-time log-domain contribution to the initial
-        belief state, BEFORE any EEG evidence has been observed for this
-        character. This should be added to the decoder's accumulated_log_probs
-        exactly ONCE per character (at reset), NOT re-added on every flash
-        sequence -- fuse() is for per-sequence EEG evidence only.
-
-        In 'adaptive' mode, alpha is entropy-scaled by the EEG posterior -- but
-        before any EEG evidence exists, the natural assumption is maximum
-        uncertainty (a uniform EEG posterior), which makes normalized_entropy
-        exactly 1.0 and reduces adaptive alpha to base_alpha here. This isn't a
-        special case -- it's the correct adaptive-mode value at zero evidence,
-        and lets adaptive-mode trust in the LLM decay naturally as real EEG
-        evidence accumulates afterward, without needing a second alpha formula.
-        """
         if not self.is_active:
             return np.zeros(self.num_classes)
+
+        alpha = self.base_alpha
+        if self.mode == 'adaptive':
+            llm_entropy = entropy(llm_probs + self.epsilon)
+            normalized_llm_entropy = llm_entropy / self.max_entropy
+            alpha = self.base_alpha * (1 - normalized_llm_entropy)  # trust LLM more when IT is confident
+
+        # Chars the LLM assigns zero probability to (unmapped special keys)
+        # are fully excluded via a large finite floor -- NOT -inf, since
+        # alpha * -inf = NaN whenever alpha is exactly 0 (a real case in
+        # adaptive mode, when the LLM prior is maximally uncertain/uniform).
         unmapped = (llm_probs == 0)
-        return self.base_alpha * self._safe_log(llm_probs, unmapped_mask=unmapped)
+        bias = np.full(self.num_classes, -1e9)
+        valid = ~unmapped
+        bias[valid] = alpha * self._safe_log(llm_probs)[valid]
+        return bias

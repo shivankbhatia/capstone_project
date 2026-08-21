@@ -325,7 +325,7 @@ if __name__ == "__main__":
     # EXPERIMENT 2: Fixed Weight Fusion (optimal alpha=0.01 from sweep)
     # ---------------------------------------------------------
     print("\nRunning Fixed Weight Fusion...")
-    for test_alpha in [0.01]:
+    for test_alpha in [0.1]:
         print(f"\nRunning Fixed Fusion (a={test_alpha})...")
         sweep_fusion = BayesianFusionEngine(num_classes=num_classes, mode='fixed', base_alpha=test_alpha)
         m, i = run_evaluation(decoder, llm, sweep_fusion, **eval_kwargs)
