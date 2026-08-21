@@ -27,63 +27,47 @@ class LLMPredictor:
         self.model = AutoModelForCausalLM.from_pretrained(model_name)
         self.model.eval()
         
-        # Create a mapping from characters to token IDs
-        self.token_mapping = self._build_token_mapping()
 
-    def _build_token_mapping(self):
-        """Maps grid characters to GPT-2 token IDs. Multi-character special-key
-        labels (PgUp, LfAw, email, etc.) don't correspond to a single meaningful
-        token -- exclude them from LM scoring rather than silently using a
-        garbage first-token match."""
-        mapping = {}
-        for char in self.char_list:
-            mapped_char = ' ' if char == '_' else char
-            if len(mapped_char) > 1 and mapped_char != ' ':
-                continue  # skip multi-char special keys entirely
-            tokens = self.tokenizer.encode(' ' + mapped_char.upper(), add_special_tokens=False)
-            if tokens:
-                mapping[char] = tokens[0]
-        return mapping
-
-    def predict_next_char(self, context_so_far):
-        """
-        Takes the spelled string context and returns a 36-element probability 
-        distribution over the spelling matrix.
-        """
-        # If no context (start of word), return a flat, uniform distribution
+    def predict_next_char(self, context_so_far, num_beams=8):
         if not context_so_far:
             probs = np.ones(len(self.char_list))
             return probs / probs.sum()
 
-        # Tokenize context
         clean_context = context_so_far.replace('_', ' ').lower()
-        input_ids = self.tokenizer.encode(clean_context, return_tensors='pt')
-        
-        # Run inference
+        prompt_ids = self.tokenizer.encode(clean_context, return_tensors='pt')
+
         with torch.no_grad():
-            outputs = self.model(input_ids)
-            # Get logits for the very last token in the sequence
-            next_token_logits = outputs.logits[0, -1, :]
-        
-        # Apply temperature scaling (higher temperature = flatter, less overconfident distribution)
-        next_token_logits = next_token_logits / self.temperature
-        
-        # Extract logits specifically for our 36 characters
-        grid_logits = np.zeros(len(self.char_list))
-        unmapped_mask = np.zeros(len(self.char_list), dtype=bool)
+            output = self.model.generate(
+                prompt_ids,
+                max_new_tokens=3,
+                num_beams=num_beams,
+                num_return_sequences=num_beams,
+                do_sample=False,
+                output_scores=True,
+                return_dict_in_generate=True,
+                pad_token_id=self.tokenizer.eos_token_id,
+            )
 
-        for idx, char in enumerate(self.char_list):
-            if char in self.token_mapping:
-                token_id = self.token_mapping[char]
-                grid_logits[idx] = next_token_logits[token_id].item()
-            else:
-                unmapped_mask[idx] = True
+        beam_weights = torch.softmax(output.sequences_scores, dim=0).numpy()
 
-        grid_logits = grid_logits - np.max(grid_logits[~unmapped_mask]) if (~unmapped_mask).any() else grid_logits
-        probs = np.exp(grid_logits)
-        probs[unmapped_mask] = 0.0
-        if probs.sum() > 0:
-            probs = probs / probs.sum()
+        grid_probs = np.zeros(len(self.char_list))
+        for seq, weight in zip(output.sequences, beam_weights):
+            generated_ids = seq[prompt_ids.shape[1]:]
+            generated_text = self.tokenizer.decode(generated_ids).lower()
+            stripped = generated_text.lstrip(' ')
+            if not stripped:
+                continue
+
+            next_char = stripped[0]
+            grid_label = 'Sp' if next_char == ' ' else next_char
+
+            for idx, char in enumerate(self.char_list):
+                if char.lower() == grid_label.lower():
+                    grid_probs[idx] += weight
+                    break
+
+        if grid_probs.sum() > 0:
+            probs = grid_probs / grid_probs.sum()
         else:
             probs = np.ones(len(self.char_list)) / len(self.char_list)
 
