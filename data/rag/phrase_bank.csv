@@ -1,0 +1,13 @@
+text,source,weight,category
+THE QUICK BROWN FOX,example,1.0,general
+HELLO WORLD,example,1.0,greeting
+YES PLEASE,example,1.0,communication
+NO THANK YOU,example,1.0,communication
+I NEED HELP,example,1.2,clinical
+I AM THIRSTY,example,1.1,clinical
+TURN ON THE LIGHTS,example,1.0,home_control
+CALL MY FAMILY,example,1.0,personal_example
+BUTTON,study_example,1.0,repeated_letters
+HIDDEN,study_example,1.0,repeated_letters
+ALLOWS,study_example,1.0,repeated_letters
+INDEED,study_example,1.0,repeated_letters

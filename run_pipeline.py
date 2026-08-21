@@ -8,6 +8,7 @@ import joblib
 from src.models.decoder import P300Decoder, calculate_itr
 from src.models.fusion import BayesianFusionEngine
 from src.models.llm_predictor import LLMPredictor
+from src.models.rag_predictor import RAGPredictor
 from src.preprocessing.build_session_sequence import yield_character_trials
 
 # -----------------------------------------------------------------------------
@@ -297,6 +298,18 @@ if __name__ == "__main__":
 
     decoder = P300Decoder(spelling_matrix)
     llm = LLMPredictor(spelling_matrix)
+    fixed_rag_llm = RAGPredictor(
+        llm,
+        phrase_bank_path="data/rag/phrase_bank.csv",
+        rag_weight=0.25,
+        retrieval_confidence_threshold=0.0,
+    )
+    gated_rag_llm = RAGPredictor(
+        llm,
+        phrase_bank_path="data/rag/phrase_bank.csv",
+        rag_weight=0.25,
+        retrieval_confidence_threshold=0.60,
+    )
     tracker = SimpleAblationTracker()
 
     # 2. Load Real SWLDA Classifier
@@ -339,5 +352,21 @@ if __name__ == "__main__":
 
     adapt_metrics, adapt_itr = run_evaluation(decoder, llm, adaptive_fusion, **eval_kwargs)
     tracker.record_run("Fusion (Adaptive)", adapt_metrics, adapt_itr)
+
+    # ---------------------------------------------------------
+    # EXPERIMENT 4: Fixed RAG-LM Fusion
+    # ---------------------------------------------------------
+    print("\nRunning Fixed RAG-LM Fusion...")
+    fixed_rag_fusion = BayesianFusionEngine(num_classes=num_classes, mode='fixed', base_alpha=0.1)
+    fixed_rag_metrics, fixed_rag_itr = run_evaluation(decoder, fixed_rag_llm, fixed_rag_fusion, **eval_kwargs)
+    tracker.record_run("Fusion (Fixed RAG-LM)", fixed_rag_metrics, fixed_rag_itr)
+
+    # ---------------------------------------------------------
+    # EXPERIMENT 5: Gated RAG-LM Fusion
+    # ---------------------------------------------------------
+    print("\nRunning Gated RAG-LM Fusion...")
+    gated_rag_fusion = BayesianFusionEngine(num_classes=num_classes, mode='adaptive', base_alpha=0.01)
+    gated_rag_metrics, gated_rag_itr = run_evaluation(decoder, gated_rag_llm, gated_rag_fusion, **eval_kwargs)
+    tracker.record_run("Fusion (Gated RAG-LM)", gated_rag_metrics, gated_rag_itr)
 
     tracker.print_summary()

@@ -6,7 +6,7 @@ The main research question is:
 
 > Can a language model improve P300 spelling efficiency by guiding character selection when EEG evidence is uncertain, without overriding confident EEG decisions?
 
-The system answers this by preprocessing raw EDF recordings, training a memory-efficient P300 classifier, replaying character-level trials, and comparing EEG-only decoding against fixed and adaptive EEG+LLM fusion. The next planned extension is a retrieval-augmented generation (RAG) layer that can personalize and domain-condition the language prior with user-specific text, task-specific phrase banks, and session history.
+The system answers this by preprocessing raw EDF recordings, training a memory-efficient P300 classifier, replaying character-level trials, and comparing EEG-only decoding against fixed, adaptive, and retrieval-augmented EEG+LLM fusion. The current RAG layer personalizes and domain-conditions the language prior with a local phrase bank while preserving the existing EEG classifier and Bayesian decoder.
 
 ---
 
@@ -82,9 +82,9 @@ For adaptive files, the preprocessing stage also stores:
 The replay loop uses these fields to select the correct flash epochs for each character and sequence.
 
 
-### 1.6 Planned RAG layer for personalized and task-aware priors
+### 1.6 RAG layer for personalized and task-aware priors
 
-The next major extension is a **retrieval-augmented generation (RAG) layer** placed between the typed context and the LLM prior. Instead of relying only on the pretrained `distilgpt2` distribution, the system can retrieve relevant user-, task-, or domain-specific text snippets and use them to condition the next-character prior.
+The implemented **retrieval-augmented generation (RAG) layer** sits between the typed context and the LLM prior. Instead of relying only on the pretrained `distilgpt2` distribution, the system retrieves relevant user-, task-, or domain-specific phrase-bank entries and uses prefix-compatible continuations to condition the next-character prior.
 
 Possible retrieval sources include:
 
@@ -102,7 +102,7 @@ Expected outcomes are:
 - More interpretable language assistance because retrieved snippets can be logged and audited.
 - A cleaner path to personalization without retraining the EEG classifier.
 
-The core implementation challenge is calibration. Retrieval can make the language prior too confident, so the RAG signal should be fused conservatively with EEG evidence, gated by retrieval confidence, and evaluated against an EEG-only baseline to confirm that it improves efficiency without increasing wrong selections.
+The core implementation challenge is calibration. Retrieval can make the language prior too confident, so the implemented RAG signal is interpolated conservatively with the base LLM prior, can be gated by retrieval confidence, and is evaluated as additional ablation conditions against EEG-only and LLM-only baselines.
 
 ---
 
@@ -119,6 +119,7 @@ capstone_project/
 ├── test_sgd.py
 │
 ├── data/
+│   ├── rag/                         # Small phrase-bank examples for RAG priors
 │   └── raw/                         # Raw dataset location; large files are not committed
 │
 ├── notebooks/                       # Notebook workspace placeholder
@@ -150,7 +151,8 @@ capstone_project/
     │   ├── classifier.py
     │   ├── decoder.py
     │   ├── fusion.py
-    │   └── llm_predictor.py
+    │   ├── llm_predictor.py
+    │   └── rag_predictor.py
     │
     ├── evaluation/
     │   ├── ablations.py
@@ -174,10 +176,12 @@ capstone_project/
 3. Initializes the LLM character-prior predictor.
 4. Loads the trained P300 classifier.
 5. Replays character trials from the ground-truth registry.
-6. Runs three evaluation arms:
+6. Runs five evaluation arms:
    - EEG-only baseline.
    - Fixed-weight EEG+LLM fusion.
    - Adaptive entropy-based EEG+LLM fusion.
+   - Fixed RAG-LM fusion.
+   - Gated RAG-LM fusion.
 7. Reports accuracy, flashes per character, ITR, and approximate WPM.
 
 ### Why it exists
@@ -188,7 +192,7 @@ The script provides a single executable entry point for comparing decoding strat
 
 - `load_spelling_matrix()` reads `data/processed/grid_layout.json` and builds a matrix whose dimensions match the real Study D layout.
 - `real_eeg_classifier_stream()` loads epoched FIF files lazily, caches them, selects the correct character/sequence epochs, runs the classifier, and maps row/column flash probabilities into a full grid posterior.
-- `run_evaluation()` loops through character trials, accumulates EEG evidence, applies the LLM prior as an initial bias, and stops when confidence crosses the configured threshold.
+- `run_evaluation()` loops through character trials, accumulates EEG evidence, applies the selected predictor prior as an initial bias, and stops when confidence crosses the configured threshold.
 - `SimpleAblationTracker` stores and prints summary metrics for each experimental condition.
 
 ---
@@ -393,9 +397,40 @@ Special behavior:
 - Multi-character special keys are skipped unless explicitly mapped.
 - If no prefix matches produce mass, the predictor falls back to a uniform prior.
 
+
 ---
 
-## 3.9 `src/evaluation/metrics.py` — metrics and ablation summaries
+## 3.9 `src/models/rag_predictor.py` — retrieval-augmented character prior
+
+### What it does
+
+This module wraps an existing base predictor such as `LLMPredictor` and adds a local phrase-bank retrieval prior. It converts prefix-compatible phrase continuations into a next-character probability vector over the same P300 grid classes.
+
+### Why it exists
+
+A pretrained LLM may under-prioritize user-specific names, clinical phrases, commands, or study-specific vocabulary. The RAG predictor adds an explicit memory layer without retraining the EEG classifier or the language model.
+
+### How it works
+
+1. Loads phrase-bank rows from CSV or JSON.
+2. Normalizes phrase text and extracts the current partial word from `context_so_far`.
+3. Finds phrase-bank entries containing tokens that start with the partial word.
+4. Converts the next character after the partial prefix into a grid index.
+5. Builds a retrieval-only probability vector from weighted matching phrases.
+6. Enables retrieval only when confidence passes `retrieval_confidence_threshold`.
+7. Interpolates retrieval and base LLM priors using `rag_weight`.
+8. Stores diagnostics including matched phrases, retrieval confidence, enabled/skipped state, and skip reason.
+
+### Current usage
+
+`run_pipeline.py` creates two RAG-enhanced predictors:
+
+- **Fixed RAG-LM:** `retrieval_confidence_threshold=0.0`, so compatible retrieval can always contribute.
+- **Gated RAG-LM:** `retrieval_confidence_threshold=0.60`, so retrieval contributes only when its next-character distribution is sufficiently confident.
+
+---
+
+## 3.10 `src/evaluation/metrics.py` — metrics and ablation summaries
 
 ### What it does
 
@@ -420,7 +455,7 @@ Metrics include:
 
 ---
 
-## 3.10 `scripts/analyze_bigp3bci_studyd_e.py` — dataset analytics
+## 3.11 `scripts/analyze_bigp3bci_studyd_e.py` — dataset analytics
 
 ### What it does
 
@@ -523,6 +558,8 @@ This evaluates:
 1. EEG-only baseline.
 2. Fixed LLM fusion.
 3. Adaptive LLM fusion.
+4. Fixed RAG-LM fusion.
+5. Gated RAG-LM fusion.
 
 The script prints an ablation summary with:
 
@@ -583,19 +620,25 @@ The evaluator loads real FIF epochs when available and falls back to mock data o
 
 The `results/bigp3bci_studyd_e_findings/` CSV files provide auditable summaries of Study D/E file structure, grid layout, stimulus counts, inferred character trials, and quality flags.
 
+### 5.10 Implemented RAG-enhanced priors
+
+The project now includes `RAGPredictor`, a local phrase-bank retrieval layer that wraps the base LLM predictor, converts prefix-compatible phrase continuations into grid-level next-character probabilities, and supports both fixed and confidence-gated retrieval interpolation.
+
 ---
 
 ## 6. Experimental design
 
-The primary experiment is a three-arm ablation:
+The primary experiment is a five-arm ablation:
 
 | Condition | EEG evidence | LLM prior | Fusion behavior |
 |---|---|---|---|
 | Baseline | Yes | No | Fusion disabled |
 | Fixed fusion | Yes | Yes | Constant alpha |
 | Adaptive fusion | Yes | Yes | Entropy-scaled alpha |
+| Fixed RAG-LM fusion | Yes | RAG-enhanced | Constant alpha |
+| Gated RAG-LM fusion | Yes | RAG-enhanced | Entropy-scaled alpha plus retrieval confidence gating |
 
-The decoding loop applies the LLM prior as an initial log bias for each character. EEG evidence is then accumulated sequence by sequence until either:
+The decoding loop applies the selected LLM or RAG-LM prior as an initial log bias for each character. EEG evidence is then accumulated sequence by sequence until either:
 
 - confidence exceeds the threshold, or
 - the maximum number of sequences is reached.
@@ -608,7 +651,7 @@ This design measures whether language context can reduce the number of flashes r
 
 1. **Raw and processed datasets are external artifacts.** The repository expects them under `data/raw` and `data/processed`, but they are not committed.
 2. **Study D layout is expected to be stable.** The batch preprocessor raises an error if a later file disagrees with the first saved Study D grid layout.
-3. **The LLM prior is only as good as the text context.** If the ground-truth registry is incomplete or malformed, contextual predictions degrade.
+3. **The LLM/RAG prior is only as good as the text context and phrase bank.** If the ground-truth registry is incomplete, malformed, or poorly aligned with the RAG phrase bank, contextual predictions degrade.
 4. **The classifier must match the processed epoch format.** If old FIF files lack required metadata, they should be regenerated.
 5. **Adaptive fusion depends on the correct number of classes.** The entropy denominator must match the true grid size.
 6. **Timing in ITR is approximated from flashes.** The current evaluator estimates average time per character using flashes and a fixed timing approximation.
@@ -678,9 +721,9 @@ python plot_threshold_sweep.py
 
 ---
 
-## 10. RAG layer implementation roadmap
+## 10. RAG layer implementation
 
-A retrieval-augmented generation layer is a natural next step because the current LLM predictor is purely parametric: it uses what `distilgpt2` already knows, but it does not know the user's vocabulary, the current task, or domain-specific phrase constraints. RAG would add an explicit memory and retrieval step before computing the language prior.
+The retrieval-augmented generation layer adds explicit phrase memory before computing the language prior. The base LLM predictor is still used, but `RAGPredictor` retrieves prefix-compatible phrase-bank entries, converts their next-character continuations into a grid-level retrieval prior, and interpolates that retrieval prior with the base LLM prior.
 
 ### 10.1 Where RAG fits in the current pipeline
 
@@ -690,23 +733,23 @@ The current path is:
 context_so_far -> LLMPredictor -> grid-level LM prior -> Bayesian fusion -> decoder
 ```
 
-The proposed RAG path is:
+The implemented RAG path is:
 
 ```text
 context_so_far
   -> retrieve relevant snippets / phrases / candidates
   -> build retrieval-conditioned prompt or candidate prior
-  -> LLMPredictor / RAGPredictor
+  -> RAGPredictor wrapping LLMPredictor
   -> grid-level RAG-LM prior
   -> Bayesian fusion with EEG evidence
   -> decoder
 ```
 
-This means RAG should not replace the EEG classifier or decoder. It should only improve the prior that is already being fused with EEG evidence.
+RAG does not replace the EEG classifier or decoder. It only improves the prior that is already being fused with EEG evidence.
 
-### 10.2 Implementation possibilities
+### 10.2 Implemented approach and future possibilities
 
-#### Option A — Phrase-bank reranking
+#### Implemented option — Phrase-bank reranking
 
 Maintain a small phrase bank of likely target words and phrases. At each character, filter entries by the already typed prefix and assign prior mass to the next character of matching entries.
 
@@ -756,9 +799,9 @@ Expected outcome:
 - Stronger next-character priors for partially typed words.
 - More engineering complexity than either method by itself.
 
-#### Option D — Adaptive RAG gating
+#### Implemented option — Adaptive RAG gating
 
-Use retrieval only when it is likely to help. For example, enable RAG when retrieval similarity is high, LLM entropy is low, or EEG evidence is uncertain. Disable or down-weight RAG when retrieved snippets are weak or conflicting.
+Use retrieval only when it is likely to help. The implemented `RAGPredictor` exposes `retrieval_confidence_threshold`; fixed RAG can set this to `0.0`, while gated RAG can require stronger retrieval confidence before interpolation.
 
 Best for:
 
@@ -772,51 +815,50 @@ Expected outcome:
 - Reduced risk of confidently wrong language-model suggestions.
 - A clear ablation path: no RAG, always-on RAG, and gated RAG.
 
-### 10.3 Recommended minimal viable implementation
+### 10.3 Implemented module
 
-The recommended first implementation is a **hybrid phrase-bank and prefix-trie RAG layer** because it is easy to evaluate and does not require a new external vector database.
+The first implementation is a **phrase-bank and prefix-compatible RAG layer**. It is easy to evaluate, works locally, and does not require a new external vector database.
 
-Suggested new module:
+Implemented module:
 
 ```text
 src/models/rag_predictor.py
 ```
 
-Suggested responsibilities:
+Responsibilities:
 
 1. Load a phrase bank from JSON or CSV.
 2. Normalize phrases using the same character conventions as the grid.
 3. Given `context_so_far`, extract the current partial word.
 4. Find phrase-bank entries compatible with the partial prefix.
 5. Convert matching phrase continuations into a next-character probability vector.
-6. Interpolate the retrieval prior with the existing `LLMPredictor` prior.
-7. Return both the probability vector and diagnostics such as matched phrases, retrieval confidence, and entropy.
+6. Interpolate the retrieval prior with the existing `LLMPredictor` prior when confidence is sufficient.
+7. Store diagnostics such as matched phrases, retrieval confidence, whether RAG was enabled, and why it was enabled or skipped.
 
-Possible configuration:
+Current configuration used by `run_pipeline.py`:
 
 ```python
-rag_weight = 0.25
-min_retrieval_matches = 2
+fixed_rag_weight = 0.25
+fixed_rag_confidence_threshold = 0.0
+gated_rag_weight = 0.25
+gated_rag_confidence_threshold = 0.60
 max_retrieved_phrases = 20
-retrieval_confidence_threshold = 0.60
 ```
 
-Example fusion inside a future predictor:
+Retrieval interpolation inside the predictor:
 
 ```text
 combined_prior = normalize((1 - rag_weight) * llm_prior + rag_weight * retrieval_prior)
 ```
 
-The combined prior can then be passed into the existing Bayesian fusion path without changing the EEG classifier.
+The combined prior is passed into the existing Bayesian fusion path without changing the EEG classifier.
 
 ### 10.4 Data artifacts to add
 
-A practical RAG implementation should add small, auditable text assets such as:
+The implementation adds a small, auditable phrase-bank asset:
 
 ```text
 data/rag/phrase_bank.csv
-data/rag/domain_vocabulary.csv
-data/rag/user_memory.example.json
 ```
 
 Recommended fields:
@@ -830,14 +872,14 @@ These files should be small examples only. Private user memories should remain u
 
 ### 10.5 Evaluation plan for RAG
 
-Add RAG as a fourth and fifth ablation condition:
+RAG is added as fourth and fifth ablation conditions:
 
 | Condition | Purpose |
 |---|---|
 | EEG only | Lower-bound baseline |
 | EEG + fixed LLM | Current constant-weight language prior |
 | EEG + adaptive LLM | Current uncertainty-aware language prior |
-| EEG + fixed RAG-LM | Test whether retrieval improves priors |
+| EEG + fixed RAG-LM | Test whether always-on retrieval interpolation improves priors |
 | EEG + gated RAG-LM | Test whether confidence gating prevents over-biasing |
 
 Metrics should include:
@@ -889,13 +931,14 @@ Implemented:
 - Incremental classifier training.
 - Character-level decoding.
 - LLM character-prior prediction.
+- RAG-enhanced character-prior prediction.
 - Bayesian fusion.
-- Three-arm ablation evaluation.
+- Five-arm ablation evaluation.
 - Dataset analytics exports.
 
 Planned next work:
 
-- Implement a RAG prior layer for user/task/domain-aware language assistance.
-- Add RAG ablation conditions to compare fixed and gated retrieval against the current LLM-only priors.
-- Log retrieval diagnostics so language-model assistance remains interpretable and auditable.
+- Expand the RAG phrase bank with task-specific and user-specific vocabularies.
+- Add aggregate RAG diagnostics to the evaluation summary.
+- Compare fixed and gated RAG against the current LLM-only priors on full Study D runs.
 - Run the final experiments on the full local data artifacts and replace any placeholder result values with final measured metrics.
