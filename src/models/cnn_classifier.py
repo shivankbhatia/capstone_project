@@ -34,10 +34,23 @@ class RPBranch(nn.Module):
 
 
 class CWTBranch(nn.Module):
-    """Conv branch over (B, 8, 30, 64) CWT spectrogram images."""
+    """Conv branch over (B, 8, 30, 64) CWT spectrogram images.
+
+    CWT magnitudes are stored raw (arbitrary EEG-amplitude scale, long-tailed,
+    strictly positive) -- unlike RP, which is already bounded in (0, 1] by
+    construction. Feeding that raw scale into a 16k-dim fused Linear head
+    with default init is a primary driver of the loss-spike/instability
+    reported during training (loss -> ~21, val_acc oscillating near the
+    majority-class baseline). log1p compresses the long tail; per-sample
+    InstanceNorm2d removes the remaining per-epoch/per-channel scale
+    variation (no learned affine, so it can't reintroduce the same
+    unbounded-scale problem) without needing to recompute the stored
+    features.
+    """
 
     def __init__(self, in_channels=8):
         super().__init__()
+        self.norm_in = nn.InstanceNorm2d(in_channels, affine=False)
         self.conv1 = nn.Conv2d(in_channels, 16, kernel_size=(3, 5), padding=(1, 2))
         self.conv2 = nn.Conv2d(16, 32, kernel_size=3, padding=1)
         self.pool = nn.AdaptiveMaxPool2d((16, 16))
@@ -45,6 +58,8 @@ class CWTBranch(nn.Module):
         self.bn2 = nn.BatchNorm2d(32)
 
     def forward(self, x):
+        x = torch.log1p(x)
+        x = self.norm_in(x)
         x = F.relu(self.bn1(self.conv1(x)))
         x = F.relu(self.bn2(self.conv2(x)))
         x = self.pool(x)                                  # -> (B,32,16,16)
