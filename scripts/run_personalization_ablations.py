@@ -6,8 +6,11 @@ and tested with paired, Holm-Bonferroni-corrected Wilcoxon comparisons.
 """
 import json
 from pathlib import Path
+import sys
 
 import joblib
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from run_pipeline import load_spelling_matrix, run_evaluation
 from src.evaluation.ablations import AblationTracker, PERSONALIZATION_RUNGS

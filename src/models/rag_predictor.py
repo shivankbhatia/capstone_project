@@ -12,9 +12,11 @@ from __future__ import annotations
 
 import csv
 import json
+import math
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable, List, Optional
+from typing import Iterable, List, Literal, Optional
 
 import numpy as np
 
@@ -54,6 +56,9 @@ class RAGDiagnostics:
     top_margin: float = 0.0
     subject_weight: float = 0.0
     personalization_active: bool = False
+    subject_source: Literal["word_match", "char_backoff", "none"] = "none"
+    subject_gate_weight: float = 0.0
+    global_gate_weight: float = 0.0
 
 
 class RAGPredictor:
@@ -91,6 +96,7 @@ class RAGPredictor:
         min_subject_phrases: int = 10,
         personalization_bonus: float = 1.5,
         subject_only: bool = False,
+        subject_confidence_threshold: float = 0.20,
     ):
         if not 0.0 <= rag_weight <= 1.0:
             raise ValueError("rag_weight must be between 0 and 1")
@@ -104,6 +110,8 @@ class RAGPredictor:
             raise ValueError("min_subject_phrases must be positive")
         if personalization_bonus < 0:
             raise ValueError("personalization_bonus must be non-negative")
+        if not 0.0 <= subject_confidence_threshold <= 1.0:
+            raise ValueError("subject_confidence_threshold must be between 0 and 1")
 
         self.base_predictor = base_predictor
         self.char_list = list(base_predictor.char_list)
@@ -115,6 +123,7 @@ class RAGPredictor:
         self.min_subject_phrases = min_subject_phrases
         self.personalization_bonus = personalization_bonus
         self.subject_only = subject_only
+        self.subject_confidence_threshold = subject_confidence_threshold
         self.global_phrases = self._load_phrase_bank(self.phrase_bank_path)
         self.subject_phrase_bank_path = self._subject_phrase_bank_path()
         self.subject_phrases = (
@@ -266,6 +275,7 @@ class RAGPredictor:
     def _matching_phrases(
         self,
         context_so_far: str,
+        phrases: Optional[List[RetrievedPhrase]] = None,
     ) -> List[RetrievalMatch]:
         normalized_context = self._normalize_context(context_so_far)
         suffixes = self._context_suffixes(normalized_context)
@@ -275,28 +285,14 @@ class RAGPredictor:
 
         matches: List[RetrievalMatch] = []
 
-        phrase_banks = []
-        if not self.subject_only:
-            phrase_banks.append((self.global_phrases, 1.0))
-        if self.subject_id:
-            phrase_banks.append(
-                (
-                    self.subject_phrases,
-                    self.subject_weight * self.personalization_bonus,
-                )
-            )
+        if phrases is None:
+            phrases = self.subject_phrases if self.subject_only else self.global_phrases
 
-        for phrases, bank_multiplier in phrase_banks:
-            if bank_multiplier <= 0:
-                continue
-            for phrase in phrases:
-                best_match: Optional[RetrievalMatch] = None
+        for phrase in phrases:
+            best_match: Optional[RetrievalMatch] = None
 
-                for suffix in suffixes:
-                    for start in self._phrase_match_starts(
-                        phrase.text,
-                        suffix,
-                    ):
+            for suffix in suffixes:
+                for start in self._phrase_match_starts(phrase.text, suffix):
                         end = start + len(suffix)
 
                         if end >= len(phrase.text):
@@ -318,7 +314,6 @@ class RAGPredictor:
                             phrase.weight
                             * (1.0 + len(suffix))
                             * context_bonus
-                            * bank_multiplier
                         )
 
                         candidate = RetrievalMatch(
@@ -335,8 +330,8 @@ class RAGPredictor:
                         ):
                             best_match = candidate
 
-                if best_match is not None:
-                    matches.append(best_match)
+            if best_match is not None:
+                matches.append(best_match)
 
         matches.sort(
             key=lambda match: (
@@ -372,20 +367,14 @@ class RAGPredictor:
 
             search_from = start + 1
 
-    def retrieval_prior(self, context_so_far: str):
-        """Return a retrieval-only prior and diagnostics for the context."""
+    @staticmethod
+    def _soft_gate(confidence, threshold, sharpness=10.0):
+        return 1.0 / (1.0 + math.exp(-sharpness * (confidence - threshold)))
 
-        normalized_context = self._normalize_context(context_so_far)
-        partial_word = self._partial_word(context_so_far)
+    def _prior_from_matches(self, matches):
+        grid_probs = np.zeros(len(self.char_list), dtype=float)
 
-        grid_probs = np.zeros(
-            len(self.char_list),
-            dtype=float,
-        )
-
-        matched = self._matching_phrases(context_so_far)
-
-        for match in matched:
+        for match in matches:
             idx = self._char_to_grid_index(match.next_char)
 
             if idx is not None:
@@ -410,59 +399,94 @@ class RAGPredictor:
             else confidence
         )
 
-        best_context = (
-            matched[0].matched_context
-            if matched
-            else ""
-        )
-
-        if not matched:
-            enabled = False
+        if not matches:
             reason = "no_matches"
-
         elif total <= 0:
-            enabled = False
             reason = "no_grid_compatible_next_char"
-
         else:
-            enabled = (
-                confidence
-                >= self.retrieval_confidence_threshold
-            )
+            reason = "available"
+        return grid_probs, confidence, reason
 
-            reason = (
-                "enabled"
-                if enabled
-                else "below_threshold"
+    def _char_ngram_prior(self, context_so_far, phrases):
+        """Order-2, Laplace-smoothed character backoff over subject text."""
+        text = " ".join(phrase.text for phrase in phrases)
+        bigram_counts, unigram_counts = Counter(), Counter()
+        for first, second in zip(text, text[1:]):
+            bigram_counts[(first, second)] += 1
+            unigram_counts[first] += 1
+        context = self._normalize_context(context_so_far)
+        last = context[-1] if context else " "
+        probs = np.ones(len(self.char_list), dtype=float)
+        for index, label in enumerate(self.char_list):
+            char = " " if label == "Sp" else str(label).lower()
+            probs[index] += bigram_counts.get((last, char), 0)
+        probs /= probs.sum()
+        confidence = float((probs.max() * len(probs) - 1) / max(1, len(probs) - 1))
+        return probs, confidence
+
+    def _bank_prior(self, context_so_far, phrases):
+        matches = self._matching_phrases(context_so_far, phrases)
+        prior, confidence, reason = self._prior_from_matches(matches)
+        return prior, confidence, reason, matches
+
+    def retrieval_prior(self, context_so_far: str):
+        """Return the weighted retrieval prior and diagnostics for a context."""
+        normalized_context = self._normalize_context(context_so_far)
+        partial_word = self._partial_word(context_so_far)
+        global_prior, global_confidence, global_reason, global_matches = self._bank_prior(
+            context_so_far, self.global_phrases
+        )
+        subject_prior, subject_confidence, subject_reason, subject_matches = self._bank_prior(
+            context_so_far, self.subject_phrases
+        )
+        subject_source = "word_match" if subject_matches else "none"
+        if subject_source == "none" and self.subject_phrases:
+            subject_prior, subject_confidence = self._char_ngram_prior(
+                context_so_far, self.subject_phrases
             )
+            subject_source = "char_backoff"
+
+        global_gate = (
+            self._soft_gate(global_confidence, self.retrieval_confidence_threshold, 30.0)
+            if global_reason == "available" and not self.subject_only else 0.0
+        )
+        subject_gate = (
+            self._soft_gate(subject_confidence, self.subject_confidence_threshold, 8.0)
+            if subject_source != "none" else 0.0
+        )
+        global_weight = self.rag_weight * global_gate
+        subject_gate_weight = (
+            self.rag_weight * self.personalization_bonus * self.subject_weight * subject_gate
+        )
+        total_weight = global_weight + subject_gate_weight
+        if total_weight > 0.9:
+            scale = 0.9 / total_weight
+            global_weight *= scale
+            subject_gate_weight *= scale
+        weighted_retrieval = self._normalize_probs(
+            global_prior * global_weight + subject_prior * subject_gate_weight
+        )
+        all_matches = global_matches + subject_matches
+        confidence = max(global_confidence, subject_confidence)
+        top_margin = float(np.sort(weighted_retrieval)[-1] - np.sort(weighted_retrieval)[-2])
+        active = global_weight > 0 or subject_gate_weight > 0
 
         diagnostics = RAGDiagnostics(
             partial_word=partial_word,
-            matched_phrases=[
-                match.phrase.text
-                for match in matched
-            ],
+            matched_phrases=[match.phrase.text for match in all_matches],
             retrieval_confidence=confidence,
-            rag_enabled=enabled,
-            reason=reason,
+            rag_enabled=active,
+            reason="enabled" if active else (subject_reason if self.subject_id else global_reason),
             normalized_context=normalized_context,
-            matched_context=best_context,
+            matched_context=all_matches[0].matched_context if all_matches else "",
             top_margin=top_margin,
             subject_weight=self.subject_weight,
-            personalization_active=(
-                bool(self.subject_id)
-                and self.subject_weight > 0
-                and any(
-                    match.phrase.source in {
-                        "studyd_train_subject",
-                        "observed_subject_session",
-                    }
-                    for match in matched
-                )
-            ),
+            personalization_active=subject_gate_weight > 0,
+            subject_source=subject_source,
+            subject_gate_weight=subject_gate_weight,
+            global_gate_weight=global_weight,
         )
-
-        return grid_probs, diagnostics
+        return weighted_retrieval, diagnostics
 
     @staticmethod
     def _normalize_probs(probs: Iterable[float]) -> np.ndarray:
@@ -493,17 +517,10 @@ class RAGPredictor:
             context_so_far
         )
 
-        if diagnostics.rag_enabled:
-            combined = (
-                (1.0 - self.rag_weight) * base_prior
-            ) + (
-                self.rag_weight * retrieval_prior
-            )
-
-            prior = self._normalize_probs(combined)
-
-        else:
-            prior = base_prior
+        retrieval_weight = diagnostics.subject_gate_weight + diagnostics.global_gate_weight
+        prior = self._normalize_probs(
+            (1.0 - retrieval_weight) * base_prior + retrieval_weight * retrieval_prior
+        )
 
         self.last_diagnostics = diagnostics
 

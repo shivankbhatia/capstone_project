@@ -40,6 +40,7 @@ def _paired_wilcoxon(
     comparison: np.ndarray,
     comparison_name: str,
     metric_name: str,
+    baseline_name: str = "Baseline",
     alpha: float = 0.05,
 ) -> SignificanceResult:
     """
@@ -91,7 +92,7 @@ def _paired_wilcoxon(
         p_value = float(result.pvalue)
 
     return SignificanceResult(
-        comparison=f"Baseline vs {comparison_name}",
+        comparison=f"{baseline_name} vs {comparison_name}",
         metric=metric_name,
         n_subjects=len(baseline),
         statistic=statistic,
@@ -225,6 +226,10 @@ class AblationTracker:
                             comparison_name=(
                                 f"{comparison_method} "
                                 f"({PERSONALIZATION_RUNGS[comparison_method]})"
+                            ),
+                            baseline_name=(
+                                f"{baseline_method} "
+                                f"({PERSONALIZATION_RUNGS[baseline_method]})"
                             ),
                             metric_name=metric,
                             alpha=alpha,

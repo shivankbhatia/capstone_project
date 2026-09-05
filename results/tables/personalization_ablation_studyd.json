@@ -1,0 +1,825 @@
+{
+  "subjects": {
+    "D_01": {
+      "rung_0_classifier": {
+        "accuracy": 58.333333333333336,
+        "flashes_per_character": 13.333333333333334,
+        "itr": 5.91223862624447
+      },
+      "rung_1_lm": {
+        "accuracy": 79.16666666666666,
+        "flashes_per_character": 9.333333333333334,
+        "itr": 13.34070906022088
+      },
+      "rung_2_global_rag": {
+        "accuracy": 79.16666666666666,
+        "flashes_per_character": 9.333333333333334,
+        "itr": 13.34070906022088
+      },
+      "rung_3_subject_only_rag": {
+        "accuracy": 79.16666666666666,
+        "flashes_per_character": 9.333333333333334,
+        "itr": 13.34070906022088
+      },
+      "rung_4_personalized_rag": {
+        "accuracy": 79.16666666666666,
+        "flashes_per_character": 9.333333333333334,
+        "itr": 13.34070906022088
+      }
+    },
+    "D_02": {
+      "rung_0_classifier": {
+        "accuracy": 50.0,
+        "flashes_per_character": 14.227272727272727,
+        "itr": 4.417680356279173
+      },
+      "rung_1_lm": {
+        "accuracy": 50.0,
+        "flashes_per_character": 11.863636363636363,
+        "itr": 5.297831231859697
+      },
+      "rung_2_global_rag": {
+        "accuracy": 50.0,
+        "flashes_per_character": 11.863636363636363,
+        "itr": 5.297831231859697
+      },
+      "rung_3_subject_only_rag": {
+        "accuracy": 50.0,
+        "flashes_per_character": 11.863636363636363,
+        "itr": 5.297831231859697
+      },
+      "rung_4_personalized_rag": {
+        "accuracy": 50.0,
+        "flashes_per_character": 11.863636363636363,
+        "itr": 5.297831231859697
+      }
+    },
+    "D_03": {
+      "rung_0_classifier": {
+        "accuracy": 36.666666666666664,
+        "flashes_per_character": 12.933333333333334,
+        "itr": 3.078108824602829
+      },
+      "rung_1_lm": {
+        "accuracy": 50.0,
+        "flashes_per_character": 8.566666666666666,
+        "itr": 7.336756021482389
+      },
+      "rung_2_global_rag": {
+        "accuracy": 50.0,
+        "flashes_per_character": 8.566666666666666,
+        "itr": 7.336756021482389
+      },
+      "rung_3_subject_only_rag": {
+        "accuracy": 50.0,
+        "flashes_per_character": 8.566666666666666,
+        "itr": 7.336756021482389
+      },
+      "rung_4_personalized_rag": {
+        "accuracy": 46.666666666666664,
+        "flashes_per_character": 8.6,
+        "itr": 6.60442408973783
+      }
+    },
+    "D_04": {
+      "rung_0_classifier": {
+        "accuracy": 20.0,
+        "flashes_per_character": 13.0,
+        "itr": 1.2189212560412417
+      },
+      "rung_1_lm": {
+        "accuracy": 56.666666666666664,
+        "flashes_per_character": 9.566666666666666,
+        "itr": 7.895843650718771
+      },
+      "rung_2_global_rag": {
+        "accuracy": 56.666666666666664,
+        "flashes_per_character": 9.166666666666666,
+        "itr": 8.240389555477408
+      },
+      "rung_3_subject_only_rag": {
+        "accuracy": 56.666666666666664,
+        "flashes_per_character": 9.566666666666666,
+        "itr": 7.895843650718771
+      },
+      "rung_4_personalized_rag": {
+        "accuracy": 56.666666666666664,
+        "flashes_per_character": 9.166666666666666,
+        "itr": 8.240389555477408
+      }
+    },
+    "D_05": {
+      "rung_0_classifier": {
+        "accuracy": 37.5,
+        "flashes_per_character": 12.708333333333334,
+        "itr": 3.238581361165191
+      },
+      "rung_1_lm": {
+        "accuracy": 58.333333333333336,
+        "flashes_per_character": 8.291666666666666,
+        "itr": 9.507117388935832
+      },
+      "rung_2_global_rag": {
+        "accuracy": 70.83333333333334,
+        "flashes_per_character": 8.333333333333334,
+        "itr": 12.619383440465098
+      },
+      "rung_3_subject_only_rag": {
+        "accuracy": 58.333333333333336,
+        "flashes_per_character": 8.291666666666666,
+        "itr": 9.507117388935832
+      },
+      "rung_4_personalized_rag": {
+        "accuracy": 70.83333333333334,
+        "flashes_per_character": 8.333333333333334,
+        "itr": 12.619383440465098
+      }
+    },
+    "D_06": {
+      "rung_0_classifier": {
+        "accuracy": 22.22222222222222,
+        "flashes_per_character": 12.38888888888889,
+        "itr": 1.507602139337341
+      },
+      "rung_1_lm": {
+        "accuracy": 50.0,
+        "flashes_per_character": 8.666666666666666,
+        "itr": 7.252101144311439
+      },
+      "rung_2_global_rag": {
+        "accuracy": 50.0,
+        "flashes_per_character": 8.666666666666666,
+        "itr": 7.252101144311439
+      },
+      "rung_3_subject_only_rag": {
+        "accuracy": 50.0,
+        "flashes_per_character": 8.666666666666666,
+        "itr": 7.252101144311439
+      },
+      "rung_4_personalized_rag": {
+        "accuracy": 50.0,
+        "flashes_per_character": 8.666666666666666,
+        "itr": 7.252101144311439
+      }
+    },
+    "D_07": {
+      "rung_0_classifier": {
+        "accuracy": 21.428571428571427,
+        "flashes_per_character": 12.714285714285714,
+        "itr": 1.388325523147441
+      },
+      "rung_1_lm": {
+        "accuracy": 50.0,
+        "flashes_per_character": 9.785714285714286,
+        "itr": 6.422785441677283
+      },
+      "rung_2_global_rag": {
+        "accuracy": 50.0,
+        "flashes_per_character": 9.785714285714286,
+        "itr": 6.422785441677283
+      },
+      "rung_3_subject_only_rag": {
+        "accuracy": 50.0,
+        "flashes_per_character": 9.785714285714286,
+        "itr": 6.422785441677283
+      },
+      "rung_4_personalized_rag": {
+        "accuracy": 50.0,
+        "flashes_per_character": 9.785714285714286,
+        "itr": 6.422785441677283
+      }
+    },
+    "D_08": {
+      "rung_0_classifier": {
+        "accuracy": 26.666666666666668,
+        "flashes_per_character": 12.333333333333334,
+        "itr": 2.0030344180484887
+      },
+      "rung_1_lm": {
+        "accuracy": 50.0,
+        "flashes_per_character": 9.433333333333334,
+        "itr": 6.66270776509178
+      },
+      "rung_2_global_rag": {
+        "accuracy": 50.0,
+        "flashes_per_character": 9.433333333333334,
+        "itr": 6.66270776509178
+      },
+      "rung_3_subject_only_rag": {
+        "accuracy": 50.0,
+        "flashes_per_character": 9.433333333333334,
+        "itr": 6.66270776509178
+      },
+      "rung_4_personalized_rag": {
+        "accuracy": 50.0,
+        "flashes_per_character": 9.433333333333334,
+        "itr": 6.66270776509178
+      }
+    },
+    "D_09": {
+      "rung_0_classifier": {
+        "accuracy": 33.33333333333333,
+        "flashes_per_character": 13.5,
+        "itr": 2.559550565299335
+      },
+      "rung_1_lm": {
+        "accuracy": 41.66666666666667,
+        "flashes_per_character": 10.583333333333334,
+        "itr": 4.543097267943575
+      },
+      "rung_2_global_rag": {
+        "accuracy": 41.66666666666667,
+        "flashes_per_character": 10.583333333333334,
+        "itr": 4.543097267943575
+      },
+      "rung_3_subject_only_rag": {
+        "accuracy": 41.66666666666667,
+        "flashes_per_character": 10.583333333333334,
+        "itr": 4.543097267943575
+      },
+      "rung_4_personalized_rag": {
+        "accuracy": 41.66666666666667,
+        "flashes_per_character": 10.583333333333334,
+        "itr": 4.543097267943575
+      }
+    },
+    "D_10": {
+      "rung_0_classifier": {
+        "accuracy": 50.0,
+        "flashes_per_character": 12.805555555555555,
+        "itr": 4.9081465445231425
+      },
+      "rung_1_lm": {
+        "accuracy": 63.888888888888886,
+        "flashes_per_character": 10.194444444444445,
+        "itr": 8.8447625698843
+      },
+      "rung_2_global_rag": {
+        "accuracy": 63.888888888888886,
+        "flashes_per_character": 10.194444444444445,
+        "itr": 8.8447625698843
+      },
+      "rung_3_subject_only_rag": {
+        "accuracy": 63.888888888888886,
+        "flashes_per_character": 10.194444444444445,
+        "itr": 8.8447625698843
+      },
+      "rung_4_personalized_rag": {
+        "accuracy": 63.888888888888886,
+        "flashes_per_character": 10.194444444444445,
+        "itr": 8.8447625698843
+      }
+    },
+    "D_11": {
+      "rung_0_classifier": {
+        "accuracy": 8.0,
+        "flashes_per_character": 9.6,
+        "itr": 0.3436826915491631
+      },
+      "rung_1_lm": {
+        "accuracy": 16.0,
+        "flashes_per_character": 7.84,
+        "itr": 1.4151576521089781
+      },
+      "rung_2_global_rag": {
+        "accuracy": 16.0,
+        "flashes_per_character": 7.84,
+        "itr": 1.4151576521089781
+      },
+      "rung_3_subject_only_rag": {
+        "accuracy": 16.0,
+        "flashes_per_character": 7.84,
+        "itr": 1.4151576521089781
+      },
+      "rung_4_personalized_rag": {
+        "accuracy": 16.0,
+        "flashes_per_character": 7.84,
+        "itr": 1.4151576521089781
+      }
+    },
+    "D_12": {
+      "rung_0_classifier": {
+        "accuracy": 33.33333333333333,
+        "flashes_per_character": 15.0,
+        "itr": 2.3035955087694013
+      },
+      "rung_1_lm": {
+        "accuracy": 75.0,
+        "flashes_per_character": 12.833333333333334,
+        "itr": 8.932698928302099
+      },
+      "rung_2_global_rag": {
+        "accuracy": 83.33333333333334,
+        "flashes_per_character": 12.833333333333334,
+        "itr": 10.507662997113925
+      },
+      "rung_3_subject_only_rag": {
+        "accuracy": 75.0,
+        "flashes_per_character": 12.833333333333334,
+        "itr": 8.932698928302099
+      },
+      "rung_4_personalized_rag": {
+        "accuracy": 83.33333333333334,
+        "flashes_per_character": 12.833333333333334,
+        "itr": 10.507662997113925
+      }
+    },
+    "D_13": {
+      "rung_0_classifier": {
+        "accuracy": 13.333333333333334,
+        "flashes_per_character": 13.7,
+        "itr": 0.599199980989814
+      },
+      "rung_1_lm": {
+        "accuracy": 30.0,
+        "flashes_per_character": 10.333333333333334,
+        "itr": 2.856225828072608
+      },
+      "rung_2_global_rag": {
+        "accuracy": 30.0,
+        "flashes_per_character": 10.333333333333334,
+        "itr": 2.856225828072608
+      },
+      "rung_3_subject_only_rag": {
+        "accuracy": 30.0,
+        "flashes_per_character": 10.333333333333334,
+        "itr": 2.856225828072608
+      },
+      "rung_4_personalized_rag": {
+        "accuracy": 30.0,
+        "flashes_per_character": 10.333333333333334,
+        "itr": 2.856225828072608
+      }
+    },
+    "D_14": {
+      "rung_0_classifier": {
+        "accuracy": 41.66666666666667,
+        "flashes_per_character": 12.833333333333334,
+        "itr": 3.7465802144729485
+      },
+      "rung_1_lm": {
+        "accuracy": 66.66666666666666,
+        "flashes_per_character": 9.666666666666666,
+        "itr": 9.936352119991845
+      },
+      "rung_2_global_rag": {
+        "accuracy": 66.66666666666666,
+        "flashes_per_character": 9.666666666666666,
+        "itr": 9.936352119991845
+      },
+      "rung_3_subject_only_rag": {
+        "accuracy": 66.66666666666666,
+        "flashes_per_character": 9.666666666666666,
+        "itr": 9.936352119991845
+      },
+      "rung_4_personalized_rag": {
+        "accuracy": 66.66666666666666,
+        "flashes_per_character": 9.666666666666666,
+        "itr": 9.936352119991845
+      }
+    },
+    "D_15": {
+      "rung_0_classifier": {
+        "accuracy": 50.0,
+        "flashes_per_character": 11.833333333333334,
+        "itr": 5.311398021185841
+      },
+      "rung_1_lm": {
+        "accuracy": 66.66666666666666,
+        "flashes_per_character": 9.666666666666666,
+        "itr": 9.936352119991845
+      },
+      "rung_2_global_rag": {
+        "accuracy": 66.66666666666666,
+        "flashes_per_character": 9.666666666666666,
+        "itr": 9.936352119991845
+      },
+      "rung_3_subject_only_rag": {
+        "accuracy": 66.66666666666666,
+        "flashes_per_character": 9.666666666666666,
+        "itr": 9.936352119991845
+      },
+      "rung_4_personalized_rag": {
+        "accuracy": 66.66666666666666,
+        "flashes_per_character": 9.666666666666666,
+        "itr": 9.936352119991845
+      }
+    },
+    "D_16": {
+      "rung_0_classifier": {
+        "accuracy": 16.666666666666664,
+        "flashes_per_character": 9.5,
+        "itr": 1.2477262532843887
+      },
+      "rung_1_lm": {
+        "accuracy": 50.0,
+        "flashes_per_character": 6.833333333333333,
+        "itr": 9.197786817175484
+      },
+      "rung_2_global_rag": {
+        "accuracy": 50.0,
+        "flashes_per_character": 6.833333333333333,
+        "itr": 9.197786817175484
+      },
+      "rung_3_subject_only_rag": {
+        "accuracy": 50.0,
+        "flashes_per_character": 6.833333333333333,
+        "itr": 9.197786817175484
+      },
+      "rung_4_personalized_rag": {
+        "accuracy": 50.0,
+        "flashes_per_character": 6.833333333333333,
+        "itr": 9.197786817175484
+      }
+    },
+    "D_17": {
+      "rung_0_classifier": {
+        "accuracy": 38.88888888888889,
+        "flashes_per_character": 13.88888888888889,
+        "itr": 3.12696167338344
+      },
+      "rung_1_lm": {
+        "accuracy": 77.77777777777779,
+        "flashes_per_character": 10.222222222222221,
+        "itr": 11.853909852845828
+      },
+      "rung_2_global_rag": {
+        "accuracy": 72.22222222222221,
+        "flashes_per_character": 10.222222222222221,
+        "itr": 10.592383893382756
+      },
+      "rung_3_subject_only_rag": {
+        "accuracy": 77.77777777777779,
+        "flashes_per_character": 10.222222222222221,
+        "itr": 11.853909852845828
+      },
+      "rung_4_personalized_rag": {
+        "accuracy": 72.22222222222221,
+        "flashes_per_character": 10.222222222222221,
+        "itr": 10.592383893382756
+      }
+    }
+  },
+  "significance": [
+    {
+      "comparison": "Baseline vs rung_1_lm (Classifier + plain LM fusion)",
+      "metric": "accuracy",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 0.00043777719457466344,
+      "mean_difference": 21.987861811391227,
+      "median_difference": 20.833333333333336,
+      "significant": true,
+      "adjusted_p_value": 0.009631098280642595,
+      "holm_significant": true
+    },
+    {
+      "comparison": "Baseline vs rung_2_global_rag (Classifier + global pooled RAG)",
+      "metric": "accuracy",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 0.00043777719457466344,
+      "mean_difference": 22.886554621848738,
+      "median_difference": 23.333333333333332,
+      "significant": true,
+      "adjusted_p_value": 0.009631098280642595,
+      "holm_significant": true
+    },
+    {
+      "comparison": "Baseline vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
+      "metric": "accuracy",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 0.00043777719457466344,
+      "mean_difference": 21.987861811391227,
+      "median_difference": 20.833333333333336,
+      "significant": true,
+      "adjusted_p_value": 0.009631098280642595,
+      "holm_significant": true
+    },
+    {
+      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "metric": "accuracy",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 0.00043777719457466344,
+      "mean_difference": 22.69047619047619,
+      "median_difference": 23.333333333333332,
+      "significant": true,
+      "adjusted_p_value": 0.009631098280642595,
+      "holm_significant": true
+    },
+    {
+      "comparison": "Baseline vs rung_2_global_rag (Classifier + global pooled RAG)",
+      "metric": "accuracy",
+      "n_subjects": 17,
+      "statistic": 1.0,
+      "p_value": 0.28504940740261275,
+      "mean_difference": 0.8986928104575164,
+      "median_difference": 0.0,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
+    },
+    {
+      "comparison": "Baseline vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
+      "metric": "accuracy",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 1.0,
+      "mean_difference": 0.0,
+      "median_difference": 0.0,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
+    },
+    {
+      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "metric": "accuracy",
+      "n_subjects": 17,
+      "statistic": 3.0,
+      "p_value": 0.4652088184521418,
+      "mean_difference": 0.7026143790849673,
+      "median_difference": 0.0,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
+    },
+    {
+      "comparison": "Baseline vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
+      "metric": "accuracy",
+      "n_subjects": 17,
+      "statistic": 1.0,
+      "p_value": 0.28504940740261275,
+      "mean_difference": -0.8986928104575164,
+      "median_difference": 0.0,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
+    },
+    {
+      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "metric": "accuracy",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 0.31731050786291415,
+      "mean_difference": -0.19607843137254916,
+      "median_difference": 0.0,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
+    },
+    {
+      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "metric": "accuracy",
+      "n_subjects": 17,
+      "statistic": 3.0,
+      "p_value": 0.4652088184521418,
+      "mean_difference": 0.7026143790849673,
+      "median_difference": 0.0,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
+    },
+    {
+      "comparison": "Baseline vs rung_1_lm (Classifier + plain LM fusion)",
+      "metric": "flashes_per_character",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 1.52587890625e-05,
+      "mean_difference": -3.0952279093455566,
+      "median_difference": -2.928571428571427,
+      "significant": true,
+      "adjusted_p_value": 0.000457763671875,
+      "holm_significant": true
+    },
+    {
+      "comparison": "Baseline vs rung_2_global_rag (Classifier + global pooled RAG)",
+      "metric": "flashes_per_character",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 1.52587890625e-05,
+      "mean_difference": -3.1163063407181055,
+      "median_difference": -2.928571428571427,
+      "significant": true,
+      "adjusted_p_value": 0.000457763671875,
+      "holm_significant": true
+    },
+    {
+      "comparison": "Baseline vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
+      "metric": "flashes_per_character",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 1.52587890625e-05,
+      "mean_difference": -3.0952279093455566,
+      "median_difference": -2.928571428571427,
+      "significant": true,
+      "adjusted_p_value": 0.000457763671875,
+      "holm_significant": true
+    },
+    {
+      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "metric": "flashes_per_character",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 1.52587890625e-05,
+      "mean_difference": -3.11434555640438,
+      "median_difference": -2.928571428571427,
+      "significant": true,
+      "adjusted_p_value": 0.000457763671875,
+      "holm_significant": true
+    },
+    {
+      "comparison": "Baseline vs rung_2_global_rag (Classifier + global pooled RAG)",
+      "metric": "flashes_per_character",
+      "n_subjects": 17,
+      "statistic": 1.0,
+      "p_value": 0.6547208460185769,
+      "mean_difference": -0.021078431372548972,
+      "median_difference": 0.0,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
+    },
+    {
+      "comparison": "Baseline vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
+      "metric": "flashes_per_character",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 1.0,
+      "mean_difference": 0.0,
+      "median_difference": 0.0,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
+    },
+    {
+      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "metric": "flashes_per_character",
+      "n_subjects": 17,
+      "statistic": 3.0,
+      "p_value": 1.0,
+      "mean_difference": -0.01911764705882349,
+      "median_difference": 0.0,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
+    },
+    {
+      "comparison": "Baseline vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
+      "metric": "flashes_per_character",
+      "n_subjects": 17,
+      "statistic": 1.0,
+      "p_value": 0.6547208460185769,
+      "mean_difference": 0.021078431372548972,
+      "median_difference": 0.0,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
+    },
+    {
+      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "metric": "flashes_per_character",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 0.31731050786291415,
+      "mean_difference": 0.0019607843137254832,
+      "median_difference": 0.0,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
+    },
+    {
+      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "metric": "flashes_per_character",
+      "n_subjects": 17,
+      "statistic": 3.0,
+      "p_value": 1.0,
+      "mean_difference": -0.01911764705882349,
+      "median_difference": 0.0,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
+    },
+    {
+      "comparison": "Baseline vs rung_1_lm (Classifier + plain LM fusion)",
+      "metric": "itr",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 1.52587890625e-05,
+      "mean_difference": 4.960050641311234,
+      "median_difference": 5.034459918529842,
+      "significant": true,
+      "adjusted_p_value": 0.000457763671875,
+      "holm_significant": true
+    },
+    {
+      "comparison": "Baseline vs rung_2_global_rag (Classifier + global pooled RAG)",
+      "metric": "itr",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 1.52587890625e-05,
+      "mean_difference": 5.18183005693692,
+      "median_difference": 5.034459918529842,
+      "significant": true,
+      "adjusted_p_value": 0.000457763671875,
+      "holm_significant": true
+    },
+    {
+      "comparison": "Baseline vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
+      "metric": "itr",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 1.52587890625e-05,
+      "mean_difference": 4.960050641311234,
+      "median_difference": 5.034459918529842,
+      "significant": true,
+      "adjusted_p_value": 0.000457763671875,
+      "holm_significant": true
+    },
+    {
+      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "metric": "itr",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 1.52587890625e-05,
+      "mean_difference": 5.138751708010769,
+      "median_difference": 5.034459918529842,
+      "significant": true,
+      "adjusted_p_value": 0.000457763671875,
+      "holm_significant": true
+    },
+    {
+      "comparison": "Baseline vs rung_2_global_rag (Classifier + global pooled RAG)",
+      "metric": "itr",
+      "n_subjects": 17,
+      "statistic": 2.0,
+      "p_value": 0.27332167829229814,
+      "mean_difference": 0.22177941562568584,
+      "median_difference": 0.0,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
+    },
+    {
+      "comparison": "Baseline vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
+      "metric": "itr",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 1.0,
+      "mean_difference": 0.0,
+      "median_difference": 0.0,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
+    },
+    {
+      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "metric": "itr",
+      "n_subjects": 17,
+      "statistic": 5.0,
+      "p_value": 0.5001842570707944,
+      "mean_difference": 0.17870106669953537,
+      "median_difference": 0.0,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
+    },
+    {
+      "comparison": "Baseline vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
+      "metric": "itr",
+      "n_subjects": 17,
+      "statistic": 2.0,
+      "p_value": 0.27332167829229814,
+      "mean_difference": -0.22177941562568584,
+      "median_difference": 0.0,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
+    },
+    {
+      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "metric": "itr",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 0.31731050786291415,
+      "mean_difference": -0.043078348926150485,
+      "median_difference": 0.0,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
+    },
+    {
+      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "metric": "itr",
+      "n_subjects": 17,
+      "statistic": 5.0,
+      "p_value": 0.5001842570707944,
+      "mean_difference": 0.17870106669953537,
+      "median_difference": 0.0,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
+    }
+  ]
+}
