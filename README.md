@@ -867,7 +867,34 @@ global corpus.
 
 ---
 
-## 11. Project status
+## 11. Connected frontend prototype
+
+The local **Neural Type** prototype in `prototype/` is a visual replay client
+for the backend pipeline, not a separate browser-only decoder. Start it from
+the repository root:
+
+```bash
+.venv/bin/python prototype/server.py
+```
+
+Then open [http://127.0.0.1:8000](http://127.0.0.1:8000).
+
+Two execution paths are intentionally distinguished in the interface:
+
+- **Study D held-out replay:** loads a processed FIF session, scores epochs
+  with `data/processed/swlda_model.pkl`, and uses `LLMPredictor`,
+  `RAGPredictor`, `BayesianFusionEngine`, and `P300Decoder`. The selected
+  keys, posterior values, RAG diagnostics, sequence counts, and accuracy are
+  returned by the backend.
+- **Custom-text simulation:** uses the same 9×8 keyboard, language/RAG prior,
+  fusion engine, and decoder. Arbitrary text has no recorded EEG, so its
+  target-conditioned EEG likelihoods are deterministic simulation and are
+  labelled as simulated throughout the UI.
+
+The waveform is a visualisation of the current backend evidence posterior; it
+is not displayed as raw EEG in either mode.
+
+## 12. Project status
 
 Implemented:
 
