@@ -17,14 +17,14 @@
         "itr": 13.34070906022088
       },
       "rung_3_subject_only_rag": {
-        "accuracy": 79.16666666666666,
-        "flashes_per_character": 9.333333333333334,
-        "itr": 13.34070906022088
+        "accuracy": 70.83333333333334,
+        "flashes_per_character": 13.375,
+        "itr": 7.862544199666727
       },
       "rung_4_personalized_rag": {
-        "accuracy": 79.16666666666666,
-        "flashes_per_character": 9.333333333333334,
-        "itr": 13.34070906022088
+        "accuracy": 70.83333333333334,
+        "flashes_per_character": 13.375,
+        "itr": 7.862544199666727
       }
     },
     "D_02": {
@@ -44,14 +44,14 @@
         "itr": 5.297831231859697
       },
       "rung_3_subject_only_rag": {
-        "accuracy": 50.0,
-        "flashes_per_character": 11.863636363636363,
-        "itr": 5.297831231859697
+        "accuracy": 54.54545454545454,
+        "flashes_per_character": 14.227272727272727,
+        "itr": 5.019701040018308
       },
       "rung_4_personalized_rag": {
-        "accuracy": 50.0,
-        "flashes_per_character": 11.863636363636363,
-        "itr": 5.297831231859697
+        "accuracy": 54.54545454545454,
+        "flashes_per_character": 14.227272727272727,
+        "itr": 5.019701040018308
       }
     },
     "D_03": {
@@ -71,14 +71,14 @@
         "itr": 7.336756021482389
       },
       "rung_3_subject_only_rag": {
-        "accuracy": 50.0,
-        "flashes_per_character": 8.566666666666666,
-        "itr": 7.336756021482389
+        "accuracy": 36.666666666666664,
+        "flashes_per_character": 13.2,
+        "itr": 3.0159248079441867
       },
       "rung_4_personalized_rag": {
-        "accuracy": 46.666666666666664,
-        "flashes_per_character": 8.6,
-        "itr": 6.60442408973783
+        "accuracy": 36.666666666666664,
+        "flashes_per_character": 12.3,
+        "itr": 3.236602232915712
       }
     },
     "D_04": {
@@ -98,14 +98,14 @@
         "itr": 8.240389555477408
       },
       "rung_3_subject_only_rag": {
-        "accuracy": 56.666666666666664,
-        "flashes_per_character": 9.566666666666666,
-        "itr": 7.895843650718771
+        "accuracy": 46.666666666666664,
+        "flashes_per_character": 13.066666666666666,
+        "itr": 4.346789324368267
       },
       "rung_4_personalized_rag": {
-        "accuracy": 56.666666666666664,
-        "flashes_per_character": 9.166666666666666,
-        "itr": 8.240389555477408
+        "accuracy": 50.0,
+        "flashes_per_character": 13.066666666666666,
+        "itr": 4.8100670855126895
       }
     },
     "D_05": {
@@ -125,14 +125,14 @@
         "itr": 12.619383440465098
       },
       "rung_3_subject_only_rag": {
-        "accuracy": 58.333333333333336,
-        "flashes_per_character": 8.291666666666666,
-        "itr": 9.507117388935832
+        "accuracy": 45.83333333333333,
+        "flashes_per_character": 12.625,
+        "itr": 4.381371445999142
       },
       "rung_4_personalized_rag": {
-        "accuracy": 70.83333333333334,
-        "flashes_per_character": 8.333333333333334,
-        "itr": 12.619383440465098
+        "accuracy": 50.0,
+        "flashes_per_character": 12.625,
+        "itr": 4.978340059461317
       }
     },
     "D_06": {
@@ -152,14 +152,14 @@
         "itr": 7.252101144311439
       },
       "rung_3_subject_only_rag": {
-        "accuracy": 50.0,
-        "flashes_per_character": 8.666666666666666,
-        "itr": 7.252101144311439
+        "accuracy": 44.44444444444444,
+        "flashes_per_character": 11.555555555555555,
+        "itr": 4.575261022186557
       },
       "rung_4_personalized_rag": {
-        "accuracy": 50.0,
-        "flashes_per_character": 8.666666666666666,
-        "itr": 7.252101144311439
+        "accuracy": 44.44444444444444,
+        "flashes_per_character": 11.555555555555555,
+        "itr": 4.575261022186557
       }
     },
     "D_07": {
@@ -179,14 +179,14 @@
         "itr": 6.422785441677283
       },
       "rung_3_subject_only_rag": {
-        "accuracy": 50.0,
-        "flashes_per_character": 9.785714285714286,
-        "itr": 6.422785441677283
+        "accuracy": 42.857142857142854,
+        "flashes_per_character": 12.642857142857142,
+        "itr": 3.9640303660466762
       },
       "rung_4_personalized_rag": {
-        "accuracy": 50.0,
-        "flashes_per_character": 9.785714285714286,
-        "itr": 6.422785441677283
+        "accuracy": 42.857142857142854,
+        "flashes_per_character": 12.642857142857142,
+        "itr": 3.9640303660466762
       }
     },
     "D_08": {
@@ -207,13 +207,13 @@
       },
       "rung_3_subject_only_rag": {
         "accuracy": 50.0,
-        "flashes_per_character": 9.433333333333334,
-        "itr": 6.66270776509178
+        "flashes_per_character": 12.333333333333334,
+        "itr": 5.096071074381011
       },
       "rung_4_personalized_rag": {
         "accuracy": 50.0,
-        "flashes_per_character": 9.433333333333334,
-        "itr": 6.66270776509178
+        "flashes_per_character": 12.333333333333334,
+        "itr": 5.096071074381011
       }
     },
     "D_09": {
@@ -233,14 +233,14 @@
         "itr": 4.543097267943575
       },
       "rung_3_subject_only_rag": {
-        "accuracy": 41.66666666666667,
-        "flashes_per_character": 10.583333333333334,
-        "itr": 4.543097267943575
+        "accuracy": 33.33333333333333,
+        "flashes_per_character": 13.083333333333334,
+        "itr": 2.641064914512689
       },
       "rung_4_personalized_rag": {
-        "accuracy": 41.66666666666667,
-        "flashes_per_character": 10.583333333333334,
-        "itr": 4.543097267943575
+        "accuracy": 33.33333333333333,
+        "flashes_per_character": 13.083333333333334,
+        "itr": 2.641064914512689
       }
     },
     "D_10": {
@@ -260,14 +260,14 @@
         "itr": 8.8447625698843
       },
       "rung_3_subject_only_rag": {
-        "accuracy": 63.888888888888886,
-        "flashes_per_character": 10.194444444444445,
-        "itr": 8.8447625698843
+        "accuracy": 66.66666666666666,
+        "flashes_per_character": 12.75,
+        "itr": 7.533443437379438
       },
       "rung_4_personalized_rag": {
-        "accuracy": 63.888888888888886,
-        "flashes_per_character": 10.194444444444445,
-        "itr": 8.8447625698843
+        "accuracy": 66.66666666666666,
+        "flashes_per_character": 12.75,
+        "itr": 7.533443437379438
       }
     },
     "D_11": {
@@ -288,13 +288,13 @@
       },
       "rung_3_subject_only_rag": {
         "accuracy": 16.0,
-        "flashes_per_character": 7.84,
-        "itr": 1.4151576521089781
+        "flashes_per_character": 9.56,
+        "itr": 1.160547697963848
       },
       "rung_4_personalized_rag": {
         "accuracy": 16.0,
-        "flashes_per_character": 7.84,
-        "itr": 1.4151576521089781
+        "flashes_per_character": 9.56,
+        "itr": 1.160547697963848
       }
     },
     "D_12": {
@@ -315,13 +315,13 @@
       },
       "rung_3_subject_only_rag": {
         "accuracy": 75.0,
-        "flashes_per_character": 12.833333333333334,
-        "itr": 8.932698928302099
+        "flashes_per_character": 15.0,
+        "itr": 7.642420194214019
       },
       "rung_4_personalized_rag": {
         "accuracy": 83.33333333333334,
-        "flashes_per_character": 12.833333333333334,
-        "itr": 10.507662997113925
+        "flashes_per_character": 15.0,
+        "itr": 8.98988945308636
       }
     },
     "D_13": {
@@ -341,14 +341,14 @@
         "itr": 2.856225828072608
       },
       "rung_3_subject_only_rag": {
-        "accuracy": 30.0,
-        "flashes_per_character": 10.333333333333334,
-        "itr": 2.856225828072608
+        "accuracy": 23.333333333333332,
+        "flashes_per_character": 13.533333333333333,
+        "itr": 1.4881963943438896
       },
       "rung_4_personalized_rag": {
-        "accuracy": 30.0,
-        "flashes_per_character": 10.333333333333334,
-        "itr": 2.856225828072608
+        "accuracy": 23.333333333333332,
+        "flashes_per_character": 13.533333333333333,
+        "itr": 1.4881963943438896
       }
     },
     "D_14": {
@@ -369,13 +369,13 @@
       },
       "rung_3_subject_only_rag": {
         "accuracy": 66.66666666666666,
-        "flashes_per_character": 9.666666666666666,
-        "itr": 9.936352119991845
+        "flashes_per_character": 13.833333333333334,
+        "itr": 6.943474975415987
       },
       "rung_4_personalized_rag": {
         "accuracy": 66.66666666666666,
-        "flashes_per_character": 9.666666666666666,
-        "itr": 9.936352119991845
+        "flashes_per_character": 13.833333333333334,
+        "itr": 6.943474975415987
       }
     },
     "D_15": {
@@ -395,14 +395,14 @@
         "itr": 9.936352119991845
       },
       "rung_3_subject_only_rag": {
-        "accuracy": 66.66666666666666,
-        "flashes_per_character": 9.666666666666666,
-        "itr": 9.936352119991845
+        "accuracy": 50.0,
+        "flashes_per_character": 11.333333333333334,
+        "itr": 5.545724404473453
       },
       "rung_4_personalized_rag": {
-        "accuracy": 66.66666666666666,
-        "flashes_per_character": 9.666666666666666,
-        "itr": 9.936352119991845
+        "accuracy": 50.0,
+        "flashes_per_character": 11.333333333333334,
+        "itr": 5.545724404473453
       }
     },
     "D_16": {
@@ -423,13 +423,13 @@
       },
       "rung_3_subject_only_rag": {
         "accuracy": 50.0,
-        "flashes_per_character": 6.833333333333333,
-        "itr": 9.197786817175484
+        "flashes_per_character": 10.333333333333334,
+        "itr": 6.08240741135798
       },
       "rung_4_personalized_rag": {
         "accuracy": 50.0,
-        "flashes_per_character": 6.833333333333333,
-        "itr": 9.197786817175484
+        "flashes_per_character": 10.333333333333334,
+        "itr": 6.08240741135798
       }
     },
     "D_17": {
@@ -449,20 +449,20 @@
         "itr": 10.592383893382756
       },
       "rung_3_subject_only_rag": {
-        "accuracy": 77.77777777777779,
-        "flashes_per_character": 10.222222222222221,
-        "itr": 11.853909852845828
+        "accuracy": 50.0,
+        "flashes_per_character": 13.222222222222221,
+        "itr": 4.753478060977245
       },
       "rung_4_personalized_rag": {
-        "accuracy": 72.22222222222221,
-        "flashes_per_character": 10.222222222222221,
-        "itr": 10.592383893382756
+        "accuracy": 50.0,
+        "flashes_per_character": 13.222222222222221,
+        "itr": 4.753478060977245
       }
     }
   },
   "significance": [
     {
-      "comparison": "Baseline vs rung_1_lm (Classifier + plain LM fusion)",
+      "comparison": "rung_0_classifier (Classifier only) vs rung_1_lm (Classifier + plain LM fusion)",
       "metric": "accuracy",
       "n_subjects": 17,
       "statistic": 0.0,
@@ -470,11 +470,11 @@
       "mean_difference": 21.987861811391227,
       "median_difference": 20.833333333333336,
       "significant": true,
-      "adjusted_p_value": 0.009631098280642595,
+      "adjusted_p_value": 0.007004435113194615,
       "holm_significant": true
     },
     {
-      "comparison": "Baseline vs rung_2_global_rag (Classifier + global pooled RAG)",
+      "comparison": "rung_0_classifier (Classifier only) vs rung_2_global_rag (Classifier + global pooled RAG)",
       "metric": "accuracy",
       "n_subjects": 17,
       "statistic": 0.0,
@@ -482,35 +482,35 @@
       "mean_difference": 22.886554621848738,
       "median_difference": 23.333333333333332,
       "significant": true,
-      "adjusted_p_value": 0.009631098280642595,
+      "adjusted_p_value": 0.007004435113194615,
       "holm_significant": true
     },
     {
-      "comparison": "Baseline vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
+      "comparison": "rung_0_classifier (Classifier only) vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
       "metric": "accuracy",
       "n_subjects": 17,
       "statistic": 0.0,
-      "p_value": 0.00043777719457466344,
-      "mean_difference": 21.987861811391227,
-      "median_difference": 20.833333333333336,
+      "p_value": 0.0009815397525216685,
+      "mean_difference": 15.576903488668192,
+      "median_difference": 12.500000000000007,
       "significant": true,
-      "adjusted_p_value": 0.009631098280642595,
+      "adjusted_p_value": 0.01374155653530336,
       "holm_significant": true
     },
     {
-      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "comparison": "rung_0_classifier (Classifier only) vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
       "metric": "accuracy",
       "n_subjects": 17,
       "statistic": 0.0,
-      "p_value": 0.00043777719457466344,
-      "mean_difference": 22.69047619047619,
-      "median_difference": 23.333333333333332,
+      "p_value": 0.0009815397525216685,
+      "mean_difference": 16.5082760376878,
+      "median_difference": 12.500000000000007,
       "significant": true,
-      "adjusted_p_value": 0.009631098280642595,
+      "adjusted_p_value": 0.01374155653530336,
       "holm_significant": true
     },
     {
-      "comparison": "Baseline vs rung_2_global_rag (Classifier + global pooled RAG)",
+      "comparison": "rung_1_lm (Classifier + plain LM fusion) vs rung_2_global_rag (Classifier + global pooled RAG)",
       "metric": "accuracy",
       "n_subjects": 17,
       "statistic": 1.0,
@@ -522,67 +522,67 @@
       "holm_significant": false
     },
     {
-      "comparison": "Baseline vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
-      "metric": "accuracy",
-      "n_subjects": 17,
-      "statistic": 0.0,
-      "p_value": 1.0,
-      "mean_difference": 0.0,
-      "median_difference": 0.0,
-      "significant": false,
-      "adjusted_p_value": 1.0,
-      "holm_significant": false
-    },
-    {
-      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "comparison": "rung_1_lm (Classifier + plain LM fusion) vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
       "metric": "accuracy",
       "n_subjects": 17,
       "statistic": 3.0,
-      "p_value": 0.4652088184521418,
-      "mean_difference": 0.7026143790849673,
-      "median_difference": 0.0,
+      "p_value": 0.004741768038406972,
+      "mean_difference": -6.41095832272303,
+      "median_difference": -6.666666666666668,
       "significant": false,
-      "adjusted_p_value": 1.0,
+      "adjusted_p_value": 0.0521594484224767,
       "holm_significant": false
     },
     {
-      "comparison": "Baseline vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
+      "comparison": "rung_1_lm (Classifier + plain LM fusion) vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
       "metric": "accuracy",
       "n_subjects": 17,
-      "statistic": 1.0,
-      "p_value": 0.28504940740261275,
-      "mean_difference": -0.8986928104575164,
-      "median_difference": 0.0,
+      "statistic": 12.5,
+      "p_value": 0.021058670381610255,
+      "mean_difference": -5.4795857737034215,
+      "median_difference": -6.666666666666664,
       "significant": false,
-      "adjusted_p_value": 1.0,
+      "adjusted_p_value": 0.1895280334344923,
       "holm_significant": false
     },
     {
-      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
-      "metric": "accuracy",
-      "n_subjects": 17,
-      "statistic": 0.0,
-      "p_value": 0.31731050786291415,
-      "mean_difference": -0.19607843137254916,
-      "median_difference": 0.0,
-      "significant": false,
-      "adjusted_p_value": 1.0,
-      "holm_significant": false
-    },
-    {
-      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "comparison": "rung_2_global_rag (Classifier + global pooled RAG) vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
       "metric": "accuracy",
       "n_subjects": 17,
       "statistic": 3.0,
-      "p_value": 0.4652088184521418,
-      "mean_difference": 0.7026143790849673,
-      "median_difference": 0.0,
+      "p_value": 0.0029678594886235568,
+      "mean_difference": -7.309651133180545,
+      "median_difference": -7.142857142857146,
+      "significant": true,
+      "adjusted_p_value": 0.03561431386348268,
+      "holm_significant": true
+    },
+    {
+      "comparison": "rung_2_global_rag (Classifier + global pooled RAG) vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "metric": "accuracy",
+      "n_subjects": 17,
+      "statistic": 3.0,
+      "p_value": 0.004741768038406972,
+      "mean_difference": -6.378278584160937,
+      "median_difference": -6.666666666666664,
       "significant": false,
-      "adjusted_p_value": 1.0,
+      "adjusted_p_value": 0.0521594484224767,
       "holm_significant": false
     },
     {
-      "comparison": "Baseline vs rung_1_lm (Classifier + plain LM fusion)",
+      "comparison": "rung_3_subject_only_rag (Classifier + hard subject-only RAG) vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "metric": "accuracy",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 0.10880943004054569,
+      "mean_difference": 0.9313725490196089,
+      "median_difference": 0.0,
+      "significant": false,
+      "adjusted_p_value": 0.7616660102838199,
+      "holm_significant": false
+    },
+    {
+      "comparison": "rung_0_classifier (Classifier only) vs rung_1_lm (Classifier + plain LM fusion)",
       "metric": "flashes_per_character",
       "n_subjects": 17,
       "statistic": 0.0,
@@ -594,7 +594,7 @@
       "holm_significant": true
     },
     {
-      "comparison": "Baseline vs rung_2_global_rag (Classifier + global pooled RAG)",
+      "comparison": "rung_0_classifier (Classifier only) vs rung_2_global_rag (Classifier + global pooled RAG)",
       "metric": "flashes_per_character",
       "n_subjects": 17,
       "statistic": 0.0,
@@ -606,31 +606,31 @@
       "holm_significant": true
     },
     {
-      "comparison": "Baseline vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
+      "comparison": "rung_0_classifier (Classifier only) vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
       "metric": "flashes_per_character",
       "n_subjects": 17,
-      "statistic": 0.0,
-      "p_value": 1.52587890625e-05,
-      "mean_difference": -3.0952279093455566,
-      "median_difference": -2.928571428571427,
-      "significant": true,
-      "adjusted_p_value": 0.000457763671875,
-      "holm_significant": true
+      "statistic": 40.5,
+      "p_value": 0.451147469241197,
+      "mean_difference": -0.0367833800186742,
+      "median_difference": -0.03999999999999915,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
     },
     {
-      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "comparison": "rung_0_classifier (Classifier only) vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
       "metric": "flashes_per_character",
       "n_subjects": 17,
-      "statistic": 0.0,
-      "p_value": 1.52587890625e-05,
-      "mean_difference": -3.11434555640438,
-      "median_difference": -2.928571428571427,
-      "significant": true,
-      "adjusted_p_value": 0.000457763671875,
-      "holm_significant": true
+      "statistic": 32.5,
+      "p_value": 0.20917434878385344,
+      "mean_difference": -0.08972455648926235,
+      "median_difference": -0.05555555555555536,
+      "significant": false,
+      "adjusted_p_value": 1.0,
+      "holm_significant": false
     },
     {
-      "comparison": "Baseline vs rung_2_global_rag (Classifier + global pooled RAG)",
+      "comparison": "rung_1_lm (Classifier + plain LM fusion) vs rung_2_global_rag (Classifier + global pooled RAG)",
       "metric": "flashes_per_character",
       "n_subjects": 17,
       "statistic": 1.0,
@@ -642,67 +642,67 @@
       "holm_significant": false
     },
     {
-      "comparison": "Baseline vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
+      "comparison": "rung_1_lm (Classifier + plain LM fusion) vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
       "metric": "flashes_per_character",
       "n_subjects": 17,
       "statistic": 0.0,
-      "p_value": 1.0,
-      "mean_difference": 0.0,
-      "median_difference": 0.0,
-      "significant": false,
-      "adjusted_p_value": 1.0,
-      "holm_significant": false
+      "p_value": 1.52587890625e-05,
+      "mean_difference": 3.058444529326882,
+      "median_difference": 2.9000000000000004,
+      "significant": true,
+      "adjusted_p_value": 0.000457763671875,
+      "holm_significant": true
     },
     {
-      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "comparison": "rung_1_lm (Classifier + plain LM fusion) vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
       "metric": "flashes_per_character",
       "n_subjects": 17,
-      "statistic": 3.0,
-      "p_value": 1.0,
-      "mean_difference": -0.01911764705882349,
-      "median_difference": 0.0,
-      "significant": false,
-      "adjusted_p_value": 1.0,
-      "holm_significant": false
+      "statistic": 0.0,
+      "p_value": 1.52587890625e-05,
+      "mean_difference": 3.005503352856294,
+      "median_difference": 2.9000000000000004,
+      "significant": true,
+      "adjusted_p_value": 0.000457763671875,
+      "holm_significant": true
     },
     {
-      "comparison": "Baseline vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
+      "comparison": "rung_2_global_rag (Classifier + global pooled RAG) vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
       "metric": "flashes_per_character",
       "n_subjects": 17,
-      "statistic": 1.0,
-      "p_value": 0.6547208460185769,
-      "mean_difference": 0.021078431372548972,
-      "median_difference": 0.0,
-      "significant": false,
-      "adjusted_p_value": 1.0,
-      "holm_significant": false
+      "statistic": 0.0,
+      "p_value": 1.52587890625e-05,
+      "mean_difference": 3.0795229606994314,
+      "median_difference": 2.9000000000000004,
+      "significant": true,
+      "adjusted_p_value": 0.000457763671875,
+      "holm_significant": true
     },
     {
-      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "comparison": "rung_2_global_rag (Classifier + global pooled RAG) vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "metric": "flashes_per_character",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 1.52587890625e-05,
+      "mean_difference": 3.026581784228843,
+      "median_difference": 2.9000000000000004,
+      "significant": true,
+      "adjusted_p_value": 0.000457763671875,
+      "holm_significant": true
+    },
+    {
+      "comparison": "rung_3_subject_only_rag (Classifier + hard subject-only RAG) vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
       "metric": "flashes_per_character",
       "n_subjects": 17,
       "statistic": 0.0,
       "p_value": 0.31731050786291415,
-      "mean_difference": 0.0019607843137254832,
+      "mean_difference": -0.05294117647058815,
       "median_difference": 0.0,
       "significant": false,
       "adjusted_p_value": 1.0,
       "holm_significant": false
     },
     {
-      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
-      "metric": "flashes_per_character",
-      "n_subjects": 17,
-      "statistic": 3.0,
-      "p_value": 1.0,
-      "mean_difference": -0.01911764705882349,
-      "median_difference": 0.0,
-      "significant": false,
-      "adjusted_p_value": 1.0,
-      "holm_significant": false
-    },
-    {
-      "comparison": "Baseline vs rung_1_lm (Classifier + plain LM fusion)",
+      "comparison": "rung_0_classifier (Classifier only) vs rung_1_lm (Classifier + plain LM fusion)",
       "metric": "itr",
       "n_subjects": 17,
       "statistic": 0.0,
@@ -714,7 +714,7 @@
       "holm_significant": true
     },
     {
-      "comparison": "Baseline vs rung_2_global_rag (Classifier + global pooled RAG)",
+      "comparison": "rung_0_classifier (Classifier only) vs rung_2_global_rag (Classifier + global pooled RAG)",
       "metric": "itr",
       "n_subjects": 17,
       "statistic": 0.0,
@@ -726,31 +726,31 @@
       "holm_significant": true
     },
     {
-      "comparison": "Baseline vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
+      "comparison": "rung_0_classifier (Classifier only) vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
+      "metric": "itr",
+      "n_subjects": 17,
+      "statistic": 1.0,
+      "p_value": 3.0517578125e-05,
+      "mean_difference": 2.067124518407398,
+      "median_difference": 1.9503055734222574,
+      "significant": true,
+      "adjusted_p_value": 0.00054931640625,
+      "holm_significant": true
+    },
+    {
+      "comparison": "rung_0_classifier (Classifier only) vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
       "metric": "itr",
       "n_subjects": 17,
       "statistic": 0.0,
       "p_value": 1.52587890625e-05,
-      "mean_difference": 4.960050641311234,
-      "median_difference": 5.034459918529842,
+      "mean_difference": 2.2217358747868374,
+      "median_difference": 1.9503055734222574,
       "significant": true,
       "adjusted_p_value": 0.000457763671875,
       "holm_significant": true
     },
     {
-      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
-      "metric": "itr",
-      "n_subjects": 17,
-      "statistic": 0.0,
-      "p_value": 1.52587890625e-05,
-      "mean_difference": 5.138751708010769,
-      "median_difference": 5.034459918529842,
-      "significant": true,
-      "adjusted_p_value": 0.000457763671875,
-      "holm_significant": true
-    },
-    {
-      "comparison": "Baseline vs rung_2_global_rag (Classifier + global pooled RAG)",
+      "comparison": "rung_1_lm (Classifier + plain LM fusion) vs rung_2_global_rag (Classifier + global pooled RAG)",
       "metric": "itr",
       "n_subjects": 17,
       "statistic": 2.0,
@@ -762,63 +762,63 @@
       "holm_significant": false
     },
     {
-      "comparison": "Baseline vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
+      "comparison": "rung_1_lm (Classifier + plain LM fusion) vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
       "metric": "itr",
       "n_subjects": 17,
       "statistic": 0.0,
-      "p_value": 1.0,
-      "mean_difference": 0.0,
-      "median_difference": 0.0,
-      "significant": false,
-      "adjusted_p_value": 1.0,
-      "holm_significant": false
+      "p_value": 1.52587890625e-05,
+      "mean_difference": -2.8929261229038357,
+      "median_difference": -2.676840122124882,
+      "significant": true,
+      "adjusted_p_value": 0.000457763671875,
+      "holm_significant": true
     },
     {
-      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "comparison": "rung_1_lm (Classifier + plain LM fusion) vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
       "metric": "itr",
       "n_subjects": 17,
-      "statistic": 5.0,
-      "p_value": 0.5001842570707944,
-      "mean_difference": 0.17870106669953537,
-      "median_difference": 0.0,
-      "significant": false,
-      "adjusted_p_value": 1.0,
-      "holm_significant": false
+      "statistic": 1.0,
+      "p_value": 3.0517578125e-05,
+      "mean_difference": -2.7383147665243968,
+      "median_difference": -2.676840122124882,
+      "significant": true,
+      "adjusted_p_value": 0.00054931640625,
+      "holm_significant": true
     },
     {
-      "comparison": "Baseline vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
-      "metric": "itr",
-      "n_subjects": 17,
-      "statistic": 2.0,
-      "p_value": 0.27332167829229814,
-      "mean_difference": -0.22177941562568584,
-      "median_difference": 0.0,
-      "significant": false,
-      "adjusted_p_value": 1.0,
-      "holm_significant": false
-    },
-    {
-      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "comparison": "rung_2_global_rag (Classifier + global pooled RAG) vs rung_3_subject_only_rag (Classifier + hard subject-only RAG)",
       "metric": "itr",
       "n_subjects": 17,
       "statistic": 0.0,
-      "p_value": 0.31731050786291415,
-      "mean_difference": -0.043078348926150485,
-      "median_difference": 0.0,
-      "significant": false,
-      "adjusted_p_value": 1.0,
-      "holm_significant": false
+      "p_value": 1.52587890625e-05,
+      "mean_difference": -3.1147055385295217,
+      "median_difference": -2.865242802899907,
+      "significant": true,
+      "adjusted_p_value": 0.000457763671875,
+      "holm_significant": true
     },
     {
-      "comparison": "Baseline vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "comparison": "rung_2_global_rag (Classifier + global pooled RAG) vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
       "metric": "itr",
       "n_subjects": 17,
-      "statistic": 5.0,
-      "p_value": 0.5001842570707944,
-      "mean_difference": 0.17870106669953537,
+      "statistic": 0.0,
+      "p_value": 1.52587890625e-05,
+      "mean_difference": -2.9600941821500824,
+      "median_difference": -2.676840122124882,
+      "significant": true,
+      "adjusted_p_value": 0.000457763671875,
+      "holm_significant": true
+    },
+    {
+      "comparison": "rung_3_subject_only_rag (Classifier + hard subject-only RAG) vs rung_4_personalized_rag (Classifier + ramped subject/global RAG with session growth)",
+      "metric": "itr",
+      "n_subjects": 17,
+      "statistic": 0.0,
+      "p_value": 0.06788915486182899,
+      "mean_difference": 0.15461135637943904,
       "median_difference": 0.0,
       "significant": false,
-      "adjusted_p_value": 1.0,
+      "adjusted_p_value": 0.5431132388946319,
       "holm_significant": false
     }
   ]

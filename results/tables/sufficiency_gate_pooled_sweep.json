@@ -1,0 +1,111 @@
+{
+  "experiment": "synthetic_validation_only",
+  "pooled_by_raw_counts": true,
+  "sweep": [
+    {
+      "corpus_size_words": 18,
+      "subjects": [
+        "D_01",
+        "D_03",
+        "D_04",
+        "D_05",
+        "D_08",
+        "D_10",
+        "D_11",
+        "D_13"
+      ],
+      "subject_count": 8,
+      "correct_characters": 103,
+      "total_characters": 229,
+      "total_flashes_used": 2858,
+      "accuracy": 44.97816593886463,
+      "flashes_per_character": 12.480349344978166,
+      "itr": 4.311202016718268,
+      "mean_sufficiency_gate": 0.018706509954354602
+    },
+    {
+      "corpus_size_words": 50,
+      "subjects": [
+        "D_01",
+        "D_03",
+        "D_04",
+        "D_05",
+        "D_08",
+        "D_10",
+        "D_11",
+        "D_13"
+      ],
+      "subject_count": 8,
+      "correct_characters": 102,
+      "total_characters": 229,
+      "total_flashes_used": 2840,
+      "accuracy": 44.54148471615721,
+      "flashes_per_character": 12.40174672489083,
+      "itr": 4.276770568100202,
+      "mean_sufficiency_gate": 0.04742587317756679
+    },
+    {
+      "corpus_size_words": 150,
+      "subjects": [
+        "D_01",
+        "D_03",
+        "D_04",
+        "D_05",
+        "D_08",
+        "D_10",
+        "D_11",
+        "D_13"
+      ],
+      "subject_count": 8,
+      "correct_characters": 103,
+      "total_characters": 229,
+      "total_flashes_used": 2866,
+      "accuracy": 44.97816593886463,
+      "flashes_per_character": 12.51528384279476,
+      "itr": 4.299167956657644,
+      "mean_sufficiency_gate": 0.5
+    },
+    {
+      "corpus_size_words": 500,
+      "subjects": [
+        "D_01",
+        "D_03",
+        "D_04",
+        "D_05",
+        "D_08",
+        "D_10",
+        "D_11",
+        "D_13"
+      ],
+      "subject_count": 8,
+      "correct_characters": 106,
+      "total_characters": 229,
+      "total_flashes_used": 2800,
+      "accuracy": 46.2882096069869,
+      "flashes_per_character": 12.22707423580786,
+      "itr": 4.590054798186846,
+      "mean_sufficiency_gate": 0.9999724643088853
+    },
+    {
+      "corpus_size_words": 1000,
+      "subjects": [
+        "D_01",
+        "D_03",
+        "D_04",
+        "D_05",
+        "D_08",
+        "D_10",
+        "D_11",
+        "D_13"
+      ],
+      "subject_count": 8,
+      "correct_characters": 106,
+      "total_characters": 229,
+      "total_flashes_used": 2746,
+      "accuracy": 46.2882096069869,
+      "flashes_per_character": 11.991266375545852,
+      "itr": 4.6803180753543945,
+      "mean_sufficiency_gate": 0.9999999999915765
+    }
+  ]
+}

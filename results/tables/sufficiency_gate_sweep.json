@@ -1,0 +1,50 @@
+{
+  "subject": "D_07",
+  "sweep": [
+    {
+      "corpus_size_words": 18,
+      "actual_token_count": 18,
+      "sufficiency_gate_value": 0.018706509954354602,
+      "subject_gate_weight_sample": 0.004201982904473105,
+      "accuracy": 42.857142857142854,
+      "flashes_per_character": 12.428571428571429,
+      "itr": 4.032375717185412
+    },
+    {
+      "corpus_size_words": 50,
+      "actual_token_count": 50,
+      "sufficiency_gate_value": 0.04742587317756678,
+      "subject_gate_weight_sample": 0.0025857248460959235,
+      "accuracy": 42.857142857142854,
+      "flashes_per_character": 12.571428571428571,
+      "itr": 3.9865532658537597
+    },
+    {
+      "corpus_size_words": 150,
+      "actual_token_count": 150,
+      "sufficiency_gate_value": 0.5,
+      "subject_gate_weight_sample": 0.11094363094987658,
+      "accuracy": 42.857142857142854,
+      "flashes_per_character": 11.714285714285714,
+      "itr": 4.278252285306474
+    },
+    {
+      "corpus_size_words": 500,
+      "actual_token_count": 500,
+      "sufficiency_gate_value": 0.9999724643088853,
+      "subject_gate_weight_sample": 0.21209622004593393,
+      "accuracy": 42.857142857142854,
+      "flashes_per_character": 11.714285714285714,
+      "itr": 4.278252285306474
+    },
+    {
+      "corpus_size_words": 1000,
+      "actual_token_count": 1000,
+      "sufficiency_gate_value": 0.9999999999915765,
+      "subject_gate_weight_sample": 0.22417104602073862,
+      "accuracy": 42.857142857142854,
+      "flashes_per_character": 11.714285714285714,
+      "itr": 4.278252285306474
+    }
+  ]
+}

@@ -6,7 +6,7 @@ The main research question is:
 
 > Can a language model improve P300 spelling efficiency by guiding character selection when EEG evidence is uncertain, without overriding confident EEG decisions?
 
-The system answers this by preprocessing raw EDF recordings, training a memory-efficient P300 classifier, replaying character-level trials, and comparing EEG-only decoding against fixed, adaptive, and retrieval-augmented EEG+LLM fusion. The current RAG layer personalizes and domain-conditions the language prior with a local phrase bank while preserving the existing EEG classifier and Bayesian decoder.
+The system answers this by preprocessing raw EDF recordings, training a memory-efficient P300 classifier, replaying character-level trials, and comparing EEG-only decoding against fixed, adaptive, and retrieval-augmented EEG+LLM fusion. The reported RAG condition uses a leakage-safe global pooled phrase bank while preserving the EEG classifier and Bayesian decoder.
 
 ---
 
@@ -82,34 +82,20 @@ For adaptive files, the preprocessing stage also stores:
 The replay loop uses these fields to select the correct flash epochs for each character and sequence.
 
 
-### 1.6 RAG layer for personalized and task-aware priors
+### 1.6 Retrieval-augmented global language prior
 
-The implemented **retrieval-augmented generation (RAG) layer** sits between the typed context and the LLM prior. Instead of relying only on the pretrained `distilgpt2` distribution, the system retrieves relevant user-, task-, or domain-specific phrase-bank entries and uses prefix-compatible continuations to condition the next-character prior.
+The implemented **retrieval-augmented generation (RAG) layer** sits between the typed context and the LLM prior. Instead of relying only on the pretrained `distilgpt2` distribution, it retrieves prefix-compatible entries from a local global phrase bank and uses their continuations to condition the next-character prior.
 
-Possible retrieval sources include:
+The reported bank is built from training-split Study-D targets only. Retrieval is prefix-compatible and produces a grid-level next-character prior that is conservatively blended with the base LLM. This supports auditable, low-latency retrieval without a vector database or an oracle target vocabulary.
 
-- **User phrase memory:** common words, names, locations, commands, or phrases typed by the user.
-- **Task dictionaries:** vocabulary for clinical communication, home automation, email, classroom use, or study-specific prompts.
-- **Session history:** characters, words, and phrases already selected in the current spelling session.
-- **Conversation context:** previous turns or a known communication goal such as answering a question, selecting a menu item, or completing a form.
-- **Error-correction memory:** likely intended words after backspaces, corrections, or low-confidence selections.
-
-Expected outcomes are:
-
-- Higher top-k probability for contextually relevant characters and words.
-- Fewer flashes per character when the intended word or phrase is retrievable.
-- Better performance on proper nouns, abbreviations, domain terms, and personalized vocabulary that a general model may under-prioritize.
-- More interpretable language assistance because retrieved snippets can be logged and audited.
-- A cleaner path to personalization without retraining the EEG classifier.
-
-The core implementation challenge is calibration. Retrieval can make the language prior too confident, so the implemented RAG signal is interpolated conservatively with the base LLM prior, can be gated by retrieval confidence, and is evaluated as additional ablation conditions against EEG-only and LLM-only baselines.
+The predictor also supports subject-aware retrieval for future deployment. It is guarded by retrieval-confidence and data-sufficiency gates, so sparse personal banks defer to the global corpus rather than degrade decoding.
 
 ---
 
 ## 2. Repository layout
 
 ```text
-capstone_project/
+p300-llm-speller/
 ├── README.md
 ├── requirements.txt
 ├── setup_env.sh
@@ -119,14 +105,19 @@ capstone_project/
 ├── test_sgd.py
 │
 ├── data/
-│   ├── rag/                         # Small phrase-bank examples for RAG priors
+│   ├── rag/
+│   │   ├── phrase_bank_global.csv   # Train-split global retrieval bank
+│   │   ├── by_subject/              # Train-split subject banks
+│   │   └── synthetic_validation/    # Isolated gate-validation banks
 │   └── raw/                         # Raw dataset location; large files are not committed
 │
 ├── notebooks/                       # Notebook workspace placeholder
 ├── paper/                           # Report/paper workspace placeholder
 │
 ├── results/
-│   ├── threshold_sweep.png
+│   ├── tables/
+│   │   ├── personalization_ablation_studyd.json
+│   │   └── sufficiency_gate_pooled_sweep.json
 │   └── bigp3bci_studyd_e_findings/
 │       ├── character_trials.csv
 │       ├── file_summary.csv
@@ -135,7 +126,12 @@ capstone_project/
 │       └── stimulus_code_counts.csv
 │
 ├── scripts/
-│   └── analyze_bigp3bci_studyd_e.py
+│   ├── analyze_bigp3bci_studyd_e.py
+│   ├── build_phrase_bank_from_registry.py
+│   ├── run_personalization_ablations.py
+│   ├── build_synthetic_validation_bank.py
+│   ├── sweep_sufficiency_gate.py
+│   └── sweep_sufficiency_gate_pooled.py
 │
 └── src/
     ├── data/
@@ -417,20 +413,38 @@ A pretrained LLM may under-prioritize user-specific names, clinical phrases, com
 3. Finds phrase-bank entries containing tokens that start with the partial word.
 4. Converts the next character after the partial prefix into a grid index.
 5. Builds a retrieval-only probability vector from weighted matching phrases.
-6. Enables retrieval only when confidence passes `retrieval_confidence_threshold`.
-7. Interpolates retrieval and base LLM priors using `rag_weight`.
-8. Stores diagnostics including matched phrases, retrieval confidence, enabled/skipped state, and skip reason.
+6. Applies a confidence-aware interpolation weight and blends retrieval with the base LLM prior.
+7. Stores diagnostics including matches, confidence, effective global/subject weights, the data-sufficiency value, and the reason.
+8. When a subject is supplied, loads `data/rag/by_subject/phrase_bank_<subject>.csv`; subject retrieval falls back to character bigrams when a word match is unavailable.
+9. Gates personal evidence by both retrieval confidence and corpus sufficiency. The latter is a sigmoid over subject-bank token count (midpoint: 150 tokens), preventing a small bank from dominating because of one confident match.
 
 ### Current usage
 
-`run_pipeline.py` creates two RAG-enhanced predictors:
-
-- **Fixed RAG-LM:** `retrieval_confidence_threshold=0.0`, so compatible retrieval can always contribute.
-- **Gated RAG-LM:** `retrieval_confidence_threshold=0.60`, so retrieval contributes only when its next-character distribution is sufficiently confident.
+`run_pipeline.py` evaluates global RAG alongside EEG-only, fixed-LLM, and adaptive-LLM conditions. `scripts/run_personalization_ablations.py` separately evaluates global, subject-only, and gated subject/global retrieval by held-out subject. Subject-aware retrieval is not a primary Study-D result because the available subject corpora are too small.
 
 ---
 
-## 3.10 `src/evaluation/metrics.py` — metrics and ablation summaries
+## 3.10 `scripts/run_personalization_ablations.py` — subject-aware RAG diagnostic
+
+### What it does
+
+Runs a five-rung, held-out Study-D comparison for each subject:
+
+1. Classifier only.
+2. Classifier + plain LLM fusion.
+3. Classifier + global pooled RAG.
+4. Classifier + hard subject-only RAG.
+5. Classifier + gated subject/global RAG with within-session memory growth.
+
+It writes per-subject metrics and paired Wilcoxon tests with Holm–Bonferroni adjustment to `results/tables/personalization_ablation_studyd.json`.
+
+### Interpretation
+
+The subject-only and personalized rungs are diagnostic stress tests, not headline performance claims. Their purpose is to verify that the data-sufficiency gate limits the influence of sparse personal corpora and to document the failure mode of naive subject-only retrieval on Study D.
+
+---
+
+## 3.11 `src/evaluation/metrics.py` — metrics and ablation summaries
 
 ### What it does
 
@@ -455,7 +469,7 @@ Metrics include:
 
 ---
 
-## 3.11 `scripts/analyze_bigp3bci_studyd_e.py` — dataset analytics
+## 3.12 `scripts/analyze_bigp3bci_studyd_e.py` — dataset analytics
 
 ### What it does
 
@@ -547,7 +561,15 @@ data/processed/swlda_model.pkl
 
 This trains a probabilistic P300 classifier using file-by-file incremental learning.
 
-### Step 6 — Run the full evaluation
+### Step 6 — Build leakage-safe retrieval banks
+
+```bash
+python scripts/build_phrase_bank_from_registry.py
+```
+
+This deterministically splits sessions per subject, writes the global and per-subject training banks, and records the held-out session IDs. Run it after preprocessing whenever the ground-truth registry changes.
+
+### Step 7 — Run the full evaluation
 
 ```bash
 python run_pipeline.py
@@ -568,7 +590,34 @@ The script prints an ablation summary with:
 - ITR.
 - WPM approximation.
 
-### Step 7 — Plot threshold sweep if needed
+### Step 8 — Run the subject-aware diagnostic (optional)
+
+```bash
+python scripts/run_personalization_ablations.py
+```
+
+This takes longer than the main pipeline because it evaluates all five rungs for every held-out subject. It writes the per-subject results and corrected paired tests to `results/tables/personalization_ablation_studyd.json`.
+
+### Step 9 — Validate the sufficiency gate with isolated synthetic banks (optional)
+
+```bash
+# Requires a local public-domain filler text at
+# data/rag/synthetic_validation/filler_source.txt
+python scripts/build_synthetic_validation_bank.py \
+  --subject D_07 --sizes 18 50 150 500 1000
+python scripts/sweep_sufficiency_gate.py \
+  --subject D_07 --sizes 18 50 150 500 1000
+```
+
+Synthetic banks are tagged `synthetic_validation`, exclude the selected subject's held-out target words, and remain outside the real per-subject bank directory. They validate gate behavior only; do not combine them with the Study-D ablation results.
+
+For a pooled, raw-count summary after generating banks for each selected subject:
+
+```bash
+python scripts/sweep_sufficiency_gate_pooled.py
+```
+
+### Step 10 — Plot threshold sweep if needed
 
 ```bash
 python plot_threshold_sweep.py
@@ -620,9 +669,13 @@ The evaluator loads real FIF epochs when available and falls back to mock data o
 
 The `results/bigp3bci_studyd_e_findings/` CSV files provide auditable summaries of Study D/E file structure, grid layout, stimulus counts, inferred character trials, and quality flags.
 
-### 5.10 Implemented RAG-enhanced priors
+### 5.10 Implemented global and subject-aware RAG priors
 
-The project now includes `RAGPredictor`, a local phrase-bank retrieval layer that wraps the base LLM predictor, converts prefix-compatible phrase continuations into grid-level next-character probabilities, and supports both fixed and confidence-gated retrieval interpolation.
+The project now includes `RAGPredictor`, a local phrase-bank retrieval layer that wraps the base LLM predictor and converts prefix-compatible phrase continuations into grid-level next-character probabilities. Global and optional subject banks are blended with separate continuous confidence gates. Personal evidence also passes a token-count sufficiency gate, with character-bigram backoff when word retrieval finds no match.
+
+### 5.11 Added held-out personalization and gate-validation experiments
+
+The repository now includes a per-subject five-rung RAG ablation with paired, Holm–Bonferroni-corrected Wilcoxon comparisons. A separate synthetic-corpus sweep validates the data-sufficiency mechanism without entering the real Study-D phrase-bank or headline ablation results.
 
 ---
 
@@ -645,9 +698,32 @@ The decoding loop applies the selected LLM or RAG-LM prior as an initial log bia
 
 This design measures whether language context can reduce the number of flashes required while preserving or improving accuracy.
 
-### 6.1 Final results (held-out test split, real EEG + SWLDA)
+### 6.1 Main five-arm results (held-out test split, real EEG + SWLDA)
 
 The RAG phrase bank is built exclusively from an 80% train split of Study D sessions (`scripts/build_phrase_bank_from_registry.py`); evaluation runs only on the remaining 20% held-out sessions (`data/processed/test_sessions.json`), so no target-vocabulary leaks between the phrase bank and the reported numbers. `rag_weight`/`retrieval_confidence_threshold` were selected via a 15-point grid sweep (`scripts/sweep_rag_params.py`, results in `results/tables/rag_sweep.json`) on that same train split.
+
+**Reported RAG condition.** The primary RAG result uses the global pooled
+phrase bank (rung 2). This is the competitive, non-regressing condition for
+Study D; it is not a claim that the fixed Study-D corpus supports reliable
+subject-specific personalization.
+
+**Personalization safety mechanism.** `RAGPredictor` can automatically blend
+a subject corpus with the global corpus when a subject identity is available.
+Its subject contribution is governed by two independent continuous gates:
+retrieval confidence and data sufficiency (a sigmoid of the subject-bank token
+count). The latter prevents a small corpus from being trusted merely because a
+single retrieval match is confident. Subject-only and blended-personalization
+rungs are retained as diagnostic ablations, not as the headline Study-D RAG
+claim. In Study D, each subject has at most 18 distinct words even after
+pooling the available conditions, which is below the evidence needed to trust
+a personal corpus. Naive subject-only retrieval therefore regresses versus
+plain LM/global RAG; this failure motivates the sufficiency gate, which defers
+to the global corpus for this dataset.
+
+The synthetic sufficiency-gate sweep is a separately labelled
+mechanism-validation experiment. Its generated banks use
+`source="synthetic_validation"`, are stored outside `data/rag/by_subject/`,
+and are never included in the held-out Study-D results.
 
 | Condition | Accuracy (%) | Flashes/Char | ITR (bits/min) |
 |---|---|---|---|
@@ -659,7 +735,17 @@ The RAG phrase bank is built exclusively from an 80% train split of Study D sess
 
 Full table: `results/tables/ablation_results.csv`. Figures: `results/figures/ablation_comparison.png` (per-metric bars), `results/figures/accuracy_vs_itr.png` (tradeoff scatter).
 
-**Takeaway:** any LLM prior roughly triples ITR over EEG-only decoding (2.62 → ~7). RAG-conditioned fusion is the best arm on every metric — Fixed RAG-LM beats plain Fixed fusion by +0.85% accuracy and +0.19 ITR, using a leakage-safe, session-held-out phrase bank rather than an oracle one.
+**Takeaway:** any LLM prior roughly triples ITR over EEG-only decoding (2.62 → ~7). The reported global RAG condition is competitive with plain fixed fusion while using a leakage-safe, session-held-out pooled phrase bank rather than an oracle one. Per-subject retrieval is an architectural capability with an explicit data-sufficiency safeguard, not a performance claim for Study D's fixed-vocabulary corpus.
+
+### 6.2 Subject-aware RAG diagnostic
+
+`results/tables/personalization_ablation_studyd.json` records a separate five-rung analysis over 17 held-out subjects. It compares classifier-only, plain LLM, global RAG, hard subject-only RAG, and the gated subject/global configuration. The comparisons are paired at the subject level and use Holm–Bonferroni correction across the planned tests.
+
+The diagnostic confirms the intended limitation: hard subject-only retrieval is materially worse than global RAG on this sparse fixed-vocabulary corpus. The gated personalized rung likewise should not be read as a gain claim for Study D. It demonstrates the fallback architecture; global pooled RAG remains the supported retrieval condition for this dataset.
+
+### 6.3 Synthetic sufficiency-gate validation
+
+The synthetic sweep varies only the size of isolated, non-target-containing phrase banks while retaining real held-out EEG sessions. At the configured 150-token midpoint, the sufficiency gate is 0.5; it is near zero for 18/50-token banks and approaches one for 500/1000-token banks. Results are stored in `results/tables/sufficiency_gate_sweep.json` and `results/tables/sufficiency_gate_pooled_sweep.json` and are mechanism-validation outputs, not a Study-D personalization benchmark.
 
 ---
 
@@ -671,6 +757,8 @@ Full table: `results/tables/ablation_results.csv`. Figures: `results/figures/abl
 4. **The classifier must match the processed epoch format.** If old FIF files lack required metadata, they should be regenerated.
 5. **Adaptive fusion depends on the correct number of classes.** The entropy denominator must match the true grid size.
 6. **Timing in ITR is approximated from flashes.** The current evaluator estimates average time per character using flashes and a fixed timing approximation.
+7. **Personalized retrieval needs enough prior text.** Study D's per-subject banks are sparse; the global bank is the reported condition. The subject path is deliberately gated and should be re-evaluated with a richer deployment corpus.
+8. **Synthetic gate-validation banks are not training data.** Keep generated files in `data/rag/synthetic_validation/` and do not merge them into `data/rag/by_subject/`.
 
 ---
 
@@ -708,6 +796,10 @@ Check that:
 
 Ensure network access is available or pre-cache `distilgpt2` in the execution environment.
 
+### Subject-aware scripts cannot find a phrase bank or split
+
+Run `python scripts/build_phrase_bank_from_registry.py` after preprocessing. It creates `data/rag/phrase_bank_global.csv`, per-subject banks, and the held-out session manifests consumed by the diagnostic scripts.
+
 ---
 
 ## 9. Quick command reference
@@ -730,6 +822,16 @@ python src/models/classifier.py
 # Run ablation evaluation
 python run_pipeline.py
 
+# Rebuild leakage-safe global and per-subject phrase banks
+python scripts/build_phrase_bank_from_registry.py
+
+# Run per-subject personalization diagnostic
+python scripts/run_personalization_ablations.py
+
+# Run a one-subject synthetic sufficiency-gate check
+python scripts/build_synthetic_validation_bank.py --subject D_07 --sizes 18 50 150 500 1000
+python scripts/sweep_sufficiency_gate.py --subject D_07 --sizes 18 50 150 500 1000
+
 # Generate threshold plot
 python plot_threshold_sweep.py
 ```
@@ -739,199 +841,29 @@ python plot_threshold_sweep.py
 
 ## 10. RAG layer implementation
 
-The retrieval-augmented generation layer adds explicit phrase memory before computing the language prior. The base LLM predictor is still used, but `RAGPredictor` retrieves prefix-compatible phrase-bank entries, converts their next-character continuations into a grid-level retrieval prior, and interpolates that retrieval prior with the base LLM prior.
-
-### 10.1 Where RAG fits in the current pipeline
-
-The current path is:
+The implemented RAG path is local, auditable, and uses no external vector database:
 
 ```text
-context_so_far -> LLMPredictor -> grid-level LM prior -> Bayesian fusion -> decoder
+context -> global phrase-bank prefix retrieval -> grid-level retrieval prior
+        -> confidence-aware blend with LLM prior -> Bayesian EEG fusion -> decoder
 ```
 
-The implemented RAG path is:
+`scripts/build_phrase_bank_from_registry.py` creates the leakage-safe global
+bank from training sessions and writes the held-out evaluation split. Each bank
+row contains `text`, `source`, `weight`, and `category`.
 
-```text
-context_so_far
-  -> retrieve relevant snippets / phrases / candidates
-  -> build retrieval-conditioned prompt or candidate prior
-  -> RAGPredictor wrapping LLMPredictor
-  -> grid-level RAG-LM prior
-  -> Bayesian fusion with EEG evidence
-  -> decoder
-```
+`src/models/rag_predictor.py` normalizes phrase text, retrieves compatible
+continuations, maps them to actual grid characters, and records diagnostics.
+The retrieval influence is continuous and bounded so the base LLM retains
+influence. RAG never replaces EEG evidence, the SWLDA classifier, or the
+decoder.
 
-RAG does not replace the EEG classifier or decoder. It only improves the prior that is already being fused with EEG evidence.
-
-### 10.2 Implemented approach and future possibilities
-
-#### Implemented option — Phrase-bank reranking
-
-Maintain a small phrase bank of likely target words and phrases. At each character, filter entries by the already typed prefix and assign prior mass to the next character of matching entries.
-
-Best for:
-
-- Controlled communication boards.
-- Repeated phrases.
-- Names, commands, and clinical vocabulary.
-- Fast implementation with minimal dependencies.
-
-Expected outcome:
-
-- Strong improvement when the target phrase exists in the bank.
-- Low latency and high interpretability.
-- Limited generalization outside the curated vocabulary.
-
-#### Option B — Vector retrieval over personal/domain documents
-
-Index personal notes, task prompts, domain vocabulary, or conversation history with embeddings. Retrieve the most relevant snippets from the current context, then condition the LLM prior on those snippets.
-
-Best for:
-
-- Personalized vocabulary.
-- Domain-specific spelling.
-- Longer context than the typed prefix alone.
-- Experiments comparing generic vs personalized priors.
-
-Expected outcome:
-
-- Better prediction of proper nouns and specialized words.
-- More robust priors for task-specific vocabulary.
-- Additional latency from embedding search, which must be measured.
-
-#### Option C — Hybrid lexical + neural RAG prior
-
-Combine a symbolic prefix trie with embedding retrieval. The trie gives exact prefix-compatible next-character candidates, while neural retrieval supplies semantic context.
-
-Best for:
-
-- Preventing semantically relevant but prefix-incompatible suggestions.
-- Keeping character priors aligned with the partially typed word.
-- High-confidence suggestions that still respect spelling constraints.
-
-Expected outcome:
-
-- Better calibration than vector retrieval alone.
-- Stronger next-character priors for partially typed words.
-- More engineering complexity than either method by itself.
-
-#### Implemented option — Adaptive RAG gating
-
-Use retrieval only when it is likely to help. The implemented `RAGPredictor` exposes `retrieval_confidence_threshold`; fixed RAG can set this to `0.0`, while gated RAG can require stronger retrieval confidence before interpolation.
-
-Best for:
-
-- Preventing retrieval from overpowering EEG evidence.
-- Improving safety in high-stakes assistive communication.
-- Fair comparison against the existing adaptive fusion engine.
-
-Expected outcome:
-
-- Better balance between speed and accuracy.
-- Reduced risk of confidently wrong language-model suggestions.
-- A clear ablation path: no RAG, always-on RAG, and gated RAG.
-
-### 10.3 Implemented module
-
-The first implementation is a **phrase-bank and prefix-compatible RAG layer**. It is easy to evaluate, works locally, and does not require a new external vector database.
-
-Implemented module:
-
-```text
-src/models/rag_predictor.py
-```
-
-Responsibilities:
-
-1. Load a phrase bank from JSON or CSV.
-2. Normalize phrases using the same character conventions as the grid.
-3. Given `context_so_far`, extract the current partial word.
-4. Find phrase-bank entries compatible with the partial prefix.
-5. Convert matching phrase continuations into a next-character probability vector.
-6. Interpolate the retrieval prior with the existing `LLMPredictor` prior when confidence is sufficient.
-7. Store diagnostics such as matched phrases, retrieval confidence, whether RAG was enabled, and why it was enabled or skipped.
-
-Current configuration used by `run_pipeline.py`:
-
-```python
-fixed_rag_weight = 0.25
-fixed_rag_confidence_threshold = 0.0
-gated_rag_weight = 0.25
-gated_rag_confidence_threshold = 0.60
-max_retrieved_phrases = 20
-```
-
-Retrieval interpolation inside the predictor:
-
-```text
-combined_prior = normalize((1 - rag_weight) * llm_prior + rag_weight * retrieval_prior)
-```
-
-The combined prior is passed into the existing Bayesian fusion path without changing the EEG classifier.
-
-### 10.4 Data artifacts to add
-
-The implementation adds a small, auditable phrase-bank asset:
-
-```text
-data/rag/phrase_bank.csv
-```
-
-Recommended fields:
-
-- `text`: phrase, word, command, or snippet.
-- `source`: user, task, domain, session, or synthetic.
-- `weight`: optional prior importance.
-- `category`: optional label such as medical, navigation, spelling task, or personal.
-
-These files should be small examples only. Private user memories should remain uncommitted or encrypted.
-
-### 10.5 Evaluation plan for RAG
-
-RAG is added as fourth and fifth ablation conditions:
-
-| Condition | Purpose |
-|---|---|
-| EEG only | Lower-bound baseline |
-| EEG + fixed LLM | Current constant-weight language prior |
-| EEG + adaptive LLM | Current uncertainty-aware language prior |
-| EEG + fixed RAG-LM | Test whether always-on retrieval interpolation improves priors |
-| EEG + gated RAG-LM | Test whether confidence gating prevents over-biasing |
-
-Metrics should include:
-
-- Accuracy.
-- Flashes per character.
-- ITR.
-- WPM.
-- Top-1 and top-k prior accuracy before EEG evidence.
-- Retrieval hit rate.
-- Average retrieval latency.
-- Percentage of trials where RAG was enabled.
-- Error rate when RAG confidence was high.
-
-### 10.6 Risks and mitigations
-
-| Risk | Why it matters | Mitigation |
-|---|---|---|
-| Overconfident retrieval | Can bias decoder toward wrong words | Entropy-aware gating and conservative RAG weight |
-| Prefix mismatch | Retrieved snippets may not match the typed partial word | Use prefix filtering before assigning character mass |
-| Latency | BCI interaction is time-sensitive | Cache embeddings and keep phrase-bank retrieval local |
-| Privacy | User memory may contain sensitive text | Keep personal memory out of git and document storage policy |
-| Evaluation leakage | Phrase bank may include test targets unrealistically | Separate generic, personalized, and oracle phrase-bank experiments |
-| Grid mismatch | Retrieved characters may not exist on the Study D grid | Map retrieval outputs through the real `char_list` only |
-
-### 10.7 Expected research outcomes
-
-If implemented and calibrated well, the RAG layer is expected to:
-
-1. Improve spelling speed for personalized and domain-specific phrases.
-2. Reduce flashes per character when retrieved candidates match the intended text.
-3. Improve top-k prior accuracy before EEG evidence is accumulated.
-4. Preserve EEG authority by allowing the decoder to override weak or incorrect retrieval suggestions.
-5. Provide explainable logs showing which retrieved phrases influenced the prior.
-
-The main success criterion should not be language-model accuracy alone. The RAG layer should be considered successful only if it improves end-to-end BCI metrics, especially flashes per character and ITR, without reducing character accuracy.
+Subject-aware retrieval is intentionally not a reported Study-D outcome. If a
+future deployment supplies a sufficiently large subject corpus, the same
+predictor can load it, use character-bigram backoff for missing word matches,
+and apply confidence and data-sufficiency gates before adding any personal
+signal. With Study D's limited per-subject vocabulary, the gate defers to the
+global corpus.
 
 ---
 
@@ -948,17 +880,20 @@ Implemented:
 - Character-level decoding.
 - LLM character-prior prediction.
 - RAG-enhanced character-prior prediction.
+- Subject-aware retrieval with confidence, data-sufficiency, and character-bigram backoff safeguards.
 - Bayesian fusion.
 - Five-arm ablation evaluation.
 - Dataset analytics exports.
 - Train/test session split with leakage-safe RAG phrase bank (`scripts/build_phrase_bank_from_registry.py`).
 - RAG hyperparameter sweep over `rag_weight` and `retrieval_confidence_threshold` (`scripts/sweep_rag_params.py`).
 - Final five-arm results measured on real EEG + SWLDA over the held-out test split (§6.1).
+- Per-subject five-rung diagnostic with corrected paired comparisons (`scripts/run_personalization_ablations.py`).
+- Isolated synthetic sufficiency-gate validation and pooled raw-count summary.
 
 Planned next work:
 
-- Statistical significance testing across seeds/sessions (current numbers are single-run point estimates).
 - Aggregate RAG diagnostics (retrieval enabled-rate, match reasons) in the evaluation summary.
 - Populate `results/figures/` and `paper/` with the full writeup for arXiv/workshop submission.
-- Reintroduce retrieval as an isolated third ablation arm (LLM-only vs LLM+retrieval, distinct from combined RAG-LM).
-- Expand the RAG phrase bank with own-collected data once available.
+- Replicate the personalization diagnostic across seeds and richer subject corpora.
+- Evaluate retrieval as an isolated component (LM-only versus LM + retrieval) beyond the combined fusion arms.
+- Expand the phrase bank with consented, deployment-representative data once available.

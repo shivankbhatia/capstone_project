@@ -59,6 +59,8 @@ class RAGDiagnostics:
     subject_source: Literal["word_match", "char_backoff", "none"] = "none"
     subject_gate_weight: float = 0.0
     global_gate_weight: float = 0.0
+    sufficiency_gate_value: float = 0.0
+    subject_token_count: int = 0
 
 
 class RAGPredictor:
@@ -97,6 +99,8 @@ class RAGPredictor:
         personalization_bonus: float = 1.5,
         subject_only: bool = False,
         subject_confidence_threshold: float = 0.20,
+        sufficiency_midpoint_tokens: float = 150.0,
+        sufficiency_sharpness: float = 0.03,
     ):
         if not 0.0 <= rag_weight <= 1.0:
             raise ValueError("rag_weight must be between 0 and 1")
@@ -112,6 +116,10 @@ class RAGPredictor:
             raise ValueError("personalization_bonus must be non-negative")
         if not 0.0 <= subject_confidence_threshold <= 1.0:
             raise ValueError("subject_confidence_threshold must be between 0 and 1")
+        if sufficiency_midpoint_tokens <= 0:
+            raise ValueError("sufficiency_midpoint_tokens must be positive")
+        if sufficiency_sharpness <= 0:
+            raise ValueError("sufficiency_sharpness must be positive")
 
         self.base_predictor = base_predictor
         self.char_list = list(base_predictor.char_list)
@@ -124,6 +132,8 @@ class RAGPredictor:
         self.personalization_bonus = personalization_bonus
         self.subject_only = subject_only
         self.subject_confidence_threshold = subject_confidence_threshold
+        self.sufficiency_midpoint_tokens = sufficiency_midpoint_tokens
+        self.sufficiency_sharpness = sufficiency_sharpness
         self.global_phrases = self._load_phrase_bank(self.phrase_bank_path)
         self.subject_phrase_bank_path = self._subject_phrase_bank_path()
         self.subject_phrases = (
@@ -135,6 +145,11 @@ class RAGPredictor:
         # single phrase list. Retrieval itself uses the two banks separately.
         self.phrases = self.global_phrases
         self.last_diagnostics = RAGDiagnostics("", [], 0.0, False, "not_run")
+        # Total word count backing the subject bank -- the raw signal the
+        # data-sufficiency gate trusts.
+        self.subject_token_count = sum(
+            len(phrase.text.split()) for phrase in self.subject_phrases
+        )
 
     def _subject_phrase_bank_path(self) -> Optional[Path]:
         if not self.subject_id:
@@ -172,6 +187,7 @@ class RAGPredictor:
         if phrase is None or phrase.weight <= 0:
             return False
         self.subject_phrases.append(phrase)
+        self.subject_token_count += len(phrase.text.split())
         return True
 
     @staticmethod
@@ -371,6 +387,20 @@ class RAGPredictor:
     def _soft_gate(confidence, threshold, sharpness=10.0):
         return 1.0 / (1.0 + math.exp(-sharpness * (confidence - threshold)))
 
+    def _data_sufficiency_gate(self) -> float:
+        """How much to trust the subject bank based on its corpus size alone.
+
+        Independent of any single query's match confidence -- a subject
+        bank of 15 words stays near-zero here regardless of how confident
+        an individual retrieval looks, which is what prevents the rung-3
+        regression (sparse-bank noise masquerading as high confidence).
+        """
+        return self._soft_gate(
+            float(self.subject_token_count),
+            self.sufficiency_midpoint_tokens,
+            self.sufficiency_sharpness,
+        )
+
     def _prior_from_matches(self, matches):
         grid_probs = np.zeros(len(self.char_list), dtype=float)
 
@@ -454,9 +484,11 @@ class RAGPredictor:
             self._soft_gate(subject_confidence, self.subject_confidence_threshold, 8.0)
             if subject_source != "none" else 0.0
         )
+        sufficiency_gate = self._data_sufficiency_gate()
         global_weight = self.rag_weight * global_gate
         subject_gate_weight = (
-            self.rag_weight * self.personalization_bonus * self.subject_weight * subject_gate
+            self.rag_weight * self.personalization_bonus * self.subject_weight
+            * subject_gate * sufficiency_gate
         )
         total_weight = global_weight + subject_gate_weight
         if total_weight > 0.9:
@@ -485,6 +517,8 @@ class RAGPredictor:
             subject_source=subject_source,
             subject_gate_weight=subject_gate_weight,
             global_gate_weight=global_weight,
+            sufficiency_gate_value=sufficiency_gate,
+            subject_token_count=self.subject_token_count,
         )
         return weighted_retrieval, diagnostics
 
@@ -523,5 +557,7 @@ class RAGPredictor:
         )
 
         self.last_diagnostics = diagnostics
+
+        return prior
 
         return prior
