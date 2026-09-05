@@ -194,7 +194,8 @@ def mock_eeg_classifier_stream(target_char, char_list):
 # EVALUATION LOOP
 # -----------------------------------------------------------------------------
 def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
-                    confidence_threshold=0.85, max_sequences=15, min_flashes=2, clf=None):
+                    confidence_threshold=0.85, max_sequences=15, min_flashes=2,
+                    clf=None, session_ids=None, enable_session_growth=False):
     """Runs the dataset through the spelling simulation."""
 
     class Metrics:
@@ -214,6 +215,12 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
             test_sessions = set(json.load(f))
         trials = [t for t in trials if t.get('session_id') in test_sessions]
         print(f"Restricted eval to {len(test_sessions)} held-out test sessions "
+              f"({len(trials)} char trials).")
+
+    if session_ids is not None:
+        session_ids = set(session_ids)
+        trials = [t for t in trials if t.get('session_id') in session_ids]
+        print(f"Restricted eval to {len(session_ids)} requested sessions "
               f"({len(trials)} char trials).")
 
     char_list = llm.char_list
@@ -274,6 +281,15 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
         metrics.total_flashes_used += flashes_used
         if predicted_char.upper() == target.upper():
             metrics.correct_characters += 1
+
+        # In a real session the completed text is available as feedback.  Do
+        # not persist it: the RAG predictor retains it only for this process.
+        if (
+            enable_session_growth
+            and hasattr(llm, "add_observed_phrase")
+            and char_idx + 1 == len(trial.get("target_text", ""))
+        ):
+            llm.add_observed_phrase(trial["target_text"])
 
     if metrics.total_characters > 0:
         metrics.accuracy = (metrics.correct_characters / metrics.total_characters) * 100

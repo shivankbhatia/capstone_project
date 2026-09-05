@@ -20,6 +20,19 @@ class SignificanceResult:
     mean_difference: float
     median_difference: float
     significant: bool
+    adjusted_p_value: float = 1.0
+    holm_significant: bool = False
+
+
+PERSONALIZATION_RUNGS = {
+    "rung_0_classifier": "Classifier only",
+    "rung_1_lm": "Classifier + plain LM fusion",
+    "rung_2_global_rag": "Classifier + global pooled RAG",
+    "rung_3_subject_only_rag": "Classifier + hard subject-only RAG",
+    "rung_4_personalized_rag": (
+        "Classifier + ramped subject/global RAG with session growth"
+    ),
+}
 
 
 def _paired_wilcoxon(
@@ -119,16 +132,18 @@ class AblationTracker:
             "itr": float(itr),
         }
 
-    def get_complete_subjects(self) -> List[str]:
+    def get_complete_subjects(
+        self,
+        required_methods=None,
+    ) -> List[str]:
         """
         Return subjects for which all three experimental conditions exist.
         """
 
-        required_methods = {
-            "baseline",
-            "fixed",
-            "adaptive",
-        }
+        if required_methods is None:
+            required_methods = {"baseline", "fixed", "adaptive"}
+        else:
+            required_methods = set(required_methods)
 
         complete_subjects = []
 
@@ -141,16 +156,18 @@ class AblationTracker:
     def get_metric_arrays(
         self,
         metric: str,
+        methods=None,
     ) -> Dict[str, np.ndarray]:
         """
         Return paired subject-level arrays.
         """
 
-        subjects = self.get_complete_subjects()
+        methods = list(methods or ["baseline", "fixed", "adaptive"])
+        subjects = self.get_complete_subjects(methods)
 
         if not subjects:
             raise ValueError(
-                "No subjects have complete Baseline/Fixed/Adaptive results."
+                f"No subjects have complete results for {methods}."
             )
 
         return {
@@ -161,8 +178,59 @@ class AblationTracker:
                 ],
                 dtype=float,
             )
-            for method in ["baseline", "fixed", "adaptive"]
+            for method in methods
         }
+
+    @staticmethod
+    def _apply_holm_bonferroni(
+        results: List[SignificanceResult],
+        alpha: float,
+    ) -> List[SignificanceResult]:
+        """Apply Holm's step-down correction across one result family."""
+        ordered = sorted(enumerate(results), key=lambda item: item[1].p_value)
+        running_adjusted = 0.0
+        reject = True
+        total = len(results)
+        for rank, (index, result) in enumerate(ordered):
+            adjusted = min(1.0, (total - rank) * result.p_value)
+            running_adjusted = max(running_adjusted, adjusted)
+            if result.p_value > alpha / (total - rank):
+                reject = False
+            result.adjusted_p_value = running_adjusted
+            result.holm_significant = reject
+            result.significant = reject
+        return results
+
+    def run_personalization_ladder_tests(
+        self,
+        alpha: float = 0.05,
+    ) -> List[SignificanceResult]:
+        """Test every rung pair per metric with one Holm-corrected family.
+
+        Results remain paired at the subject level.  The returned collection
+        includes the planned 2-vs-3 and 3-vs-4 comparisons as well as all
+        other rung pairs, so correction covers the full comparison family.
+        """
+        methods = list(PERSONALIZATION_RUNGS)
+        metrics = ["accuracy", "flashes_per_character", "itr"]
+        results = []
+        for metric in metrics:
+            arrays = self.get_metric_arrays(metric, methods=methods)
+            for baseline_index, baseline_method in enumerate(methods[:-1]):
+                for comparison_method in methods[baseline_index + 1:]:
+                    results.append(
+                        _paired_wilcoxon(
+                            baseline=arrays[baseline_method],
+                            comparison=arrays[comparison_method],
+                            comparison_name=(
+                                f"{comparison_method} "
+                                f"({PERSONALIZATION_RUNGS[comparison_method]})"
+                            ),
+                            metric_name=metric,
+                            alpha=alpha,
+                        )
+                    )
+        return self._apply_holm_bonferroni(results, alpha)
 
     def run_significance_tests(
         self,

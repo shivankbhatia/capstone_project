@@ -51,6 +51,7 @@ def yield_character_trials(registry_path="data/processed/ground_truth_registry.j
                     yield {
                         'target_char': char,
                         'context_so_far': target_word[:i],
+                        'target_text': target_word,
                         'eeg_data_path': file_path,
                         'session_id': session_id
                     }

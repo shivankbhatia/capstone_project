@@ -52,6 +52,8 @@ class RAGDiagnostics:
     normalized_context: str = ""
     matched_context: str = ""
     top_margin: float = 0.0
+    subject_weight: float = 0.0
+    personalization_active: bool = False
 
 
 class RAGPredictor:
@@ -85,6 +87,10 @@ class RAGPredictor:
         rag_weight=0.25,
         retrieval_confidence_threshold=0.60,
         max_retrieved_phrases=20,
+        subject_id: Optional[str] = None,
+        min_subject_phrases: int = 10,
+        personalization_bonus: float = 1.5,
+        subject_only: bool = False,
     ):
         if not 0.0 <= rag_weight <= 1.0:
             raise ValueError("rag_weight must be between 0 and 1")
@@ -94,6 +100,10 @@ class RAGPredictor:
             )
         if max_retrieved_phrases <= 0:
             raise ValueError("max_retrieved_phrases must be positive")
+        if min_subject_phrases <= 0:
+            raise ValueError("min_subject_phrases must be positive")
+        if personalization_bonus < 0:
+            raise ValueError("personalization_bonus must be non-negative")
 
         self.base_predictor = base_predictor
         self.char_list = list(base_predictor.char_list)
@@ -101,8 +111,59 @@ class RAGPredictor:
         self.rag_weight = rag_weight
         self.retrieval_confidence_threshold = retrieval_confidence_threshold
         self.max_retrieved_phrases = max_retrieved_phrases
-        self.phrases = self._load_phrase_bank(self.phrase_bank_path)
+        self.subject_id = subject_id
+        self.min_subject_phrases = min_subject_phrases
+        self.personalization_bonus = personalization_bonus
+        self.subject_only = subject_only
+        self.global_phrases = self._load_phrase_bank(self.phrase_bank_path)
+        self.subject_phrase_bank_path = self._subject_phrase_bank_path()
+        self.subject_phrases = (
+            self._load_phrase_bank(self.subject_phrase_bank_path)
+            if self.subject_phrase_bank_path is not None
+            else []
+        )
+        # Backwards-compatible alias for callers which inspect the original
+        # single phrase list. Retrieval itself uses the two banks separately.
+        self.phrases = self.global_phrases
         self.last_diagnostics = RAGDiagnostics("", [], 0.0, False, "not_run")
+
+    def _subject_phrase_bank_path(self) -> Optional[Path]:
+        if not self.subject_id:
+            return None
+        return (
+            self.phrase_bank_path.parent
+            / "by_subject"
+            / f"phrase_bank_{self.subject_id}.csv"
+        )
+
+    @property
+    def subject_weight(self) -> float:
+        """Continuous offline-plus-online personalization strength."""
+        if not self.subject_id:
+            return 0.0
+        return min(1.0, len(self.subject_phrases) / self.min_subject_phrases)
+
+    def add_observed_phrase(self, text: str) -> bool:
+        """Add a completed phrase to this predictor's in-memory subject bank.
+
+        The method deliberately does not write to disk: evaluation callers can
+        use it for within-session adaptation without leaking held-out targets
+        into a future evaluation session.
+        """
+        if not self.subject_id:
+            return False
+        phrase = self._coerce_entry(
+            {
+                "text": text,
+                "source": "observed_subject_session",
+                "weight": 1.0,
+                "category": "observed",
+            }
+        )
+        if phrase is None or phrase.weight <= 0:
+            return False
+        self.subject_phrases.append(phrase)
+        return True
 
     @staticmethod
     def _normalize_text(text: str) -> str:
@@ -214,53 +275,68 @@ class RAGPredictor:
 
         matches: List[RetrievalMatch] = []
 
-        for phrase in self.phrases:
-            best_match: Optional[RetrievalMatch] = None
+        phrase_banks = []
+        if not self.subject_only:
+            phrase_banks.append((self.global_phrases, 1.0))
+        if self.subject_id:
+            phrase_banks.append(
+                (
+                    self.subject_phrases,
+                    self.subject_weight * self.personalization_bonus,
+                )
+            )
 
-            for suffix in suffixes:
-                for start in self._phrase_match_starts(
-                    phrase.text,
-                    suffix,
-                ):
-                    end = start + len(suffix)
+        for phrases, bank_multiplier in phrase_banks:
+            if bank_multiplier <= 0:
+                continue
+            for phrase in phrases:
+                best_match: Optional[RetrievalMatch] = None
 
-                    if end >= len(phrase.text):
-                        continue
-
-                    next_char = phrase.text[end]
-
-                    if self._char_to_grid_index(next_char) is None:
-                        continue
-
-                    prefix_match = (
-                        start == 0
-                        and suffix == normalized_context
-                    )
-
-                    context_bonus = 2.0 if prefix_match else 1.0
-
-                    score = (
-                        phrase.weight
-                        * (1.0 + len(suffix))
-                        * context_bonus
-                    )
-
-                    candidate = RetrievalMatch(
-                        phrase=phrase,
-                        matched_context=suffix,
-                        next_char=next_char,
-                        score=score,
-                        phrase_prefix_match=prefix_match,
-                    )
-
-                    if (
-                        best_match is None
-                        or candidate.score > best_match.score
+                for suffix in suffixes:
+                    for start in self._phrase_match_starts(
+                        phrase.text,
+                        suffix,
                     ):
-                        best_match = candidate
+                        end = start + len(suffix)
 
-            if best_match is not None:
-                matches.append(best_match)
+                        if end >= len(phrase.text):
+                            continue
+
+                        next_char = phrase.text[end]
+
+                        if self._char_to_grid_index(next_char) is None:
+                            continue
+
+                        prefix_match = (
+                            start == 0
+                            and suffix == normalized_context
+                        )
+
+                        context_bonus = 2.0 if prefix_match else 1.0
+
+                        score = (
+                            phrase.weight
+                            * (1.0 + len(suffix))
+                            * context_bonus
+                            * bank_multiplier
+                        )
+
+                        candidate = RetrievalMatch(
+                            phrase=phrase,
+                            matched_context=suffix,
+                            next_char=next_char,
+                            score=score,
+                            phrase_prefix_match=prefix_match,
+                        )
+
+                        if (
+                            best_match is None
+                            or candidate.score > best_match.score
+                        ):
+                            best_match = candidate
+
+                if best_match is not None:
+                    matches.append(best_match)
 
         matches.sort(
             key=lambda match: (
@@ -372,6 +448,18 @@ class RAGPredictor:
             normalized_context=normalized_context,
             matched_context=best_context,
             top_margin=top_margin,
+            subject_weight=self.subject_weight,
+            personalization_active=(
+                bool(self.subject_id)
+                and self.subject_weight > 0
+                and any(
+                    match.phrase.source in {
+                        "studyd_train_subject",
+                        "observed_subject_session",
+                    }
+                    for match in matched
+                )
+            ),
         )
 
         return grid_probs, diagnostics
