@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Neural Type — Adaptive P300 Speller</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .speed-dial{border-top:1px solid #edf0ec;border-bottom:1px solid #edf0ec;padding:9px 2px;margin:0 0 11px}.speed-dial-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}.speed-dial-label span:last-child{font:9px var(--mono);color:#718078}.speed-dial-options{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.speed-option{border:1px solid #b9dfbf;background:#f3fff4;color:#236442;border-radius:6px;min-height:31px;font:600 10px var(--mono);transition:background .18s,color .18s,transform .18s,box-shadow .18s}.speed-option.flashing{color:#fff;background:var(--dark);border-color:var(--dark);transform:translateY(-1px);box-shadow:0 5px 12px rgba(21,39,30,.2)}.speed-option.detected{background:#fff4d6;border-color:#e5b84d;box-shadow:0 0 0 2px rgba(237,190,85,.2)}
+    </style>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Neural Type home"><span class="brand-mark">N</span><span>NEURAL TYPE</span></a>
+        <div class="study-title"><span class="live-dot"></span>Adaptive P300 BCI <span>/</span> AAC communication</div>
+        <div class="top-actions">
+          <span class="connection"><i></i> EEG stream ready</span>
+          <button id="resetButton" class="icon-button" title="Reset session">↻</button>
+        </div>
+      </header>
+
+      <section class="command-bar" aria-label="Simulation controls">
+        <div class="scenario-select"><span class="eyebrow">DEMO SCENARIO</span><strong>AAC Speller</strong><span class="chevron">⌄</span></div>
+        <div class="control-divider"></div>
+        <div class="target-control"><span class="eyebrow">INTENDED MESSAGE</span><span id="targetPreview">I would like water, please.</span></div>
+        <div class="control-divider"></div>
+        <label class="speed-control"><span class="eyebrow">SIMULATION</span><select id="speedSelect"><option value="1">Normal</option><option value="1.75">Fast</option><option value="0.55">Slow</option></select></label>
+        <button id="startButton" class="start-button"><span class="play-icon">▶</span> Start simulation</button>
+      </section>
+
+      <section class="experience-grid">
+        <aside class="intent-panel side-panel">
+          <div class="panel-heading"><span class="section-number">01</span><div><span class="eyebrow">USER INTENT</span><h2>Message to communicate</h2></div></div>
+          <div class="intent-card">
+            <div class="intent-orb"><span></span></div>
+            <p id="targetText">I would like water, please.</p>
+            <div class="intent-meta"><span>27 characters</span><span>•</span><span>AAC phrase bank</span></div>
+          </div>
+          <div class="progress-wrap"><div class="progress-label"><span>Selection progress</span><span id="progressText">0 / 28</span></div><div class="progress-track"><span id="progressBar"></span></div></div>
+          <div class="baseline-card"><span class="eyebrow">ADAPTIVE BENEFIT</span><strong id="flashSaving">—</strong><p>estimated flashes avoided versus uniform scanning</p></div>
+          <p class="quiet-note">The target is known only to this simulation harness. The decoder receives EEG evidence and language context.</p>
+        </aside>
+
+        <section class="center-stage">
+          <div class="stage-heading"><div><span class="eyebrow">02 / ACTIVE SELECTION</span><h1>Adaptive P300 keyboard</h1></div><div class="phase-badge" id="phaseBadge"><span></span> Awaiting start</div></div>
+          <div class="keyboard-card">
+            <div class="keyboard-status"><div><span class="status-label">CURRENT STIMULUS</span><strong id="currentStimulus">—</strong></div><div><span class="status-label">TARGET EVIDENCE</span><strong id="evidenceScore">0.00</strong></div><div><span class="status-label">FLASHES</span><strong id="flashCount">0</strong></div></div>
+            <div class="speed-dial"><div class="speed-dial-label"><span class="eyebrow">LLM SPEED DIAL</span><span id="speedDialStatus">Predicted words are probed before the full grid</span></div><div id="speedDialOptions" class="speed-dial-options"></div></div>
+            <div id="keyboard" class="keyboard" aria-label="P300 character keyboard"></div>
+            <div class="keyboard-footer"><span><i class="legend-dot priority"></i> LLM-prioritized</span><span><i class="legend-dot detected"></i> EEG evidence</span><span class="scan-copy" id="scanCopy">Ready to begin</span></div>
+          </div>
+          <div class="signal-card">
+            <div class="signal-header"><div><span class="eyebrow">LIVE EEG / P300 RESPONSE</span><h2>Signal evidence</h2></div><div class="signal-stat"><span>μV</span><strong id="signalValue">+0.0</strong></div></div>
+            <div class="wave-wrap"><canvas id="waveCanvas" aria-label="Animated simulated EEG waveform"></canvas><div class="wave-marker" id="p300Marker"><span>P300 peak</span></div></div>
+            <div class="signal-axis"><span>0 ms</span><span>300 ms</span><span>600 ms</span><span>900 ms</span></div>
+          </div>
+        </section>
+
+        <aside class="output-panel side-panel">
+          <div class="panel-heading"><span class="section-number">03</span><div><span class="eyebrow">DECODER OUTPUT</span><h2>Communicated message</h2></div></div>
+          <div class="output-card"><p id="decodedText" class="decoded-text"><span class="cursor"></span></p><div class="output-footer"><span id="decodeState">Waiting for EEG evidence</span><span id="confidenceBadge" class="confidence-badge">—</span></div></div>
+          <div class="last-selection"><span class="eyebrow">LAST CONFIRMED</span><div><span id="lastChar" class="last-char">—</span><div><strong id="lastLabel">No selection yet</strong><small id="lastDetail">Confidence will appear here.</small></div></div></div>
+          <div class="event-feed"><div class="feed-title"><span class="eyebrow">ACTIVITY</span><span id="eventCount">LIVE</span></div><div id="eventList" class="event-list" aria-live="polite"></div></div>
+        </aside>
+      </section>
+
+      <section class="influence-panel">
+        <div class="influence-intro"><span class="section-number">04</span><div><span class="eyebrow">LANGUAGE-GUIDED ADAPTATION</span><h2>LLM influence, visible</h2><p>The language prior focuses attention; Bayesian fusion waits for EEG evidence to decide.</p></div></div>
+        <div class="context-block"><span class="eyebrow">DECODED CONTEXT</span><p id="contextText">No decoded context yet</p><small id="contextExplanation">A uniform prior will be used until text is selected.</small></div>
+        <div class="prediction-block"><div class="prediction-header"><span class="eyebrow">NEXT-CHARACTER PRIOR</span><span id="priorConfidence">—</span></div><div id="predictionChips" class="prediction-chips"></div></div>
+        <div class="adaptation-block"><span class="eyebrow">FLASH ADAPTATION</span><div class="adaptation-value"><strong id="priorityTarget">—</strong><span id="priorityDescription">Waiting to prioritize</span></div><div class="adaptation-bars"><span id="barOne"></span><span id="barTwo"></span><span id="barThree"></span><span id="barFour"></span></div></div>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
