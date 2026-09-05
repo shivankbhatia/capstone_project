@@ -150,6 +150,49 @@ class ReplayService:
             },
         }
 
+    def _keys_for_stimulus(self, stimulus_code: int) -> list[str]:
+        """Return the keyboard keys illuminated by one RC stimulus code."""
+        if 1 <= stimulus_code <= self.n_rows:
+            return [str(key) for key in self.matrix[stimulus_code - 1, :]]
+        column = stimulus_code - self.n_rows - 1
+        if 0 <= column < self.n_cols:
+            return [str(key) for key in self.matrix[:, column]]
+        return []
+
+    def _flash_plan(self, flashes: list[dict[str, float]], prior: np.ndarray,
+                    sequence: int) -> list[dict[str, Any]]:
+        """Attach visible RC groups and LLM/RAG-aware ordering to flash scores.
+
+        The first sequence is a complete row-first/column-second scan. Later
+        sequences prioritize groups with the most next-character prior mass.
+        Recorded EEG scores stay attached to their original stimulus code, so
+        reordering the visual decision plan never changes decoder evidence.
+        """
+        plan = []
+        for flash in flashes:
+            code = int(flash["stimulus_code"])
+            keys = self._keys_for_stimulus(code)
+            key_indices = [self.char_list.index(key) for key in keys]
+            group_mass = float(prior[key_indices].sum()) if key_indices else 0.0
+            kind = "row" if code <= self.n_rows else "column"
+            group_number = code if kind == "row" else code - self.n_rows
+            plan.append({
+                "stimulus_code": code,
+                "kind": kind,
+                "group_number": group_number,
+                "keys": keys,
+                "label": f"{kind.upper()} {group_number}",
+                "priority_mass": round(group_mass, 5),
+                "target_probability": round(float(flash["target_probability"]), 4),
+                "classifier_target": bool(float(flash["target_probability"]) >= 0.5),
+            })
+
+        if sequence == 1:
+            plan.sort(key=lambda flash: (flash["kind"] != "row", flash["group_number"]))
+        else:
+            plan.sort(key=lambda flash: (-flash["priority_mass"], flash["kind"] != "row", flash["group_number"]))
+        return plan
+
     @staticmethod
     def _synthetic_eeg(target_index: int, class_count: int, seed: str, sequence: int) -> np.ndarray:
         """Deterministic simulated likelihood for text without recorded EEG.
@@ -168,7 +211,6 @@ class ReplayService:
         from src.models.decoder import P300Decoder
         from src.models.fusion import BayesianFusionEngine
 
-        predictor = self._load_predictor()
         decoder = P300Decoder(self.matrix)
         fusion = BayesianFusionEngine(
             num_classes=len(self.char_list), mode="fixed", base_alpha=0.1
@@ -187,12 +229,14 @@ class ReplayService:
             selected_confidence = 0.0
 
             for sequence in range(1, 16):
-                eeg = evidence_provider(char_index, target, target_index, sequence)
+                eeg, raw_flashes = evidence_provider(char_index, target, target_index, sequence)
                 decoder.accumulate_evidence(eeg)
                 predicted_key, confidence = decoder.decode_character()
                 target_evidence = float(eeg[target_index])
                 traces.append({
                     "sequence": sequence,
+                    "flash_mode": "standard_row_column" if sequence == 1 else "llm_rag_ranked",
+                    "flashes": self._flash_plan(raw_flashes, prior, sequence),
                     "predicted_key": str(predicted_key),
                     "decoder_confidence": round(float(confidence), 4),
                     "target_evidence": round(target_evidence, 4),
@@ -246,16 +290,21 @@ class ReplayService:
         if session_id not in available:
             raise ValueError("Choose a session from the provided held-out Study-D samples.")
 
-        from run_pipeline import real_eeg_classifier_stream
+        from run_pipeline import real_eeg_classifier_stream, real_eeg_classifier_flash_stream
 
         eeg_path = ROOT / "data/processed/StudyD" / f"{session_id}-epo.fif"
         classifier = self._load_classifier()
 
         def evidence(char_index, _target, _target_index, sequence):
-            return real_eeg_classifier_stream(
+            posterior = real_eeg_classifier_stream(
                 str(eeg_path), char_index, sequence, classifier, self.char_list,
                 self.n_rows, self.n_cols, self.n_rows + self.n_cols,
             )
+            flashes = real_eeg_classifier_flash_stream(
+                str(eeg_path), char_index, sequence, classifier,
+                self.n_rows, self.n_cols, self.n_rows + self.n_cols,
+            )
+            return posterior, flashes
 
         result = self._decode(available[session_id], evidence, "study_d_replay", session_id)
         self._replay_cache[session_id] = result
@@ -272,7 +321,18 @@ class ReplayService:
             raise ValueError(f"Unsupported keyboard character(s): {', '.join(repr(char) for char in unsupported)}")
 
         def evidence(char_index, _target, target_index, sequence):
-            return self._synthetic_eeg(target_index, len(self.char_list), message + str(char_index), sequence)
+            posterior = self._synthetic_eeg(
+                target_index, len(self.char_list), message + str(char_index), sequence
+            )
+            target_row, target_col = divmod(target_index, self.n_cols)
+            target_codes = {target_row + 1, self.n_rows + target_col + 1}
+            flashes = []
+            for code in range(1, self.n_rows + self.n_cols + 1):
+                # The simulation's individual flash scores remain consistent
+                # with its target-conditioned grid posterior.
+                score = 0.72 if code in target_codes else 0.03
+                flashes.append({"stimulus_code": code, "target_probability": score})
+            return posterior, flashes
 
         return self._decode(message, evidence, "custom_simulation")
 

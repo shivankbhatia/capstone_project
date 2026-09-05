@@ -82,6 +82,43 @@ _adaptive_index_cache = {}
 _legacy_index_warning_paths = set()
 
 
+def row_column_posterior(flash_probs, stim_codes, n_rows, n_cols):
+    """Convert row/column flash probabilities into a grid posterior.
+
+    A classic RC sequence flashes every row and column exactly once, but the
+    Study-D Dyn/DynBigram conditions may repeat or skip groups.  Replacing a
+    row or column score with the *last* matching flash makes the result depend
+    on presentation order.  Instead, sum each flash's log likelihood ratio;
+    it preserves the same winning row/column for a complete standard sequence
+    and properly accumulates repeated dynamic flashes.
+    """
+    probabilities = np.asarray(flash_probs, dtype=float)
+    codes = np.asarray(stim_codes, dtype=int)
+    if probabilities.shape != codes.shape:
+        raise ValueError("flash_probs and stim_codes must have the same shape")
+
+    # Probability is the classifier's estimate that a flash is a target.
+    # For a candidate row/column, a matching flash is target evidence; its
+    # Bayes factor against a non-target flash is p / (1 - p).
+    eps = 1e-6
+    log_odds = np.log(np.clip(probabilities, eps, 1 - eps)) - np.log1p(
+        -np.clip(probabilities, eps, 1 - eps)
+    )
+    row_log_scores = np.zeros(n_rows)
+    col_log_scores = np.zeros(n_cols)
+
+    for score, code in zip(log_odds, codes):
+        if 1 <= code <= n_rows:
+            row_log_scores[code - 1] += score
+        elif n_rows < code <= n_rows + n_cols:
+            col_log_scores[code - n_rows - 1] += score
+
+    grid_log_scores = (row_log_scores[:, None] + col_log_scores[None, :]).ravel()
+    grid_log_scores -= np.max(grid_log_scores)
+    grid_probs = np.exp(grid_log_scores)
+    return grid_probs / grid_probs.sum()
+
+
 def _build_adaptive_index_map(epochs):
     """Build (char_idx, sequence_num) -> epoch-row indices from metadata."""
     if epochs.metadata is None:
@@ -99,12 +136,15 @@ def _build_adaptive_index_map(epochs):
     grouped = md[valid].groupby(["char_index", "sequence_in_char"]).indices
     return {key: np.asarray(idx, dtype=int) for key, idx in grouped.items()}
 
-def real_eeg_classifier_stream(eeg_data_path, char_idx, sequence_num, clf, char_list,
-                                n_rows, n_cols, flashes_per_seq, max_seqs_per_char=15):
-    """
-    Loads real EEG data, runs it through the calibrated SWLDA,
-    and returns the posterior over the full grid (n_rows * n_cols classes,
-    NOT hardcoded to 36 -- must match the actual grid, e.g. 72 for Study D).
+
+def real_eeg_classifier_flash_stream(eeg_data_path, char_idx, sequence_num, clf,
+                                     n_rows, n_cols, flashes_per_seq,
+                                     max_seqs_per_char=15):
+    """Return the classifier score for every row/column flash in a sequence.
+
+    Keeping the per-flash records lets consumers render the actual RC evidence
+    stream, while :func:`real_eeg_classifier_stream` still exposes the grid
+    posterior used by the decoder.
     """
     global _epoch_cache, _adaptive_index_cache
 
@@ -129,10 +169,9 @@ def real_eeg_classifier_stream(eeg_data_path, char_idx, sequence_num, clf, char_
         )
 
     if adaptive_index_map is not None:
-        key = (char_idx, sequence_num)
-        epoch_rows = adaptive_index_map.get(key)
+        epoch_rows = adaptive_index_map.get((char_idx, sequence_num))
         if epoch_rows is None or len(epoch_rows) == 0:
-            return np.ones(n_rows * n_cols) / (n_rows * n_cols)
+            return []
         seq_epochs = epochs[epoch_rows]
     else:
         is_adaptive = "Dyn" in str(eeg_data_path)
@@ -146,38 +185,37 @@ def real_eeg_classifier_stream(eeg_data_path, char_idx, sequence_num, clf, char_
 
         flashes_per_char = flashes_per_seq * max_seqs_per_char
         start_idx = (char_idx * flashes_per_char) + ((sequence_num - 1) * flashes_per_seq)
-        end_idx = start_idx + flashes_per_seq
-        seq_epochs = epochs[start_idx:end_idx]
+        seq_epochs = epochs[start_idx:start_idx + flashes_per_seq]
 
     if len(seq_epochs) == 0:
-        return np.ones(n_rows * n_cols) / (n_rows * n_cols)
+        return []
 
     seq_epochs.pick('eeg', exclude='bads')
-
-    X = seq_epochs.get_data(copy=False)
-    flash_probs = clf.predict_proba(X)[:, 1]
-
-    # Row/column identity comes from the preserved stimulus_code metadata,
-    # NOT from epochs.events[:, 2] (which only holds the binary
-    # target/non-target label used to build the epochs' event_id).
+    flash_probs = clf.predict_proba(seq_epochs.get_data(copy=False))[:, 1]
     stim_codes = seq_epochs.metadata["stimulus_code"].to_numpy()
+    return [
+        {"stimulus_code": int(code), "target_probability": float(probability)}
+        for probability, code in zip(flash_probs, stim_codes)
+        if 1 <= code <= n_rows + n_cols
+    ]
 
-    row_probs = np.ones(n_rows)
-    col_probs = np.ones(n_cols)
-
-    for prob, code in zip(flash_probs, stim_codes):
-        if 1 <= code <= n_rows:
-            row_probs[code - 1] = prob
-        elif n_rows < code <= n_rows + n_cols:
-            col_probs[code - n_rows - 1] = prob
-
-    grid_probs = np.outer(row_probs, col_probs).flatten()
-    sum_probs = np.sum(grid_probs)
-    if sum_probs > 0:
-        normalized_probs = grid_probs / sum_probs
-    else:
-        normalized_probs = np.ones(n_rows * n_cols) / (n_rows * n_cols)
-    return normalized_probs
+def real_eeg_classifier_stream(eeg_data_path, char_idx, sequence_num, clf, char_list,
+                                n_rows, n_cols, flashes_per_seq, max_seqs_per_char=15):
+    """
+    Loads real EEG data, runs it through the calibrated SWLDA,
+    and returns the posterior over the full grid (n_rows * n_cols classes,
+    NOT hardcoded to 36 -- must match the actual grid, e.g. 72 for Study D).
+    """
+    flashes = real_eeg_classifier_flash_stream(
+        eeg_data_path, char_idx, sequence_num, clf, n_rows, n_cols,
+        flashes_per_seq, max_seqs_per_char,
+    )
+    if not flashes:
+        return np.ones(n_rows * n_cols) / (n_rows * n_cols)
+    return row_column_posterior(
+        [flash["target_probability"] for flash in flashes],
+        [flash["stimulus_code"] for flash in flashes], n_rows, n_cols,
+    )
 
 
 def mock_eeg_classifier_stream(target_char, char_list):
