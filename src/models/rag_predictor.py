@@ -57,6 +57,11 @@ class RAGDiagnostics:
     subject_weight: float = 0.0
     personalization_active: bool = False
     subject_source: Literal["word_match", "char_backoff", "none"] = "none"
+    # The three factors below make the final subject contribution auditable:
+    # confidence sigmoid, cold-start ramp, and their final blend weight.
+    subject_confidence_weight: float = 0.0
+    subject_coldstart_weight: float = 0.0
+    subject_blend_weight: float = 0.0
     subject_gate_weight: float = 0.0
     global_gate_weight: float = 0.0
     sufficiency_gate_value: float = 0.0
@@ -78,8 +83,8 @@ class RAGPredictor:
         list of strings or a list of objects with those fields.
     rag_weight:
         Maximum interpolation weight assigned to retrieval. The effective
-        weight is zero when retrieval is unavailable or below the confidence
-        threshold.
+        Retrieval is blended continuously with the base prior.  The configured
+        threshold is the midpoint of a sigmoid, not a binary eligibility gate.
     retrieval_confidence_threshold:
         Minimum max probability in the retrieval prior required before RAG is
         allowed to influence the base prior.
@@ -99,8 +104,18 @@ class RAGPredictor:
         personalization_bonus: float = 1.5,
         subject_only: bool = False,
         subject_confidence_threshold: float = 0.20,
-        sufficiency_midpoint_tokens: float = 150.0,
-        sufficiency_sharpness: float = 0.03,
+        # Study-D subject banks contain only 12--17 words.  Centre the
+        # existing cold-start ramp in that observed range so it attenuates
+        # sparse evidence instead of reducing every subject contribution to
+        # a numerically irrelevant value.
+        sufficiency_midpoint_tokens: float = 15.0,
+        sufficiency_sharpness: float = 0.20,
+        subject_gate_sharpness: float = 10.0,
+        rung_id: Optional[str] = None,
+        disable_bigram_backoff: bool = False,
+        bigram_min_count: int = 2,
+        bigram_max_normalized_entropy: float = 0.65,
+        debug_trace_calls: int = 0,
     ):
         if not 0.0 <= rag_weight <= 1.0:
             raise ValueError("rag_weight must be between 0 and 1")
@@ -120,6 +135,12 @@ class RAGPredictor:
             raise ValueError("sufficiency_midpoint_tokens must be positive")
         if sufficiency_sharpness <= 0:
             raise ValueError("sufficiency_sharpness must be positive")
+        if subject_gate_sharpness <= 0:
+            raise ValueError("subject_gate_sharpness must be positive")
+        if bigram_min_count < 1:
+            raise ValueError("bigram_min_count must be at least one")
+        if not 0.0 <= bigram_max_normalized_entropy <= 1.0:
+            raise ValueError("bigram_max_normalized_entropy must be between 0 and 1")
 
         self.base_predictor = base_predictor
         self.char_list = list(base_predictor.char_list)
@@ -134,6 +155,12 @@ class RAGPredictor:
         self.subject_confidence_threshold = subject_confidence_threshold
         self.sufficiency_midpoint_tokens = sufficiency_midpoint_tokens
         self.sufficiency_sharpness = sufficiency_sharpness
+        self.subject_gate_sharpness = subject_gate_sharpness
+        self.rung_id = rung_id or "unspecified"
+        self.disable_bigram_backoff = disable_bigram_backoff
+        self.bigram_min_count = bigram_min_count
+        self.bigram_max_normalized_entropy = bigram_max_normalized_entropy
+        self.debug_trace_calls = debug_trace_calls
         self.global_phrases = self._load_phrase_bank(self.phrase_bank_path)
         self.subject_phrase_bank_path = self._subject_phrase_bank_path()
         self.subject_phrases = (
@@ -150,6 +177,20 @@ class RAGPredictor:
         self.subject_token_count = sum(
             len(phrase.text.split()) for phrase in self.subject_phrases
         )
+        self._subject_bigrams, self._subject_unigrams = self._build_char_ngram_table(
+            self.subject_phrases
+        )
+        # These are deliberately in-memory diagnostics: callers can inspect
+        # every character decision without changing evaluation outcomes.
+        self.char_backoff_count = 0
+        self.source_counts = {
+            "word_level_hits": 0,
+            "bigram_backoff": 0,
+            "below_min_count": 0,
+            "high_entropy": 0,
+        }
+        self.flip_counts = {"total": 0, "toward_target": 0, "away_from_target": 0}
+        self.blend_history = []
 
     def _subject_phrase_bank_path(self) -> Optional[Path]:
         if not self.subject_id:
@@ -188,6 +229,7 @@ class RAGPredictor:
             return False
         self.subject_phrases.append(phrase)
         self.subject_token_count += len(phrase.text.split())
+        self._add_phrase_to_char_ngram_table(phrase)
         return True
 
     @staticmethod
@@ -437,21 +479,53 @@ class RAGPredictor:
             reason = "available"
         return grid_probs, confidence, reason
 
-    def _char_ngram_prior(self, context_so_far, phrases):
-        """Order-2, Laplace-smoothed character backoff over subject text."""
-        text = " ".join(phrase.text for phrase in phrases)
+    @staticmethod
+    def _build_char_ngram_table(phrases):
+        """Build one per-subject bigram table, excluding synthetic joins."""
         bigram_counts, unigram_counts = Counter(), Counter()
-        for first, second in zip(text, text[1:]):
-            bigram_counts[(first, second)] += 1
-            unigram_counts[first] += 1
+        for phrase in phrases:
+            for first, second in zip(phrase.text, phrase.text[1:]):
+                bigram_counts[(first, second)] += phrase.weight
+                unigram_counts[first] += phrase.weight
+        return bigram_counts, unigram_counts
+
+    def _add_phrase_to_char_ngram_table(self, phrase):
+        for first, second in zip(phrase.text, phrase.text[1:]):
+            self._subject_bigrams[(first, second)] += phrase.weight
+            self._subject_unigrams[first] += phrase.weight
+
+    def _char_ngram_prior(self, context_so_far):
+        """Return a gated empirical bigram prior, or ``None`` to use base LM."""
         context = self._normalize_context(context_so_far)
         last = context[-1] if context else " "
-        probs = np.ones(len(self.char_list), dtype=float)
+        supported = []
         for index, label in enumerate(self.char_list):
             char = " " if label == "Sp" else str(label).lower()
-            probs[index] += bigram_counts.get((last, char), 0)
+            count = self._subject_bigrams.get((last, char), 0)
+            if count >= self.bigram_min_count:
+                supported.append((index, count))
+
+        if not supported:
+            self.source_counts["below_min_count"] += 1
+            return None, 0.0
+
+        counts = np.asarray([count for _, count in supported], dtype=float)
+        probabilities = counts / counts.sum()
+        # Normalize by the entropy of a uniform distribution over the actual
+        # supported successors: 0=single unambiguous successor, 1=uniform.
+        entropy = (
+            float(-(probabilities * np.log(probabilities)).sum() / np.log(len(counts)))
+            if len(counts) > 1 else 0.0
+        )
+        if entropy > self.bigram_max_normalized_entropy:
+            self.source_counts["high_entropy"] += 1
+            return None, 0.0
+
+        probs = np.zeros(len(self.char_list), dtype=float)
+        for (index, _), probability in zip(supported, probabilities):
+            probs[index] = probability
         probs /= probs.sum()
-        confidence = float((probs.max() * len(probs) - 1) / max(1, len(probs) - 1))
+        confidence = float(probs.max())
         return probs, confidence
 
     def _bank_prior(self, context_so_far, phrases):
@@ -470,18 +544,31 @@ class RAGPredictor:
             context_so_far, self.subject_phrases
         )
         subject_source = "word_match" if subject_matches else "none"
-        if subject_source == "none" and self.subject_phrases:
-            subject_prior, subject_confidence = self._char_ngram_prior(
-                context_so_far, self.subject_phrases
-            )
-            subject_source = "char_backoff"
+        if subject_source == "word_match":
+            self.source_counts["word_level_hits"] += 1
+        elif (
+            subject_source == "none"
+            and self.subject_phrases
+            and not self.disable_bigram_backoff
+        ):
+            subject_prior, subject_confidence = self._char_ngram_prior(context_so_far)
+            if subject_prior is not None:
+                subject_source = "char_backoff"
+                self.char_backoff_count += 1
+                self.source_counts["bigram_backoff"] += 1
+            else:
+                subject_prior = np.zeros(len(self.char_list), dtype=float)
 
         global_gate = (
             self._soft_gate(global_confidence, self.retrieval_confidence_threshold, 30.0)
             if global_reason == "available" and not self.subject_only else 0.0
         )
         subject_gate = (
-            self._soft_gate(subject_confidence, self.subject_confidence_threshold, 8.0)
+            self._soft_gate(
+                subject_confidence,
+                self.subject_confidence_threshold,
+                self.subject_gate_sharpness,
+            )
             if subject_source != "none" else 0.0
         )
         sufficiency_gate = self._data_sufficiency_gate()
@@ -515,6 +602,9 @@ class RAGPredictor:
             subject_weight=self.subject_weight,
             personalization_active=subject_gate_weight > 0,
             subject_source=subject_source,
+            subject_confidence_weight=subject_gate,
+            subject_coldstart_weight=sufficiency_gate,
+            subject_blend_weight=subject_gate_weight,
             subject_gate_weight=subject_gate_weight,
             global_gate_weight=global_weight,
             sufficiency_gate_value=sufficiency_gate,
@@ -538,7 +628,7 @@ class RAGPredictor:
 
         return probs / total
 
-    def predict_next_char(self, context_so_far: str):
+    def predict_next_char(self, context_so_far: str, target_char: Optional[str] = None):
         """Return a RAG-enhanced grid prior for the next character."""
 
         base_prior = self._normalize_probs(
@@ -556,8 +646,41 @@ class RAGPredictor:
             (1.0 - retrieval_weight) * base_prior + retrieval_weight * retrieval_prior
         )
 
-        self.last_diagnostics = diagnostics
+        base_argmax = int(np.argmax(base_prior))
+        final_argmax = int(np.argmax(prior))
+        flipped = base_argmax != final_argmax
+        flip_direction = "none"
+        if flipped:
+            self.flip_counts["total"] += 1
+            if target_char is not None:
+                target_index = self._char_to_grid_index(str(target_char).lower())
+                if final_argmax == target_index:
+                    flip_direction = "toward_target"
+                    self.flip_counts["toward_target"] += 1
+                elif base_argmax == target_index:
+                    flip_direction = "away_from_target"
+                    self.flip_counts["away_from_target"] += 1
+                else:
+                    flip_direction = "other"
 
-        return prior
+        self.last_diagnostics = diagnostics
+        self.blend_history.append({
+            "context": str(context_so_far),
+            "subject_source": diagnostics.subject_source,
+            "confidence": diagnostics.retrieval_confidence,
+            "confidence_weight": diagnostics.subject_confidence_weight,
+            "coldstart_weight": diagnostics.subject_coldstart_weight,
+            "blend_weight": diagnostics.subject_blend_weight,
+            "base_argmax": base_argmax,
+            "final_argmax": final_argmax,
+            "flipped": flipped,
+            "flip_direction": flip_direction,
+        })
+        if len(self.blend_history) <= self.debug_trace_calls:
+            print(
+                f"RAG_TRACE rung={self.rung_id} w={retrieval_weight:.8f} "
+                f"rag={np.array2string(retrieval_prior[:5], precision=6)} "
+                f"base={np.array2string(base_prior[:5], precision=6)}"
+            )
 
         return prior

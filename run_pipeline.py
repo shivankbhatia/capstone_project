@@ -218,6 +218,54 @@ def real_eeg_classifier_stream(eeg_data_path, char_idx, sequence_num, clf, char_
     )
 
 
+def real_eeg_single_flash_trace(eeg_data_path, char_idx, sequence_num, stimulus_code,
+                                n_rows, n_cols, flashes_per_seq,
+                                max_seqs_per_char=15, channel=None):
+    """Return the real averaged EEG voltage trace for one recorded flash."""
+    global _epoch_cache, _adaptive_index_cache
+
+    if eeg_data_path not in _epoch_cache:
+        _epoch_cache.clear()
+        _adaptive_index_cache.clear()
+        import gc
+        gc.collect()
+        epochs = mne.read_epochs(eeg_data_path, preload=True, verbose=False)
+        _epoch_cache[eeg_data_path] = epochs
+        _adaptive_index_cache[eeg_data_path] = _build_adaptive_index_map(epochs)
+
+    epochs = _epoch_cache[eeg_data_path]
+    if epochs.metadata is None or "stimulus_code" not in epochs.metadata.columns:
+        raise ValueError(f"{eeg_data_path} has no stimulus_code metadata")
+    adaptive_index_map = _adaptive_index_cache.get(eeg_data_path)
+    if adaptive_index_map is not None:
+        epoch_rows = adaptive_index_map.get((char_idx, sequence_num))
+        if epoch_rows is None or len(epoch_rows) == 0:
+            return None
+        seq_epochs = epochs[epoch_rows]
+    else:
+        flashes_per_char = flashes_per_seq * max_seqs_per_char
+        start_idx = char_idx * flashes_per_char + (sequence_num - 1) * flashes_per_seq
+        seq_epochs = epochs[start_idx:start_idx + flashes_per_seq]
+
+    if len(seq_epochs) == 0:
+        return None
+    stim_codes = seq_epochs.metadata["stimulus_code"].to_numpy()
+    match = np.where(stim_codes == stimulus_code)[0]
+    if len(match) == 0:
+        return None
+    flash_epochs = seq_epochs[match].copy().pick("eeg", exclude="bads")
+    ch_names = flash_epochs.ch_names
+    if not ch_names:
+        return None
+    selected_channel = channel if channel in ch_names else ("Pz" if "Pz" in ch_names else ch_names[0])
+    data = flash_epochs.get_data(copy=False)[:, ch_names.index(selected_channel), :]
+    return {
+        "channel": selected_channel,
+        "times_ms": [round(float(t), 1) for t in flash_epochs.times * 1000.0],
+        "amplitude_uv": [round(float(v), 3) for v in data.mean(axis=0) * 1e6],
+    }
+
+
 def mock_eeg_classifier_stream(target_char, char_list):
     """Fallback simulated data if model is missing."""
     probs = np.random.uniform(0.01, 0.05, len(char_list))
@@ -270,7 +318,12 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
         char_idx = len(context)
 
         decoder.reset()
-        llm_prior = llm.predict_next_char(context)
+        # RAG uses the held-out target only for post-hoc flip-direction
+        # diagnostics; it never affects the returned prior or decoding.
+        if isinstance(llm, RAGPredictor):
+            llm_prior = llm.predict_next_char(context, target_char=target)
+        else:
+            llm_prior = llm.predict_next_char(context)
 
         # Apply the LM prior ONCE as an initial belief bias -- not per-sequence.
         decoder.accumulated_log_probs += fusion_engine.get_initial_log_bias(llm_prior)
