@@ -28,7 +28,7 @@ PERSONALIZATION_RUNGS = {
     "rung_0_classifier": "Classifier only",
     "rung_1_lm": "Classifier + plain LM fusion",
     "rung_2_global_rag": "Classifier + global pooled RAG",
-    "rung_3_subject_only_rag": "Classifier + hard subject-only RAG",
+    "rung_3_subject_only_rag": "Classifier + gated subject-only RAG",
     "rung_4_personalized_rag": (
         "Classifier + ramped subject/global RAG with session growth"
     ),

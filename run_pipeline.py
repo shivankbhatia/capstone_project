@@ -270,7 +270,12 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
         char_idx = len(context)
 
         decoder.reset()
-        llm_prior = llm.predict_next_char(context)
+        # The held-out label is only used for post-hoc RAG flip-direction
+        # diagnostics; it does not affect the returned prior or decoding.
+        if isinstance(llm, RAGPredictor):
+            llm_prior = llm.predict_next_char(context, target_char=target)
+        else:
+            llm_prior = llm.predict_next_char(context)
 
         # Apply the LM prior ONCE as an initial belief bias -- not per-sequence.
         decoder.accumulated_log_probs += fusion_engine.get_initial_log_bias(llm_prior)
