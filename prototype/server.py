@@ -54,6 +54,7 @@ class ReplayService:
         self._predictor = None
         self._predictor_error = None
         self._replay_cache: dict[tuple[str, str], dict[str, Any]] = {}
+        self._fixed_block_indexing_cache: dict[str, bool] = {}
 
     @staticmethod
     def _load_matrix():
@@ -65,6 +66,19 @@ class ReplayService:
         if self._classifier is None:
             self._classifier = joblib.load(MODEL_PATH)
         return self._classifier
+
+    def _uses_fixed_block_indexing(self, eeg_path: Path) -> bool:
+        """Return true when a session lacks adaptive sequence metadata."""
+        path = str(eeg_path)
+        if path not in self._fixed_block_indexing_cache:
+            import mne
+
+            metadata = mne.read_epochs(path, preload=False, verbose=False).metadata
+            self._fixed_block_indexing_cache[path] = (
+                metadata is None
+                or not {"char_index", "sequence_in_char"}.issubset(metadata.columns)
+            )
+        return self._fixed_block_indexing_cache[path]
 
     def _load_predictor(self):
         """Load the real DistilGPT-2 + global RAG predictor once, lazily."""
@@ -207,7 +221,9 @@ class ReplayService:
         probabilities /= probabilities.sum()
         return probabilities
 
-    def _decode(self, message: str, evidence_provider, source: str, session_id: str | None = None):
+    def _decode(self, message: str, evidence_provider, source: str,
+                session_id: str | None = None, confidence_threshold: float = 0.80,
+                min_sequences: int = 2, max_sequences: int = 10):
         from src.models.decoder import P300Decoder
         from src.models.fusion import BayesianFusionEngine
 
@@ -218,6 +234,7 @@ class ReplayService:
         decoded = ""
         selections = []
         total_sequences = 0
+        total_flashes = 0
 
         for char_index, target in enumerate(message):
             target_index = self._target_index(target)
@@ -228,7 +245,7 @@ class ReplayService:
             selected_key = None
             selected_confidence = 0.0
 
-            for sequence in range(1, 16):
+            for sequence in range(1, max_sequences + 1):
                 eeg, raw_flashes = evidence_provider(char_index, target, target_index, sequence)
                 decoder.accumulate_evidence(eeg)
                 predicted_key, confidence = decoder.decode_character()
@@ -242,12 +259,14 @@ class ReplayService:
                     "target_evidence": round(target_evidence, 4),
                 })
                 selected_key, selected_confidence = predicted_key, confidence
-                if sequence >= 2 and confidence >= 0.85:
+                if sequence >= min_sequences and confidence >= confidence_threshold:
                     break
 
             selected_text = " " if selected_key == "Sp" else ("." if selected_key == "Prd" else str(selected_key))
             decoded += selected_text
             total_sequences += len(traces)
+            flashes_used = sum(len(trace["flashes"]) for trace in traces)
+            total_flashes += flashes_used
             selections.append({
                 "index": char_index,
                 "target_key": self._grid_key(target),
@@ -257,6 +276,7 @@ class ReplayService:
                 "correct": selected_key == self._grid_key(target),
                 "confidence": round(float(selected_confidence), 4),
                 "sequences": len(traces),
+                "flashes_used": flashes_used,
                 "trace": traces,
                 "prior": prior_payload,
             })
@@ -274,7 +294,9 @@ class ReplayService:
                 "accuracy": round(100 * correct / len(selections), 2) if selections else 0.0,
                 "sequences": total_sequences,
                 "mean_sequences_per_character": round(total_sequences / len(selections), 2) if selections else 0.0,
-                "maximum_sequences_per_character": 15,
+                "flashes": total_flashes,
+                "mean_flashes_per_character": round(total_flashes / len(selections), 2) if selections else 0.0,
+                "maximum_sequences_per_character": max_sequences,
             },
             "evidence_notice": (
                 "Recorded Study-D epochs scored by the saved SWLDA classifier."
@@ -283,10 +305,16 @@ class ReplayService:
             ),
         }
 
-    def replay(self, session_id: str, scan_mode: str = "compact") -> dict[str, Any]:
+    def replay(self, session_id: str, scan_mode: str = "standard",
+               confidence_threshold: float = 0.80, min_sequences: int = 2,
+               max_sequences: int = 10) -> dict[str, Any]:
         if scan_mode not in {"compact", "standard"}:
             raise ValueError("scan_mode must be 'compact' or 'standard'.")
-        cache_key = (session_id, scan_mode)
+        if not 0.0 <= confidence_threshold <= 1.0:
+            raise ValueError("confidence_threshold must be between 0 and 1.")
+        if min_sequences < 1 or max_sequences < min_sequences:
+            raise ValueError("Require 1 <= min_sequences <= max_sequences.")
+        cache_key = (session_id, scan_mode, confidence_threshold, min_sequences, max_sequences)
         if cache_key in self._replay_cache:
             return self._replay_cache[cache_key]
         available = {sample["id"]: sample["target"] for sample in self.samples()}
@@ -303,6 +331,12 @@ class ReplayService:
                 available[session_id], str(eeg_path), classifier, session_id
             )
         else:
+            effective_max_sequences = (
+                min(max_sequences, 15)
+                if self._uses_fixed_block_indexing(eeg_path)
+                else max_sequences
+            )
+
             def evidence(char_index, _target, _target_index, sequence):
                 posterior = real_eeg_classifier_stream(
                     str(eeg_path), char_index, sequence, classifier, self.char_list,
@@ -315,7 +349,10 @@ class ReplayService:
                 return posterior, flashes
 
             result = self._decode(
-                available[session_id], evidence, "study_d_replay", session_id
+                available[session_id], evidence, "study_d_replay", session_id,
+                confidence_threshold=confidence_threshold,
+                min_sequences=min_sequences,
+                max_sequences=effective_max_sequences,
             )
         self._replay_cache[cache_key] = result
         return result

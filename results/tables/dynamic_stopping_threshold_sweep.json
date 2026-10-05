@@ -1,0 +1,411 @@
+[
+  {
+    "confidence_threshold": 0.7,
+    "min_sequences": 2,
+    "max_sequences": 15,
+    "characters": 100,
+    "mean_sequences_per_character": 2.55,
+    "mean_flashes_per_character": 34.94,
+    "accuracy": 58.0,
+    "stopping_point_histogram": {
+      "correct": {
+        "2": 53,
+        "3": 4,
+        "15": 1
+      },
+      "incorrect": {
+        "2": 30,
+        "3": 8,
+        "4": 2,
+        "15": 2
+      }
+    },
+    "coverage_min_sequences": 1
+  },
+  {
+    "confidence_threshold": 0.75,
+    "min_sequences": 2,
+    "max_sequences": 15,
+    "characters": 100,
+    "mean_sequences_per_character": 2.69,
+    "mean_flashes_per_character": 35.11,
+    "accuracy": 60.0,
+    "stopping_point_histogram": {
+      "correct": {
+        "2": 54,
+        "3": 5,
+        "15": 1
+      },
+      "incorrect": {
+        "2": 27,
+        "3": 8,
+        "4": 2,
+        "15": 3
+      }
+    },
+    "coverage_min_sequences": 1
+  },
+  {
+    "confidence_threshold": 0.8,
+    "min_sequences": 1,
+    "max_sequences": 10,
+    "characters": 100,
+    "mean_sequences_per_character": 1.61,
+    "mean_flashes_per_character": 24.39,
+    "accuracy": 53.0,
+    "stopping_point_histogram": {
+      "correct": {
+        "1": 35,
+        "2": 14,
+        "3": 4
+      },
+      "incorrect": {
+        "1": 30,
+        "2": 10,
+        "3": 4,
+        "4": 1,
+        "10": 2
+      }
+    },
+    "coverage_min_sequences": 1
+  },
+  {
+    "confidence_threshold": 0.8,
+    "min_sequences": 1,
+    "max_sequences": 15,
+    "characters": 100,
+    "mean_sequences_per_character": 1.71,
+    "mean_flashes_per_character": 24.39,
+    "accuracy": 53.0,
+    "stopping_point_histogram": {
+      "correct": {
+        "1": 35,
+        "2": 14,
+        "3": 4
+      },
+      "incorrect": {
+        "1": 30,
+        "2": 10,
+        "3": 4,
+        "4": 1,
+        "15": 2
+      }
+    },
+    "coverage_min_sequences": 1
+  },
+  {
+    "confidence_threshold": 0.8,
+    "min_sequences": 1,
+    "max_sequences": 20,
+    "characters": 100,
+    "mean_sequences_per_character": 1.81,
+    "mean_flashes_per_character": 24.39,
+    "accuracy": 53.0,
+    "stopping_point_histogram": {
+      "correct": {
+        "1": 35,
+        "2": 14,
+        "3": 4
+      },
+      "incorrect": {
+        "1": 30,
+        "2": 10,
+        "3": 4,
+        "4": 1,
+        "20": 2
+      }
+    },
+    "coverage_min_sequences": 1
+  },
+  {
+    "confidence_threshold": 0.8,
+    "min_sequences": 2,
+    "max_sequences": 10,
+    "coverage_min_sequences": 1,
+    "characters": 100,
+    "mean_sequences_per_character": 2.73,
+    "mean_flashes_per_character": 35.45,
+    "accuracy": 64.0,
+    "stopping_point_histogram": {
+      "correct": {
+        "2": 56,
+        "3": 7,
+        "10": 1
+      },
+      "incorrect": {
+        "2": 22,
+        "3": 6,
+        "4": 2,
+        "10": 6
+      }
+    }
+  },
+  {
+    "confidence_threshold": 0.8,
+    "min_sequences": 2,
+    "max_sequences": 15,
+    "characters": 100,
+    "mean_sequences_per_character": 3.08,
+    "mean_flashes_per_character": 35.45,
+    "accuracy": 64.0,
+    "stopping_point_histogram": {
+      "correct": {
+        "2": 56,
+        "3": 7,
+        "15": 1
+      },
+      "incorrect": {
+        "2": 22,
+        "3": 6,
+        "4": 2,
+        "15": 6
+      }
+    },
+    "coverage_min_sequences": 1
+  },
+  {
+    "confidence_threshold": 0.8,
+    "min_sequences": 2,
+    "max_sequences": 20,
+    "characters": 100,
+    "mean_sequences_per_character": 3.43,
+    "mean_flashes_per_character": 35.45,
+    "accuracy": 64.0,
+    "stopping_point_histogram": {
+      "correct": {
+        "2": 56,
+        "3": 7,
+        "20": 1
+      },
+      "incorrect": {
+        "2": 22,
+        "3": 6,
+        "4": 2,
+        "20": 6
+      }
+    },
+    "coverage_min_sequences": 1
+  },
+  {
+    "confidence_threshold": 0.8,
+    "min_sequences": 3,
+    "max_sequences": 10,
+    "characters": 100,
+    "mean_sequences_per_character": 3.48,
+    "mean_flashes_per_character": 44.31,
+    "accuracy": 66.0,
+    "stopping_point_histogram": {
+      "correct": {
+        "3": 62,
+        "4": 3,
+        "10": 1
+      },
+      "incorrect": {
+        "3": 26,
+        "4": 3,
+        "10": 5
+      }
+    },
+    "coverage_min_sequences": 1
+  },
+  {
+    "confidence_threshold": 0.8,
+    "min_sequences": 3,
+    "max_sequences": 15,
+    "characters": 100,
+    "mean_sequences_per_character": 3.78,
+    "mean_flashes_per_character": 44.31,
+    "accuracy": 66.0,
+    "stopping_point_histogram": {
+      "correct": {
+        "3": 62,
+        "4": 3,
+        "15": 1
+      },
+      "incorrect": {
+        "3": 26,
+        "4": 3,
+        "15": 5
+      }
+    },
+    "coverage_min_sequences": 1
+  },
+  {
+    "confidence_threshold": 0.8,
+    "min_sequences": 3,
+    "max_sequences": 20,
+    "characters": 100,
+    "mean_sequences_per_character": 4.08,
+    "mean_flashes_per_character": 44.31,
+    "accuracy": 66.0,
+    "stopping_point_histogram": {
+      "correct": {
+        "3": 62,
+        "4": 3,
+        "20": 1
+      },
+      "incorrect": {
+        "3": 26,
+        "4": 3,
+        "20": 5
+      }
+    },
+    "coverage_min_sequences": 1
+  },
+  {
+    "confidence_threshold": 0.85,
+    "min_sequences": 2,
+    "max_sequences": 15,
+    "characters": 100,
+    "mean_sequences_per_character": 3.37,
+    "mean_flashes_per_character": 36.13,
+    "accuracy": 64.0,
+    "stopping_point_histogram": {
+      "correct": {
+        "2": 54,
+        "3": 9,
+        "15": 1
+      },
+      "incorrect": {
+        "2": 22,
+        "3": 1,
+        "4": 5,
+        "15": 8
+      }
+    },
+    "coverage_min_sequences": 1
+  },
+  {
+    "confidence_threshold": 0.9,
+    "min_sequences": 2,
+    "max_sequences": 15,
+    "characters": 100,
+    "mean_sequences_per_character": 3.53,
+    "mean_flashes_per_character": 36.98,
+    "accuracy": 65.0,
+    "stopping_point_histogram": {
+      "correct": {
+        "2": 53,
+        "3": 10,
+        "4": 1,
+        "15": 1
+      },
+      "incorrect": {
+        "2": 20,
+        "3": 1,
+        "4": 5,
+        "15": 9
+      }
+    },
+    "coverage_min_sequences": 1
+  },
+  {
+    "confidence_threshold": 0.95,
+    "min_sequences": 2,
+    "max_sequences": 15,
+    "characters": 100,
+    "mean_sequences_per_character": 3.75,
+    "mean_flashes_per_character": 38.39,
+    "accuracy": 66.0,
+    "stopping_point_histogram": {
+      "correct": {
+        "2": 48,
+        "3": 13,
+        "4": 3,
+        "15": 2
+      },
+      "incorrect": {
+        "2": 17,
+        "3": 3,
+        "4": 5,
+        "15": 9
+      }
+    },
+    "coverage_min_sequences": 1
+  },
+  {
+    "confidence_threshold": 0.8,
+    "min_sequences": 3,
+    "max_sequences": 10,
+    "coverage_min_sequences": 3,
+    "characters": 77,
+    "mean_sequences_per_character": 3.25974025974026,
+    "mean_flashes_per_character": 49.58441558441559,
+    "accuracy": 63.63636363636363,
+    "stopping_point_histogram": {
+      "correct": {
+        "3": 46,
+        "4": 3
+      },
+      "incorrect": {
+        "3": 23,
+        "4": 3,
+        "10": 2
+      }
+    }
+  },
+  {
+    "confidence_threshold": 0.8,
+    "min_sequences": 3,
+    "max_sequences": 15,
+    "coverage_min_sequences": 3,
+    "characters": 77,
+    "mean_sequences_per_character": 3.3896103896103895,
+    "mean_flashes_per_character": 49.58441558441559,
+    "accuracy": 63.63636363636363,
+    "stopping_point_histogram": {
+      "correct": {
+        "3": 46,
+        "4": 3
+      },
+      "incorrect": {
+        "3": 23,
+        "4": 3,
+        "15": 2
+      }
+    }
+  },
+  {
+    "confidence_threshold": 0.8,
+    "min_sequences": 3,
+    "max_sequences": 20,
+    "coverage_min_sequences": 3,
+    "characters": 77,
+    "mean_sequences_per_character": 3.5194805194805197,
+    "mean_flashes_per_character": 49.58441558441559,
+    "accuracy": 63.63636363636363,
+    "stopping_point_histogram": {
+      "correct": {
+        "3": 46,
+        "4": 3
+      },
+      "incorrect": {
+        "3": 23,
+        "4": 3,
+        "20": 2
+      }
+    }
+  },
+  {
+    "confidence_threshold": 0.85,
+    "min_sequences": 2,
+    "max_sequences": 15,
+    "coverage_min_sequences": 3,
+    "characters": 77,
+    "mean_sequences_per_character": 2.935064935064935,
+    "mean_flashes_per_character": 38.96103896103896,
+    "accuracy": 61.03896103896104,
+    "stopping_point_histogram": {
+      "correct": {
+        "2": 38,
+        "3": 9
+      },
+      "incorrect": {
+        "2": 20,
+        "3": 1,
+        "4": 5,
+        "15": 4
+      }
+    }
+  }
+]

@@ -1,21 +1,12 @@
-"""Check held-out test session/trial counts per subject to pick a higher-n
-subject (or set of subjects) for the sufficiency-gate sweep."""
-import json
-from pathlib import Path
-
-TEST_SESSIONS = Path("data/processed/test_sessions_by_subject.json")
-
-def main():
-    if not TEST_SESSIONS.exists():
-        print(f"MISSING: {TEST_SESSIONS}")
-        return
-    with TEST_SESSIONS.open(encoding="utf-8") as f:
-        d = json.load(f)
-    print(f"{'Subject':10s} {'#Sessions':>10s}")
-    for subject, sessions in sorted(d.items()):
-        print(f"{subject:10s} {len(sessions):10d}")
-    total = sum(len(v) for v in d.values())
-    print(f"\nTotal held-out sessions across all subjects: {total}")
-
-if __name__ == "__main__":
-    main()
+import sys, numpy as np, mne
+for p in sys.argv[1:]:
+    raw = mne.io.read_raw_edf(p, preload=True, verbose=False)
+    d = raw.get_data()
+    print(f"\n== {p}")
+    print("sfreq:", raw.info["sfreq"], "| n_channels:", len(raw.ch_names),
+          "| duration_s:", round(raw.times[-1], 1))
+    print("channels:", raw.ch_names)
+    for i, n in enumerate(raw.ch_names):
+        if any(k in n for k in ("Stimulus", "Target", "Phase", "Run", "Trial")):
+            v = np.unique(d[i])
+            print(f"  {n}: {len(v)} unique", v[:15])

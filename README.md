@@ -924,3 +924,17 @@ Planned next work:
 - Replicate the personalization diagnostic across seeds and richer subject corpora.
 - Evaluate retrieval as an isolated component (LM-only versus LM + retrieval) beyond the combined fusion arms.
 - Expand the phrase bank with consented, deployment-representative data once available.
+# Dynamic-stopping operating point
+
+The selected standard row/column replay policy is `tau=0.80`,
+`min_sequences=2`, and `max_sequences=10`. It was evaluated on the 100
+held-out characters with at least one real recorded row/column sequence.
+Against the historical default (`tau=0.85`, `min_sequences=2`,
+`max_sequences=15`) on that same population, it has literal character-level
+parity: 64 characters are correct under both settings and 36 are incorrect
+under both. It uses 35.45 recorded flashes per character versus 36.13 for the
+default, a 1.9% reduction. The `min_sequences=3` variants were explored only
+on the 77 characters with at least three recorded sequences and were
+inconclusive at that sample depth. Caps above 10 were explored only where the
+recording supplied enough evidence (16 characters at depth 10 or greater) and
+are not part of the headline claim.
