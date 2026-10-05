@@ -9,6 +9,13 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
     <style>
+      /* Keep the flash focus layer out of document flow even if an older
+         cached stylesheet is still present in the local prototype server. */
+      #flashFocusOverlay { position: fixed !important; inset: 8vh 0 auto !important; z-index: 9999 !important; width: min(88vw, 1050px); max-width: 88vw; margin: 0 auto; padding: 30px; border: 1px solid #3e6c4d; border-radius: 20px; background: #102017; box-shadow: 0 28px 90px rgba(0,0,0,.55); color: #fff; }
+      #flashFocusOverlay::backdrop { background: rgba(0,0,0,.7); backdrop-filter: blur(5px) brightness(.42); }
+      #flashFocusKeys { display: grid; grid-template-columns: repeat(auto-fit, minmax(105px, 1fr)); gap: 13px; margin: 20px 0; }
+      #flashFocusKeys .flash-focus-key { min-height: 150px; border: 2px solid #54b56f; border-radius: 14px; background: #278359; color: #fff; display: grid; place-items: center; font: 600 clamp(24px,4vw,52px) var(--mono); }
+      .keyboard-card { position: relative; }.focus-toggle { position: absolute; right: 14px; top: 12px; z-index: 2; }
       .speed-dial{border-top:1px solid #edf0ec;border-bottom:1px solid #edf0ec;padding:9px 2px;margin:0 0 11px}.speed-dial-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}.speed-dial-label span:last-child{font:9px var(--mono);color:#718078}.speed-dial-options{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.speed-option{border:1px solid #b9dfbf;background:#f3fff4;color:#236442;border-radius:6px;min-height:31px;font:600 10px var(--mono);transition:background .18s,color .18s,transform .18s,box-shadow .18s}.speed-option.flashing{color:#fff;background:var(--dark);border-color:var(--dark);transform:translateY(-1px);box-shadow:0 5px 12px rgba(21,39,30,.2)}.speed-option.detected{background:#fff4d6;border-color:#e5b84d;box-shadow:0 0 0 2px rgba(237,190,85,.2)}
       .scenario-select select,.target-control select,.target-control input{border:0;background:transparent;color:var(--ink);font:600 12px var(--sans);padding:0;max-width:340px;outline:0}.target-control input{width:300px}.scenario-select select{max-width:175px}.start-button:disabled{cursor:wait;opacity:.65}.connection.offline{color:#9c4c4c}.connection.offline i{background:#d87070;box-shadow:none}.speed-dial-options .chip{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.key.target{outline:2px solid #2f8a57;outline-offset:1px}
     </style>
@@ -27,6 +34,8 @@
       <section class="command-bar" aria-label="Simulation controls">
         <label class="scenario-select"><span class="eyebrow">EVIDENCE SOURCE</span><select id="sourceSelect"><option value="replay">Study D held-out replay</option><option value="custom">Custom-text simulation</option></select></label>
         <div class="control-divider"></div>
+        <label class="scenario-select"><span class="eyebrow">SCAN MODE</span><select id="scanMode"><option value="compact">Compact row shortlist</option><option value="standard">Standard full grid</option></select></label>
+        <div class="control-divider"></div>
         <label class="target-control"><span class="eyebrow" id="targetLabel">STUDY D SAMPLE</span><select id="sampleSelect" aria-label="Study D sample"></select><input id="customMessage" maxlength="80" value="PLEASE HELP" aria-label="Custom sentence to simulate" /></label>
         <div class="control-divider"></div>
         <label class="speed-control"><span class="eyebrow">SIMULATION</span><select id="speedSelect"><option value="1">Normal</option><option value="1.75">Fast</option><option value="0.55">Slow</option></select></label>
@@ -42,13 +51,14 @@
             <div class="intent-meta"><span id="intentLength">—</span><span>•</span><span id="intentSource">Waiting for backend</span></div>
           </div>
           <div class="progress-wrap"><div class="progress-label"><span>Selection progress</span><span id="progressText">0 / 28</span></div><div class="progress-track"><span id="progressBar"></span></div></div>
-          <div class="baseline-card"><span class="eyebrow">DECODER EFFICIENCY</span><strong id="flashSaving">—</strong><p>mean EEG sequences per character (15 maximum)</p></div>
+          <div class="baseline-card"><span class="eyebrow">DECODER EFFICIENCY</span><strong id="flashSaving">—</strong><p id="scanModeDescription">compact scan: rows 1–5, then shortlisted keys</p></div>
           <p class="quiet-note" id="evidenceNote">Loading evidence provenance from the backend.</p>
         </aside>
 
         <section class="center-stage">
           <div class="stage-heading"><div><span class="eyebrow">02 / ACTIVE SELECTION</span><h1>Adaptive P300 keyboard</h1></div><div class="phase-badge" id="phaseBadge"><span></span> Awaiting start</div></div>
           <div class="keyboard-card">
+            <button id="focusToggle" class="focus-toggle" type="button" aria-pressed="false">Focus current flash</button>
             <div class="keyboard-status"><div><span class="status-label">CURRENT DECISION</span><strong id="currentStimulus">—</strong></div><div><span class="status-label">TARGET EVIDENCE</span><strong id="evidenceScore">0.00</strong></div><div><span class="status-label">SEQUENCES</span><strong id="flashCount">0</strong></div></div>
             <div class="speed-dial"><div class="speed-dial-label"><span class="eyebrow">GLOBAL RAG PRIOR</span><span id="speedDialStatus">Backend RAG diagnostics appear here</span></div><div id="speedDialOptions" class="speed-dial-options"></div></div>
             <div id="keyboard" class="keyboard" aria-label="P300 character keyboard"></div>
@@ -76,6 +86,7 @@
         <div class="adaptation-block"><span class="eyebrow">FLASH ADAPTATION</span><div class="adaptation-value"><strong id="priorityTarget">—</strong><span id="priorityDescription">Waiting to prioritize</span></div><div class="adaptation-bars"><span id="barOne"></span><span id="barTwo"></span><span id="barThree"></span><span id="barFour"></span></div></div>
       </section>
     </main>
+    <dialog id="flashFocusOverlay" aria-live="polite"><span class="eyebrow" id="flashFocusLabel">CURRENT FLASH</span><div id="flashFocusKeys" class="flash-focus-keys"></div><span class="flash-focus-hint">Focus mode · press Escape to return to the full keyboard</span></dialog>
     <script src="app.js"></script>
   </body>
 </html>
