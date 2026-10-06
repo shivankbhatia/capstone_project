@@ -8,8 +8,8 @@ venv/
 # Data (large / not committed)
 data/raw/*
 !data/raw/.gitkeep
-data/processed/*
-data/processed/
+data/processed
+data/raw/bigP3BCI_dataset/bigP3BCI-data
 !data/processed/.gitkeep
 data/processed.zip
 data/processed-backup/*
