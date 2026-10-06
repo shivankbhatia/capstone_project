@@ -119,6 +119,22 @@ def row_column_posterior(flash_probs, stim_codes, n_rows, n_cols):
     return grid_probs / grid_probs.sum()
 
 
+def membership_posterior(flash_probs, lit_masks):
+    """Grid posterior for group-flash studies (Q/E/G/N).
+
+    A cell's evidence is the sum of target log-odds over every flash that lit
+    it. For RC flashes (row lights 9 cells, column 8) this is exactly
+    row_log_score + col_log_score, i.e. identical to row_column_posterior.
+    """
+    p = np.clip(np.asarray(flash_probs, dtype=float), 1e-6, 1 - 1e-6)
+    log_odds = np.log(p) - np.log1p(-p)
+    membership = np.array([[int(ch) for ch in m] for m in lit_masks], dtype=float)
+    scores = membership.T @ log_odds
+    scores -= scores.max()
+    probs = np.exp(scores)
+    return probs / probs.sum()
+
+
 def _build_adaptive_index_map(epochs):
     """Build (char_idx, sequence_num) -> epoch-row indices from metadata."""
     if epochs.metadata is None:
@@ -168,6 +184,11 @@ def real_eeg_classifier_flash_stream(eeg_data_path, char_idx, sequence_num, clf,
             f"batch_preprocess.py to regenerate it with the metadata fix."
         )
 
+    is_group_flash = "lit_mask" in epochs.metadata.columns
+    if is_group_flash and adaptive_index_map is None:
+        raise ValueError(f"{eeg_data_path}: group-flash file has no char/sequence segmentation "
+                         f"(not evaluable). Use files with SelectedTarget pulses (Test runs).")
+
     if adaptive_index_map is not None:
         epoch_rows = adaptive_index_map.get((char_idx, sequence_num))
         if epoch_rows is None or len(epoch_rows) == 0:
@@ -193,6 +214,12 @@ def real_eeg_classifier_flash_stream(eeg_data_path, char_idx, sequence_num, clf,
     seq_epochs.pick('eeg', exclude='bads')
     flash_probs = clf.predict_proba(seq_epochs.get_data(copy=False))[:, 1]
     stim_codes = seq_epochs.metadata["stimulus_code"].to_numpy()
+    if is_group_flash:
+        lit = seq_epochs.metadata["lit_mask"].to_numpy()
+        return [
+            {"stimulus_code": int(code), "target_probability": float(probability), "lit_mask": mask}
+            for probability, code, mask in zip(flash_probs, stim_codes, lit)
+        ]
     return [
         {"stimulus_code": int(code), "target_probability": float(probability)}
         for probability, code in zip(flash_probs, stim_codes)
@@ -212,6 +239,9 @@ def real_eeg_classifier_stream(eeg_data_path, char_idx, sequence_num, clf, char_
     )
     if not flashes:
         return np.ones(n_rows * n_cols) / (n_rows * n_cols)
+    if "lit_mask" in flashes[0]:
+        return membership_posterior(
+            [f["target_probability"] for f in flashes], [f["lit_mask"] for f in flashes])
     return row_column_posterior(
         [flash["target_probability"] for flash in flashes],
         [flash["stimulus_code"] for flash in flashes], n_rows, n_cols,
@@ -281,7 +311,8 @@ def mock_eeg_classifier_stream(target_char, char_list):
 # -----------------------------------------------------------------------------
 def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
                     confidence_threshold=0.85, max_sequences=15, min_flashes=2,
-                    clf=None, session_ids=None, enable_session_growth=False):
+                    clf=None, session_ids=None, enable_session_growth=False,
+                    study="StudyD", seconds_per_sequence=2.0):
     """Runs the dataset through the spelling simulation."""
 
     class Metrics:
@@ -293,9 +324,14 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
 
     metrics = Metrics()
 
-    trials = list(yield_character_trials("data/processed/ground_truth_registry.json", "data/processed"))
+    trials = list(yield_character_trials("data/processed/ground_truth_registry.json", "data/processed", study=study))
 
-    test_split_path = "data/processed/test_sessions.json"
+    test_split_path = ("data/processed/test_sessions.json" if study == "StudyD"
+                       else f"data/processed/test_sessions_{study}.json")
+    if not os.path.exists(test_split_path) and study != "StudyD":
+        # No explicit split: evaluate on Test runs only (classifier trains on Train runs).
+        trials = [t for t in trials if "_Test" in t.get("session_id", "")]
+        print(f"No {test_split_path}; evaluating {study} on Test runs only ({len(trials)} char trials).")
     if os.path.exists(test_split_path):
         with open(test_split_path) as f:
             test_sessions = set(json.load(f))
@@ -342,7 +378,7 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
             if os.path.exists(eeg_path):
                 resolved_path = eeg_path
             else:
-                studyd_candidate = eeg_path.replace("processed/", "processed/StudyD/")
+                studyd_candidate = eeg_path.replace("processed/", f"processed/{study}/")
                 if os.path.exists(studyd_candidate):
                     resolved_path = studyd_candidate
 
@@ -383,7 +419,7 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
 
     if metrics.total_characters > 0:
         metrics.accuracy = (metrics.correct_characters / metrics.total_characters) * 100
-        avg_time_per_char = (metrics.total_flashes_used / metrics.total_characters) * 2.0
+        avg_time_per_char = (metrics.total_flashes_used / metrics.total_characters) * seconds_per_sequence
     else:
         metrics.accuracy = 0.0
         avg_time_per_char = 0.0
@@ -399,15 +435,25 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
 # MAIN EXECUTION
 # -----------------------------------------------------------------------------
 if __name__ == "__main__":
-    print("Initializing components for Phase 6 Evaluation (REAL DATA - StudyD only)...\n")
+    import argparse
+    _ap = argparse.ArgumentParser()
+    _ap.add_argument("--study", default="StudyD")
+    _ap.add_argument("--model", default=None)
+    _args = _ap.parse_args()
+    STUDY = _args.study
+    print(f"Initializing components for Phase 6 Evaluation (REAL DATA - {STUDY})...\n")
 
     # 1. Setup Matrix & LLM — built from the REAL grid, not a hardcoded 6x6.
     spelling_matrix, n_rows, n_cols = load_spelling_matrix(
-        "data/processed/grid_layout.json", study_name="StudyD"
+        "data/processed/grid_layout.json", study_name=STUDY
     )
     num_classes = n_rows * n_cols
-    # Study D's RC (row-column) condition: one flash per row + one per column.
-    flashes_per_seq = n_rows + n_cols
+    with open("data/processed/grid_layout.json") as _f:
+        _layout = json.load(_f)[STUDY]
+    # RC studies: one flash per row + one per column. Group-flash studies: from layout.
+    flashes_per_seq = _layout.get("flashes_per_seq", n_rows + n_cols)
+    # Study D keeps the legacy 2.0 s/sequence; others use measured SOA x flashes.
+    seconds_per_sequence = 2.0 if STUDY == "StudyD" else flashes_per_seq * _layout["soa_s"]
     print(f"Loaded grid: {n_rows}x{n_cols} ({num_classes} classes), "
           f"{flashes_per_seq} flashes/sequence")
 
@@ -428,7 +474,8 @@ if __name__ == "__main__":
     tracker = SimpleAblationTracker()
 
     # 2. Load Real SWLDA Classifier
-    MODEL_PATH = 'data/processed/swlda_model.pkl'
+    MODEL_PATH = _args.model or ('data/processed/swlda_model.pkl' if STUDY == 'StudyD'
+                                 else f'data/processed/swlda_model_{STUDY}.pkl')
     if os.path.exists(MODEL_PATH):
         print(f"Loading SWLDA Classifier from {MODEL_PATH}...")
         clf = joblib.load(MODEL_PATH)
@@ -437,7 +484,8 @@ if __name__ == "__main__":
                                 "Please update MODEL_PATH to point to your saved .pkl file.")
 
     eval_kwargs = dict(n_rows=n_rows, n_cols=n_cols, flashes_per_seq=flashes_per_seq,
-                        confidence_threshold=0.85, clf=clf)
+                        confidence_threshold=0.85, clf=clf,
+                        study=STUDY, seconds_per_sequence=seconds_per_sequence)
 
     # ---------------------------------------------------------
     # EXPERIMENT 1: Baseline (No LLM, EEG Only)

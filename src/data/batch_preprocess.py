@@ -69,6 +69,41 @@ def _annotate_adaptive_event_indices(events, pulse_edges, n_chars, flashes_per_s
     return char_index.astype(int), sequence_in_char
 
 
+def _cell_channels_in_grid_order(char_channels):
+    """Per-cell channel names sorted row-major, so column i == flat grid index i."""
+    cells = []
+    for ch in char_channels:
+        _, row, col = ch.strip().rsplit('_', 2)
+        cells.append((int(row), int(col), ch))
+    return [ch for _, _, ch in sorted(cells)]
+
+
+def extract_lit_masks(cell_data, onsets, window=8):
+    """cell_data: (n_cells, n_samples). Returns one '0'/'1' string per flash
+    onset marking which grid cells were lit (flat row-major order)."""
+    masks = []
+    for s in onsets:
+        lit = cell_data[:, s:s + window].max(axis=1) > 0
+        masks.append("".join("1" if v else "0" for v in lit))
+    return masks
+
+
+def sequence_coverage(lit_masks, char_index, sequence_in_char, flashes_per_seq):
+    """(n_complete, n_perfect): complete sequences, and those lighting every cell exactly once."""
+    groups = {}
+    for i, (c, s) in enumerate(zip(char_index, sequence_in_char)):
+        if c >= 0 and s > 0:
+            groups.setdefault((int(c), int(s)), []).append(i)
+    n_complete = n_perfect = 0
+    for idx in groups.values():
+        if len(idx) != flashes_per_seq:
+            continue
+        n_complete += 1
+        counts = np.sum([[int(ch) for ch in lit_masks[i]] for i in idx], axis=0)
+        n_perfect += int(np.all(counts == 1))
+    return n_complete, n_perfect
+
+
 def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
                            notch_freq=None, sequences_per_selection=20, verbose=False):
     """
@@ -154,8 +189,11 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
     stim_type = raw.get_data(picks=[stim_type_ch])[0]
     stim_code = raw.get_data(picks=[stim_code_ch])[0]
 
-    threshold = 0.5
+    threshold = (float(np.min(stim_begin)) + float(np.max(stim_begin))) / 2
     rising_edges = np.where((stim_begin[:-1] <= threshold) & (stim_begin[1:] > threshold))[0] + 1
+
+    if not len(rising_edges):
+        raise ValueError(f"No StimulusBegin rising edges found in {edf_path}")
 
     events = []
     stimulus_codes_per_event = []
@@ -187,19 +225,46 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
         for label, (row, col) in grid_map.items()
     }
 
+    # Group-flash studies (Q/E/G/N): StimulusCode is a running flash counter, not
+    # a row/column id (RC studies like D emit only n_rows+n_cols distinct codes).
+    # Which cells were lit is read from the per-cell channels instead.
+    group_flash = bool(len(stimulus_codes_per_event)
+                       and stimulus_codes_per_event.max() > n_rows + n_cols)
+    lit_masks = None
+    flashes_per_seq_info = n_rows + n_cols
+    soa_s = None
+    if group_flash:
+        cell_chs = _cell_channels_in_grid_order(char_channels)
+        if len(cell_chs) != n_rows * n_cols:
+            raise ValueError(f"{edf_path}: {len(cell_chs)} cell channels != {n_rows}x{n_cols} grid")
+        lit_masks = extract_lit_masks(raw.get_data(picks=cell_chs), rising_edges)
+        lit_counts = np.array([m.count("1") for m in lit_masks])
+        if lit_counts.min() == 0 or lit_counts.min() != lit_counts.max():
+            raise ValueError(f"{edf_path}: non-constant lit-cell count {np.unique(lit_counts).tolist()} "
+                             f"-- group-flash scoring assumes equal-size groups; inspect this study.")
+        if (n_rows * n_cols) % int(lit_counts[0]) != 0:
+            raise ValueError(f"{edf_path}: {lit_counts[0]} lit cells/flash does not tile {n_rows * n_cols} cells")
+        flashes_per_seq_info = (n_rows * n_cols) // int(lit_counts[0])
+        soa_s = float(np.median(np.diff(rising_edges)) / raw.info["sfreq"])
+
+    use_pulses = is_adaptive
+    if group_flash and not is_adaptive and selected_target_ch is not None:
+        _st = np.round(raw.get_data(picks=[selected_target_ch])[0]).astype(int)
+        use_pulses = bool(((_st[:-1] == 0) & (_st[1:] != 0)).any())
+
     current_target_trace = raw.get_data(picks=[current_target_ch])[0]
     target_indices = events[events[:, 2] == 1, 0]
     target_codes_raw = np.round(current_target_trace[target_indices]).astype(int)
 
     n_targets = len(target_codes_raw)
     agreement_info = {
-        "is_adaptive": is_adaptive,
+        "is_adaptive": use_pulses,
         "target_flash_count": int(n_targets),
     }
     adaptive_char_index = None
     adaptive_sequence_in_char = None
 
-    if is_adaptive:
+    if use_pulses:
         # SelectedTarget pulses to a nonzero code exactly once per finalized
         # character selection -- the system's own record of what was
         # selected, read directly rather than inferred via CurrentTarget
@@ -211,7 +276,7 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
         pulse_edges = np.where((selected_target[:-1] == 0) & (selected_target[1:] != 0))[0] + 1
         sequence_codes = selected_target[pulse_edges].tolist()
 
-        flashes_per_seq = n_rows + n_cols
+        flashes_per_seq = flashes_per_seq_info
         adaptive_char_index, adaptive_sequence_in_char = _annotate_adaptive_event_indices(
             events=events,
             pulse_edges=pulse_edges,
@@ -225,6 +290,16 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
         })
         print(f"  Detected {len(sequence_codes)} character(s) via SelectedTarget pulses "
               f"over {n_targets} target flashes")
+    elif group_flash:
+        # No SelectedTarget pulses (e.g. calibration/Train): segment by runs of
+        # equal CurrentTarget. Only used for registry text; labels are unaffected.
+        sequence_codes = []
+        previous = None
+        for code in target_codes_raw.tolist():
+            if code != previous:
+                sequence_codes.append(code)
+                previous = code
+        agreement_info["detection_method"] = "current_target_runs"
     else:
         if n_targets % sequences_per_selection != 0:
             print(f"WARNING: {n_targets} target flashes doesn't divide evenly by "
@@ -276,20 +351,33 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
         "stimulus_type": events[:, 2],
     })
 
-    if is_adaptive:
+    if use_pulses:
         metadata["char_index"] = adaptive_char_index
         metadata["sequence_in_char"] = adaptive_sequence_in_char
+
+    if lit_masks is not None:
+        metadata["lit_mask"] = lit_masks
+        if use_pulses:
+            n_complete, n_perfect = sequence_coverage(
+                lit_masks, adaptive_char_index, adaptive_sequence_in_char, flashes_per_seq_info)
+            if n_complete == 0 or n_perfect / n_complete < 0.95:
+                raise ValueError(
+                    f"{edf_path}: only {n_perfect}/{n_complete} complete sequences light every "
+                    f"cell exactly once (expected {flashes_per_seq_info} flashes/sequence) -- "
+                    f"segmentation or flash design differs from assumption.")
 
     metadata = metadata.iloc[epochs.selection].reset_index(drop=True)
     epochs.metadata = metadata
 
-    return epochs, spelled_string, {"grid_map": grid_map, "n_rows": n_rows, "n_cols": n_cols, "agreement": agreement_info}
+    return epochs, spelled_string, {"grid_map": grid_map, "n_rows": n_rows, "n_cols": n_cols,
+                                    "group_flash": group_flash, "flashes_per_seq": flashes_per_seq_info,
+                                    "soa_s": soa_s, "agreement": agreement_info}
 
 
 def _study_d_quality_context(edf_path):
     path = Path(edf_path)
     parts = path.parts
-    study = next((part for part in parts if part in {"StudyD", "StudyE"}), "Unknown")
+    study = next((part for part in parts if part.startswith("Study")), "Unknown")
     study_index = parts.index(study) if study in parts else -1
 
     subject = parts[study_index + 1] if study_index >= 0 and study_index + 1 < len(parts) else "Unknown"
@@ -337,10 +425,14 @@ def _append_failure_log(log_path, edf_path, exc):
 
 
 if __name__ == "__main__":
+    import argparse
+    _ap = argparse.ArgumentParser()
+    _ap.add_argument("--study", default="StudyD", help="e.g. StudyD, StudyQ")
+    STUDY = _ap.parse_args().study
     project_root = Path(__file__).resolve().parents[2]
-    raw_root = project_root / "data" / "raw" / "bigP3BCI_dataset" / "bigP3BCI-data" / "StudyD"
+    raw_root = project_root / "data" / "raw" / "bigP3BCI_dataset" / "bigP3BCI-data" / STUDY
     processed_root = project_root / "data" / "processed"
-    study_processed_root = processed_root / "StudyD"
+    study_processed_root = processed_root / STUDY
     grid_layout_path = processed_root / "grid_layout.json"
     registry_path = processed_root / "ground_truth_registry.json"
     quality_flags_path = processed_root / "quality_flags.csv"
@@ -348,7 +440,7 @@ if __name__ == "__main__":
 
     edf_files = sorted(raw_root.rglob("*.[eE][dD][fF]"))
     if not edf_files:
-        raise FileNotFoundError(f"No Study D EDF files found under {raw_root}")
+        raise FileNotFoundError(f"No {STUDY} EDF files found under {raw_root}")
 
     processed_count = 0
     failed_count = 0
@@ -359,7 +451,7 @@ if __name__ == "__main__":
     ground_truth_registry = json.loads(registry_path.read_text()) if registry_path.exists() else {}
     quality_flags = []
 
-    print(f"Found {len(edf_files)} Study D EDF files under {raw_root}")
+    print(f"Found {len(edf_files)} {STUDY} EDF files under {raw_root}")
     for edf_path in tqdm(edf_files, desc="Preprocessing", unit="file"):
         output_path = study_processed_root / f"{edf_path.stem}-epo.fif"
 
@@ -382,12 +474,17 @@ if __name__ == "__main__":
                 "n_rows": grid_info["n_rows"],
                 "n_cols": grid_info["n_cols"],
             }
-            if "StudyD" not in grid_layouts:
-                grid_layouts["StudyD"] = static_info
-            elif grid_layouts["StudyD"] != static_info:
+            if STUDY not in grid_layouts:
+                grid_layouts[STUDY] = {
+                    **static_info,
+                    "group_flash": grid_info["group_flash"],
+                    "flashes_per_seq": grid_info["flashes_per_seq"],
+                    "soa_s": grid_info["soa_s"],
+                }
+            elif {k: grid_layouts[STUDY].get(k) for k in static_info} != static_info:
                 raise ValueError(
-                    f"Grid layout mismatch at {edf_path} — expected constant 9x8 layout "
-                    f"across all Study D files. This should never happen; investigate before continuing."
+                    f"Grid layout mismatch at {edf_path} — expected a constant layout "
+                    f"across all {STUDY} files. This should never happen; investigate before continuing."
                 )
 
             ground_truth_registry[edf_path.stem] = ground_truth_text

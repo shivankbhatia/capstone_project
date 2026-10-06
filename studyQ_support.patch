@@ -1,0 +1,606 @@
+diff --git a/run_pipeline.py b/run_pipeline.py
+index cacece5..6ce9d2c 100644
+--- a/run_pipeline.py
++++ b/run_pipeline.py
+@@ -119,6 +119,22 @@ def row_column_posterior(flash_probs, stim_codes, n_rows, n_cols):
+     return grid_probs / grid_probs.sum()
+ 
+ 
++def membership_posterior(flash_probs, lit_masks):
++    """Grid posterior for group-flash studies (Q/E/G/N).
++
++    A cell's evidence is the sum of target log-odds over every flash that lit
++    it. For RC flashes (row lights 9 cells, column 8) this is exactly
++    row_log_score + col_log_score, i.e. identical to row_column_posterior.
++    """
++    p = np.clip(np.asarray(flash_probs, dtype=float), 1e-6, 1 - 1e-6)
++    log_odds = np.log(p) - np.log1p(-p)
++    membership = np.array([[int(ch) for ch in m] for m in lit_masks], dtype=float)
++    scores = membership.T @ log_odds
++    scores -= scores.max()
++    probs = np.exp(scores)
++    return probs / probs.sum()
++
++
+ def _build_adaptive_index_map(epochs):
+     """Build (char_idx, sequence_num) -> epoch-row indices from metadata."""
+     if epochs.metadata is None:
+@@ -168,6 +184,11 @@ def real_eeg_classifier_flash_stream(eeg_data_path, char_idx, sequence_num, clf,
+             f"batch_preprocess.py to regenerate it with the metadata fix."
+         )
+ 
++    is_group_flash = "lit_mask" in epochs.metadata.columns
++    if is_group_flash and adaptive_index_map is None:
++        raise ValueError(f"{eeg_data_path}: group-flash file has no char/sequence segmentation "
++                         f"(not evaluable). Use files with SelectedTarget pulses (Test runs).")
++
+     if adaptive_index_map is not None:
+         epoch_rows = adaptive_index_map.get((char_idx, sequence_num))
+         if epoch_rows is None or len(epoch_rows) == 0:
+@@ -193,6 +214,12 @@ def real_eeg_classifier_flash_stream(eeg_data_path, char_idx, sequence_num, clf,
+     seq_epochs.pick('eeg', exclude='bads')
+     flash_probs = clf.predict_proba(seq_epochs.get_data(copy=False))[:, 1]
+     stim_codes = seq_epochs.metadata["stimulus_code"].to_numpy()
++    if is_group_flash:
++        lit = seq_epochs.metadata["lit_mask"].to_numpy()
++        return [
++            {"stimulus_code": int(code), "target_probability": float(probability), "lit_mask": mask}
++            for probability, code, mask in zip(flash_probs, stim_codes, lit)
++        ]
+     return [
+         {"stimulus_code": int(code), "target_probability": float(probability)}
+         for probability, code in zip(flash_probs, stim_codes)
+@@ -212,6 +239,9 @@ def real_eeg_classifier_stream(eeg_data_path, char_idx, sequence_num, clf, char_
+     )
+     if not flashes:
+         return np.ones(n_rows * n_cols) / (n_rows * n_cols)
++    if "lit_mask" in flashes[0]:
++        return membership_posterior(
++            [f["target_probability"] for f in flashes], [f["lit_mask"] for f in flashes])
+     return row_column_posterior(
+         [flash["target_probability"] for flash in flashes],
+         [flash["stimulus_code"] for flash in flashes], n_rows, n_cols,
+@@ -281,7 +311,8 @@ def mock_eeg_classifier_stream(target_char, char_list):
+ # -----------------------------------------------------------------------------
+ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
+                     confidence_threshold=0.85, max_sequences=15, min_flashes=2,
+-                    clf=None, session_ids=None, enable_session_growth=False):
++                    clf=None, session_ids=None, enable_session_growth=False,
++                    study="StudyD", seconds_per_sequence=2.0):
+     """Runs the dataset through the spelling simulation."""
+ 
+     class Metrics:
+@@ -293,9 +324,14 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
+ 
+     metrics = Metrics()
+ 
+-    trials = list(yield_character_trials("data/processed/ground_truth_registry.json", "data/processed"))
++    trials = list(yield_character_trials("data/processed/ground_truth_registry.json", "data/processed", study=study))
+ 
+-    test_split_path = "data/processed/test_sessions.json"
++    test_split_path = ("data/processed/test_sessions.json" if study == "StudyD"
++                       else f"data/processed/test_sessions_{study}.json")
++    if not os.path.exists(test_split_path) and study != "StudyD":
++        # No explicit split: evaluate on Test runs only (classifier trains on Train runs).
++        trials = [t for t in trials if "_Test" in t.get("session_id", "")]
++        print(f"No {test_split_path}; evaluating {study} on Test runs only ({len(trials)} char trials).")
+     if os.path.exists(test_split_path):
+         with open(test_split_path) as f:
+             test_sessions = set(json.load(f))
+@@ -342,7 +378,7 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
+             if os.path.exists(eeg_path):
+                 resolved_path = eeg_path
+             else:
+-                studyd_candidate = eeg_path.replace("processed/", "processed/StudyD/")
++                studyd_candidate = eeg_path.replace("processed/", f"processed/{study}/")
+                 if os.path.exists(studyd_candidate):
+                     resolved_path = studyd_candidate
+ 
+@@ -383,7 +419,7 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
+ 
+     if metrics.total_characters > 0:
+         metrics.accuracy = (metrics.correct_characters / metrics.total_characters) * 100
+-        avg_time_per_char = (metrics.total_flashes_used / metrics.total_characters) * 2.0
++        avg_time_per_char = (metrics.total_flashes_used / metrics.total_characters) * seconds_per_sequence
+     else:
+         metrics.accuracy = 0.0
+         avg_time_per_char = 0.0
+@@ -399,15 +435,25 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
+ # MAIN EXECUTION
+ # -----------------------------------------------------------------------------
+ if __name__ == "__main__":
+-    print("Initializing components for Phase 6 Evaluation (REAL DATA - StudyD only)...\n")
++    import argparse
++    _ap = argparse.ArgumentParser()
++    _ap.add_argument("--study", default="StudyD")
++    _ap.add_argument("--model", default=None)
++    _args = _ap.parse_args()
++    STUDY = _args.study
++    print(f"Initializing components for Phase 6 Evaluation (REAL DATA - {STUDY})...\n")
+ 
+     # 1. Setup Matrix & LLM — built from the REAL grid, not a hardcoded 6x6.
+     spelling_matrix, n_rows, n_cols = load_spelling_matrix(
+-        "data/processed/grid_layout.json", study_name="StudyD"
++        "data/processed/grid_layout.json", study_name=STUDY
+     )
+     num_classes = n_rows * n_cols
+-    # Study D's RC (row-column) condition: one flash per row + one per column.
+-    flashes_per_seq = n_rows + n_cols
++    with open("data/processed/grid_layout.json") as _f:
++        _layout = json.load(_f)[STUDY]
++    # RC studies: one flash per row + one per column. Group-flash studies: from layout.
++    flashes_per_seq = _layout.get("flashes_per_seq", n_rows + n_cols)
++    # Study D keeps the legacy 2.0 s/sequence; others use measured SOA x flashes.
++    seconds_per_sequence = 2.0 if STUDY == "StudyD" else flashes_per_seq * _layout["soa_s"]
+     print(f"Loaded grid: {n_rows}x{n_cols} ({num_classes} classes), "
+           f"{flashes_per_seq} flashes/sequence")
+ 
+@@ -428,7 +474,8 @@ if __name__ == "__main__":
+     tracker = SimpleAblationTracker()
+ 
+     # 2. Load Real SWLDA Classifier
+-    MODEL_PATH = 'data/processed/swlda_model.pkl'
++    MODEL_PATH = _args.model or ('data/processed/swlda_model.pkl' if STUDY == 'StudyD'
++                                 else f'data/processed/swlda_model_{STUDY}.pkl')
+     if os.path.exists(MODEL_PATH):
+         print(f"Loading SWLDA Classifier from {MODEL_PATH}...")
+         clf = joblib.load(MODEL_PATH)
+@@ -437,7 +484,8 @@ if __name__ == "__main__":
+                                 "Please update MODEL_PATH to point to your saved .pkl file.")
+ 
+     eval_kwargs = dict(n_rows=n_rows, n_cols=n_cols, flashes_per_seq=flashes_per_seq,
+-                        confidence_threshold=0.85, clf=clf)
++                        confidence_threshold=0.85, clf=clf,
++                        study=STUDY, seconds_per_sequence=seconds_per_sequence)
+ 
+     # ---------------------------------------------------------
+     # EXPERIMENT 1: Baseline (No LLM, EEG Only)
+diff --git a/src/data/batch_preprocess.py b/src/data/batch_preprocess.py
+index d222ebc..ea11316 100644
+--- a/src/data/batch_preprocess.py
++++ b/src/data/batch_preprocess.py
+@@ -69,6 +69,41 @@ def _annotate_adaptive_event_indices(events, pulse_edges, n_chars, flashes_per_s
+     return char_index.astype(int), sequence_in_char
+ 
+ 
++def _cell_channels_in_grid_order(char_channels):
++    """Per-cell channel names sorted row-major, so column i == flat grid index i."""
++    cells = []
++    for ch in char_channels:
++        _, row, col = ch.strip().rsplit('_', 2)
++        cells.append((int(row), int(col), ch))
++    return [ch for _, _, ch in sorted(cells)]
++
++
++def extract_lit_masks(cell_data, onsets, window=8):
++    """cell_data: (n_cells, n_samples). Returns one '0'/'1' string per flash
++    onset marking which grid cells were lit (flat row-major order)."""
++    masks = []
++    for s in onsets:
++        lit = cell_data[:, s:s + window].max(axis=1) > 0
++        masks.append("".join("1" if v else "0" for v in lit))
++    return masks
++
++
++def sequence_coverage(lit_masks, char_index, sequence_in_char, flashes_per_seq):
++    """(n_complete, n_perfect): complete sequences, and those lighting every cell exactly once."""
++    groups = {}
++    for i, (c, s) in enumerate(zip(char_index, sequence_in_char)):
++        if c >= 0 and s > 0:
++            groups.setdefault((int(c), int(s)), []).append(i)
++    n_complete = n_perfect = 0
++    for idx in groups.values():
++        if len(idx) != flashes_per_seq:
++            continue
++        n_complete += 1
++        counts = np.sum([[int(ch) for ch in lit_masks[i]] for i in idx], axis=0)
++        n_perfect += int(np.all(counts == 1))
++    return n_complete, n_perfect
++
++
+ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
+                            notch_freq=None, sequences_per_selection=20, verbose=False):
+     """
+@@ -187,19 +222,46 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
+         for label, (row, col) in grid_map.items()
+     }
+ 
++    # Group-flash studies (Q/E/G/N): StimulusCode is a running flash counter, not
++    # a row/column id (RC studies like D emit only n_rows+n_cols distinct codes).
++    # Which cells were lit is read from the per-cell channels instead.
++    group_flash = bool(len(stimulus_codes_per_event)
++                       and stimulus_codes_per_event.max() > n_rows + n_cols)
++    lit_masks = None
++    flashes_per_seq_info = n_rows + n_cols
++    soa_s = None
++    if group_flash:
++        cell_chs = _cell_channels_in_grid_order(char_channels)
++        if len(cell_chs) != n_rows * n_cols:
++            raise ValueError(f"{edf_path}: {len(cell_chs)} cell channels != {n_rows}x{n_cols} grid")
++        lit_masks = extract_lit_masks(raw.get_data(picks=cell_chs), rising_edges)
++        lit_counts = np.array([m.count("1") for m in lit_masks])
++        if lit_counts.min() == 0 or lit_counts.min() != lit_counts.max():
++            raise ValueError(f"{edf_path}: non-constant lit-cell count {np.unique(lit_counts).tolist()} "
++                             f"-- group-flash scoring assumes equal-size groups; inspect this study.")
++        if (n_rows * n_cols) % int(lit_counts[0]) != 0:
++            raise ValueError(f"{edf_path}: {lit_counts[0]} lit cells/flash does not tile {n_rows * n_cols} cells")
++        flashes_per_seq_info = (n_rows * n_cols) // int(lit_counts[0])
++        soa_s = float(np.median(np.diff(rising_edges)) / raw.info["sfreq"])
++
++    use_pulses = is_adaptive
++    if group_flash and not is_adaptive and selected_target_ch is not None:
++        _st = np.round(raw.get_data(picks=[selected_target_ch])[0]).astype(int)
++        use_pulses = bool(((_st[:-1] == 0) & (_st[1:] != 0)).any())
++
+     current_target_trace = raw.get_data(picks=[current_target_ch])[0]
+     target_indices = events[events[:, 2] == 1, 0]
+     target_codes_raw = np.round(current_target_trace[target_indices]).astype(int)
+ 
+     n_targets = len(target_codes_raw)
+     agreement_info = {
+-        "is_adaptive": is_adaptive,
++        "is_adaptive": use_pulses,
+         "target_flash_count": int(n_targets),
+     }
+     adaptive_char_index = None
+     adaptive_sequence_in_char = None
+ 
+-    if is_adaptive:
++    if use_pulses:
+         # SelectedTarget pulses to a nonzero code exactly once per finalized
+         # character selection -- the system's own record of what was
+         # selected, read directly rather than inferred via CurrentTarget
+@@ -211,7 +273,7 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
+         pulse_edges = np.where((selected_target[:-1] == 0) & (selected_target[1:] != 0))[0] + 1
+         sequence_codes = selected_target[pulse_edges].tolist()
+ 
+-        flashes_per_seq = n_rows + n_cols
++        flashes_per_seq = flashes_per_seq_info
+         adaptive_char_index, adaptive_sequence_in_char = _annotate_adaptive_event_indices(
+             events=events,
+             pulse_edges=pulse_edges,
+@@ -225,6 +287,16 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
+         })
+         print(f"  Detected {len(sequence_codes)} character(s) via SelectedTarget pulses "
+               f"over {n_targets} target flashes")
++    elif group_flash:
++        # No SelectedTarget pulses (e.g. calibration/Train): segment by runs of
++        # equal CurrentTarget. Only used for registry text; labels are unaffected.
++        sequence_codes = []
++        previous = None
++        for code in target_codes_raw.tolist():
++            if code != previous:
++                sequence_codes.append(code)
++                previous = code
++        agreement_info["detection_method"] = "current_target_runs"
+     else:
+         if n_targets % sequences_per_selection != 0:
+             print(f"WARNING: {n_targets} target flashes doesn't divide evenly by "
+@@ -276,20 +348,33 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
+         "stimulus_type": events[:, 2],
+     })
+ 
+-    if is_adaptive:
++    if use_pulses:
+         metadata["char_index"] = adaptive_char_index
+         metadata["sequence_in_char"] = adaptive_sequence_in_char
+ 
++    if lit_masks is not None:
++        metadata["lit_mask"] = lit_masks
++        if use_pulses:
++            n_complete, n_perfect = sequence_coverage(
++                lit_masks, adaptive_char_index, adaptive_sequence_in_char, flashes_per_seq_info)
++            if n_complete == 0 or n_perfect / n_complete < 0.95:
++                raise ValueError(
++                    f"{edf_path}: only {n_perfect}/{n_complete} complete sequences light every "
++                    f"cell exactly once (expected {flashes_per_seq_info} flashes/sequence) -- "
++                    f"segmentation or flash design differs from assumption.")
++
+     metadata = metadata.iloc[epochs.selection].reset_index(drop=True)
+     epochs.metadata = metadata
+ 
+-    return epochs, spelled_string, {"grid_map": grid_map, "n_rows": n_rows, "n_cols": n_cols, "agreement": agreement_info}
++    return epochs, spelled_string, {"grid_map": grid_map, "n_rows": n_rows, "n_cols": n_cols,
++                                    "group_flash": group_flash, "flashes_per_seq": flashes_per_seq_info,
++                                    "soa_s": soa_s, "agreement": agreement_info}
+ 
+ 
+ def _study_d_quality_context(edf_path):
+     path = Path(edf_path)
+     parts = path.parts
+-    study = next((part for part in parts if part in {"StudyD", "StudyE"}), "Unknown")
++    study = next((part for part in parts if part.startswith("Study")), "Unknown")
+     study_index = parts.index(study) if study in parts else -1
+ 
+     subject = parts[study_index + 1] if study_index >= 0 and study_index + 1 < len(parts) else "Unknown"
+@@ -337,10 +422,14 @@ def _append_failure_log(log_path, edf_path, exc):
+ 
+ 
+ if __name__ == "__main__":
++    import argparse
++    _ap = argparse.ArgumentParser()
++    _ap.add_argument("--study", default="StudyD", help="e.g. StudyD, StudyQ")
++    STUDY = _ap.parse_args().study
+     project_root = Path(__file__).resolve().parents[2]
+-    raw_root = project_root / "data" / "raw" / "bigP3BCI_dataset" / "bigP3BCI-data" / "StudyD"
++    raw_root = project_root / "data" / "raw" / "bigP3BCI_dataset" / "bigP3BCI-data" / STUDY
+     processed_root = project_root / "data" / "processed"
+-    study_processed_root = processed_root / "StudyD"
++    study_processed_root = processed_root / STUDY
+     grid_layout_path = processed_root / "grid_layout.json"
+     registry_path = processed_root / "ground_truth_registry.json"
+     quality_flags_path = processed_root / "quality_flags.csv"
+@@ -348,7 +437,7 @@ if __name__ == "__main__":
+ 
+     edf_files = sorted(raw_root.rglob("*.[eE][dD][fF]"))
+     if not edf_files:
+-        raise FileNotFoundError(f"No Study D EDF files found under {raw_root}")
++        raise FileNotFoundError(f"No {STUDY} EDF files found under {raw_root}")
+ 
+     processed_count = 0
+     failed_count = 0
+@@ -359,7 +448,7 @@ if __name__ == "__main__":
+     ground_truth_registry = json.loads(registry_path.read_text()) if registry_path.exists() else {}
+     quality_flags = []
+ 
+-    print(f"Found {len(edf_files)} Study D EDF files under {raw_root}")
++    print(f"Found {len(edf_files)} {STUDY} EDF files under {raw_root}")
+     for edf_path in tqdm(edf_files, desc="Preprocessing", unit="file"):
+         output_path = study_processed_root / f"{edf_path.stem}-epo.fif"
+ 
+@@ -382,12 +471,17 @@ if __name__ == "__main__":
+                 "n_rows": grid_info["n_rows"],
+                 "n_cols": grid_info["n_cols"],
+             }
+-            if "StudyD" not in grid_layouts:
+-                grid_layouts["StudyD"] = static_info
+-            elif grid_layouts["StudyD"] != static_info:
++            if STUDY not in grid_layouts:
++                grid_layouts[STUDY] = {
++                    **static_info,
++                    "group_flash": grid_info["group_flash"],
++                    "flashes_per_seq": grid_info["flashes_per_seq"],
++                    "soa_s": grid_info["soa_s"],
++                }
++            elif {k: grid_layouts[STUDY].get(k) for k in static_info} != static_info:
+                 raise ValueError(
+-                    f"Grid layout mismatch at {edf_path} — expected constant 9x8 layout "
+-                    f"across all Study D files. This should never happen; investigate before continuing."
++                    f"Grid layout mismatch at {edf_path} — expected a constant layout "
++                    f"across all {STUDY} files. This should never happen; investigate before continuing."
+                 )
+ 
+             ground_truth_registry[edf_path.stem] = ground_truth_text
+diff --git a/src/models/classifier.py b/src/models/classifier.py
+index 2a00c30..265d972 100644
+--- a/src/models/classifier.py
++++ b/src/models/classifier.py
+@@ -85,14 +85,22 @@ def train_calibrated_batch(processed_dir, glob_pattern, epochs=5):
+     return pipeline_clf
+ 
+ if __name__ == "__main__":
++    import argparse
++    _ap = argparse.ArgumentParser()
++    _ap.add_argument("--study", default="StudyD")
++    _study = _ap.parse_args().study
+     processed_dir = "./data/processed"
+-    glob_pattern = "D_*_SE001*Train*-epo.fif"
++    if _study == "StudyD":
++        glob_pattern = "D_*_SE001*Train*-epo.fif"
++    else:
++        glob_pattern = f"{_study[-1]}_*Train*-epo.fif"
+     
+     try:
+         clf = train_calibrated_batch(processed_dir, glob_pattern, epochs=5)
+         
+         # Save the trained model to disk
+-        model_save_path = f"{processed_dir}/swlda_model.pkl"
++        model_save_path = (f"{processed_dir}/swlda_model.pkl" if _study == "StudyD"
++                           else f"{processed_dir}/swlda_model_{_study}.pkl")
+         print(f"\nSaving trained model to {model_save_path}...")
+         joblib.dump(clf, model_save_path)
+         print("Model saved successfully! You are ready to run the pipeline.")
+diff --git a/src/preprocessing/build_session_sequence.py b/src/preprocessing/build_session_sequence.py
+index 0630573..47b3116 100644
+--- a/src/preprocessing/build_session_sequence.py
++++ b/src/preprocessing/build_session_sequence.py
+@@ -1,7 +1,7 @@
+ import json
+ import os
+ 
+-def yield_character_trials(registry_path="data/processed/ground_truth_registry.json", dataset_dir=None):
++def yield_character_trials(registry_path="data/processed/ground_truth_registry.json", dataset_dir=None, study="StudyD"):
+     """
+     Yields character trials for the end-to-end replay loop.
+     
+@@ -36,7 +36,7 @@ def yield_character_trials(registry_path="data/processed/ground_truth_registry.j
+                 # Prefer StudyD outputs; fallback to dataset root if needed.
+                 file_path = file_name
+                 if dataset_dir:
+-                    studyd_path = os.path.join(dataset_dir, "StudyD", file_name)
++                    studyd_path = os.path.join(dataset_dir, study, file_name)
+                     root_path = os.path.join(dataset_dir, file_name)
+                     if os.path.exists(studyd_path):
+                         file_path = studyd_path
+diff --git a/tests/test_group_flash_scoring.py b/tests/test_group_flash_scoring.py
+new file mode 100644
+index 0000000..1d2c436
+--- /dev/null
++++ b/tests/test_group_flash_scoring.py
+@@ -0,0 +1,176 @@
++"""Synthetic end-to-end tests for group-flash (Study Q-style) support and
++equivalence with the RC (Study D-style) scoring path."""
++import sys, types
++from pathlib import Path
++
++import numpy as np
++import mne
++import pytest
++
++ROOT = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(ROOT))
++
++try:
++    import run_pipeline as rp
++except Exception:  # heavy LLM deps unavailable: stub them, we only need scoring code
++    for name, attr in [("src.models.llm_predictor", "LLMPredictor"),
++                       ("src.models.rag_predictor", "RAGPredictor"),
++                       ("src.models.fusion", "BayesianFusionEngine")]:
++        m = types.ModuleType(name); setattr(m, attr, object); sys.modules[name] = m
++    import run_pipeline as rp
++
++from src.data.batch_preprocess import parse_bigp3bci_edf
++
++FS, N_ROWS, N_COLS = 256, 9, 8
++N_CELLS = N_ROWS * N_COLS
++SOA, FLASH_LEN = 32, 16
++
++
++def _write_edf(path, flash_plan, n_eeg=16, seed=0):
++    """flash_plan: list of chars; each = list of sequences; each sequence = list of
++    (code, lit_cells, is_target). Returns (path, target flat indices 0-based)."""
++    rng = np.random.default_rng(seed)
++    n_flash = sum(len(s) for ch in flash_plan for s in ch)
++    n = 600 + n_flash * SOA + 9400   # long enough for the 0.1 Hz FIR highpass
++    eeg = rng.normal(0, 2e-6, (n_eeg, n))
++    cells = np.zeros((N_CELLS, n)); stype = np.zeros(n); sbegin = np.zeros(n)
++    scode = np.zeros(n); cur = np.zeros(n); sel = np.zeros(n)
++    t = 512; targets = []
++    for ch in flash_plan:
++        target = next(c for seq in ch for (_, lit, tg) in seq if tg for c in lit if all(
++            c in l2 for s2 in ch for (_, l2, t2) in s2 if t2))
++        targets.append(target)
++        start = t
++        for seq in ch:
++            for code, lit, is_t in seq:
++                sbegin[t:t + FLASH_LEN] = 1; scode[t:t + FLASH_LEN] = code
++                for c in lit:
++                    cells[c, t:t + FLASH_LEN] = 1
++                if is_t:
++                    stype[t:t + FLASH_LEN] = 1
++                    eeg[:, t + 60:t + 80] += 2e-5     # P300-like bump
++                t += SOA
++        cur[start:t] = target + 1
++        sel[t + 2:t + 10] = target + 1
++        t += SOA
++    labels = [f"L{i}" for i in range(N_CELLS)]
++    names = [f"EEG_{x}" for x in ["Fz", "Cz", "Pz", "Oz", "F3", "F4", "C3", "C4", "P3", "P4",
++                                 "T7", "T8", "CP3", "CP4", "PO7", "PO8"][:n_eeg]]
++    names += [f"{labels[i]}_{i // N_COLS + 1}_{i % N_COLS + 1}" for i in range(N_CELLS)]
++    names += ["StimulusType", "SelectedTarget", "SelectedRow", "SelectedColumn", "PhaseInSequence",
++              "StimulusBegin", "StimulusCode", "CurrentTarget", "FakeFeedback", "DisplayResults"]
++    zeros = np.zeros(n)
++    data = np.vstack([eeg, cells, stype, sel, zeros, zeros, zeros, sbegin, scode, cur, zeros, zeros])
++    info = mne.create_info(names, FS, ch_types=["eeg"] * n_eeg + ["misc"] * (len(names) - n_eeg))
++    raw = mne.io.RawArray(data, info, verbose=False)
++    path.parent.mkdir(parents=True, exist_ok=True)
++    mne.export.export_raw(str(path), raw, fmt="edf", overwrite=True, verbose=False)
++    return targets
++
++
++def _group_plan(rng, target, n_seqs):
++    """12 flashes of 6 random cells per sequence; exactly one flash holds the target."""
++    chars = []
++    seqs = []
++    for _ in range(n_seqs):
++        perm = rng.permutation(N_CELLS)
++        groups = [perm[i * 6:(i + 1) * 6].tolist() for i in range(12)]
++        seqs.append([(0, g, target in g) for g in groups])
++    # running counter code, like Study Q
++    k = 0
++    for seq in seqs:
++        for j, (_, g, tg) in enumerate(seq):
++            k += 1; seq[j] = (k, g, tg)
++    return seqs
++
++
++def _rc_plan(target, n_seqs, rng):
++    r, c = divmod(target, N_COLS)
++    seqs = []
++    for _ in range(n_seqs):
++        order = rng.permutation(N_ROWS + N_COLS) + 1
++        seq = []
++        for code in order:
++            if code <= N_ROWS:
++                lit = [(code - 1) * N_COLS + cc for cc in range(N_COLS)]
++                seq.append((int(code), lit, (code - 1) == r))
++            else:
++                col = code - N_ROWS - 1
++                lit = [rr * N_COLS + col for rr in range(N_ROWS)]
++                seq.append((int(code), lit, col == c))
++        seqs.append(seq)
++    return seqs
++
++
++class _Clf:
++    """Stand-in classifier: target iff the P300 bump is present."""
++    def predict_proba(self, X):
++        feat = X[:, :, 90:102].mean(axis=(1, 2))
++        p = 1 / (1 + np.exp(-(feat - 1e-5) / 2e-6))
++        return np.stack([1 - p, p], axis=1)
++
++
++def test_membership_matches_row_column_exactly():
++    rng = np.random.default_rng(1)
++    codes, masks, probs = [], [], rng.uniform(0.02, 0.98, 17 * 3)
++    for _ in range(3):
++        for code in range(1, 18):
++            lit = np.zeros(N_CELLS, int)
++            if code <= N_ROWS:
++                lit[(code - 1) * N_COLS:code * N_COLS] = 1
++            else:
++                lit[(code - N_ROWS - 1)::N_COLS] = 1
++            codes.append(code); masks.append("".join(map(str, lit)))
++    a = rp.row_column_posterior(probs, codes, N_ROWS, N_COLS)
++    b = rp.membership_posterior(probs, masks)
++    assert np.allclose(a, b, atol=1e-12)
++
++
++def test_group_flash_file_end_to_end(tmp_path):
++    rng = np.random.default_rng(2)
++    plan_targets = [5, 40, 71]
++    plan = [_group_plan(rng, tg, ns) for tg, ns in zip(plan_targets, [4, 5, 6])]
++    path = tmp_path / "StudyQ" / "Q_01" / "SE001" / "Test" / "Grey-to-Color" / "Q_01_SE001_Grey-to-Color_Test01.edf"
++    _write_edf(path, plan)
++    epochs, text, info = parse_bigp3bci_edf(str(path))
++    assert info["group_flash"] and info["flashes_per_seq"] == 12
++    assert info["agreement"]["is_adaptive"] and info["agreement"]["n_characters_detected"] == 3
++    assert abs(info["soa_s"] - SOA / FS) < 1e-6
++    md = epochs.metadata
++    assert "lit_mask" in md.columns and sorted(md.char_index.unique()) == [0, 1, 2]
++    assert md.groupby("char_index").sequence_in_char.max().tolist() == [4, 5, 6]
++    # round-trip through .fif keeps the string column
++    out = tmp_path / "q-epo.fif"; epochs.save(str(out), overwrite=True)
++    n_seqs = [4, 5, 6]
++    for ci, tg in enumerate(plan_targets):
++        logp = np.zeros(N_CELLS)          # same accumulation the decoder performs
++        for seq in range(1, n_seqs[ci] + 1):
++            post = rp.real_eeg_classifier_stream(str(out), ci, seq, _Clf(), None, N_ROWS, N_COLS, 12)
++            assert post.shape == (N_CELLS,)
++            logp += np.log(np.clip(post, 1e-9, 1.0))
++        assert int(np.argmax(logp)) == tg, (ci, tg, int(np.argmax(logp)))
++
++
++def test_rc_file_unchanged_path(tmp_path):
++    rng = np.random.default_rng(3)
++    targets = [10, 33]
++    plan = [_rc_plan(tg, 3, rng) for tg in targets]
++    path = tmp_path / "StudyD" / "D_01" / "SE001" / "Test" / "Dyn" / "D_01_SE001_Dyn_Test01.edf"
++    _write_edf(path, plan)
++    epochs, text, info = parse_bigp3bci_edf(str(path))
++    assert not info["group_flash"] and info["flashes_per_seq"] == N_ROWS + N_COLS
++    assert "lit_mask" not in epochs.metadata.columns          # D files unchanged
++    out = tmp_path / "d-epo.fif"; epochs.save(str(out), overwrite=True)
++    for ci, tg in enumerate(targets):
++        post = rp.real_eeg_classifier_stream(str(out), ci, 1, _Clf(), None, N_ROWS, N_COLS, 17)
++        assert int(np.argmax(post)) == tg
++
++
++def test_non_tiling_group_design_raises(tmp_path):
++    rng = np.random.default_rng(4)
++    seqs = _group_plan(rng, 3, 2)
++    seqs[0][0] = (seqs[0][0][0], seqs[0][0][1][:4], seqs[0][0][2])   # one flash lights 4 cells
++    path = tmp_path / "StudyQ" / "Q_01" / "SE001" / "Test" / "x" / "Q_01_SE001_x_Test01.edf"
++    _write_edf(path, [seqs])
++    with pytest.raises(ValueError, match="non-constant"):
++        parse_bigp3bci_edf(str(path))

@@ -1,7 +1,7 @@
 import json
 import os
 
-def yield_character_trials(registry_path="data/processed/ground_truth_registry.json", dataset_dir=None):
+def yield_character_trials(registry_path="data/processed/ground_truth_registry.json", dataset_dir=None, study="StudyD"):
     """
     Yields character trials for the end-to-end replay loop.
     
@@ -36,7 +36,7 @@ def yield_character_trials(registry_path="data/processed/ground_truth_registry.j
                 # Prefer StudyD outputs; fallback to dataset root if needed.
                 file_path = file_name
                 if dataset_dir:
-                    studyd_path = os.path.join(dataset_dir, "StudyD", file_name)
+                    studyd_path = os.path.join(dataset_dir, study, file_name)
                     root_path = os.path.join(dataset_dir, file_name)
                     if os.path.exists(studyd_path):
                         file_path = studyd_path

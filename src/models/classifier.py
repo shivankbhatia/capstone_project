@@ -85,14 +85,22 @@ def train_calibrated_batch(processed_dir, glob_pattern, epochs=5):
     return pipeline_clf
 
 if __name__ == "__main__":
+    import argparse
+    _ap = argparse.ArgumentParser()
+    _ap.add_argument("--study", default="StudyD")
+    _study = _ap.parse_args().study
     processed_dir = "./data/processed"
-    glob_pattern = "D_*_SE001*Train*-epo.fif"
+    if _study == "StudyD":
+        glob_pattern = "D_*_SE001*Train*-epo.fif"
+    else:
+        glob_pattern = f"{_study[-1]}_*Train*-epo.fif"
     
     try:
         clf = train_calibrated_batch(processed_dir, glob_pattern, epochs=5)
         
         # Save the trained model to disk
-        model_save_path = f"{processed_dir}/swlda_model.pkl"
+        model_save_path = (f"{processed_dir}/swlda_model.pkl" if _study == "StudyD"
+                           else f"{processed_dir}/swlda_model_{_study}.pkl")
         print(f"\nSaving trained model to {model_save_path}...")
         joblib.dump(clf, model_save_path)
         print("Model saved successfully! You are ready to run the pipeline.")
