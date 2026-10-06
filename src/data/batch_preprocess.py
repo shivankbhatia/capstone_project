@@ -438,7 +438,10 @@ if __name__ == "__main__":
     quality_flags_path = processed_root / "quality_flags.csv"
     failure_log_path = processed_root / "batch_preprocess_failures.log"
 
-    edf_files = sorted(raw_root.rglob("*.[eE][dD][fF]"))
+    edf_files = sorted(
+        path for path in raw_root.rglob("*.[eE][dD][fF]")
+        if not path.name.startswith("._")
+    )
     if not edf_files:
         raise FileNotFoundError(f"No {STUDY} EDF files found under {raw_root}")
 
