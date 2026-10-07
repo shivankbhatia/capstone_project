@@ -1,6 +1,8 @@
 import numpy as np
 
-from scripts.run_clean_m0_ablation_ladder import _condition, _sequence_evidence, _aggregate
+from scripts.run_clean_m0_ablation_ladder import (
+    _aggregate, _condition, _sequence_evidence, _split_target_keys,
+)
 
 
 def test_ladder_drops_partial_sequences_without_both_row_and_column_evidence():
@@ -15,6 +17,12 @@ def test_ladder_condition_groups_dyn_variants_together():
     assert _condition("D_01_SE001_RC_Train01") == "RC/Train"
     assert _condition("D_01_SE001_Dyn_Test01") == "Dyn"
     assert _condition("D_01_SE001_DynBigram_Test01") == "DynBigram"
+
+
+def test_target_parser_handles_concatenated_special_keys_and_lowercase_text():
+    grid = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") + ["Pause", "PgUp"]
+    assert _split_target_keys("PauseQ0CEC", grid) == ["Pause", "Q", "0", "C", "E", "C"]
+    assert _split_target_keys("another", grid) == ["A", "N", "O", "T", "H", "E", "R"]
 
 
 def test_aggregate_reports_zero_coverage_and_uses_recorded_flash_count():

@@ -1,0 +1,19 @@
+{
+  "status": "interrupted_before_result_write",
+  "attempt": 1,
+  "lock_sha256": "840c12db474735757ece08ae70b489795870c09933dfd18819a34a32de895095",
+  "manifest_sha256": "de2fd72215e6f2766cc66c629ebd08fd9a1c55b6dab40c63a2e7890a0a8bac7b",
+  "completed_before_failure": [
+    "D_01_SE001_DynBigram_Test03",
+    "D_01_SE001_DynBigram_Test04",
+    "D_01_SE001_Dyn_Test02",
+    "D_01_SE001_RC_Train06",
+    "D_02_SE001_DynBigram_Test05"
+  ],
+  "run_being_processed_at_failure": "D_02_SE001_Dyn_Test01",
+  "failure": "The evaluator iterated vault target strings as one-character labels. Some labels are lowercase and some are concatenated multi-character grid keys (for example Pause), so target-key lookup failed.",
+  "impact": "No aggregate result file was written and no metrics from this attempt were used. Six manifest EDFs were read before the guard failure.",
+  "correction": "Tokenize concatenated labels by longest exact grid-key match and uppercase unmatched single-letter targets; validate parsed and vault token counts.",
+  "rerun_required": true,
+  "rerun_scope": "Replay all 57 manifest runs once through rungs 0-4 after the fix; preserve this record as the audit trail."
+}

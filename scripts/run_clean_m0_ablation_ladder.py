@@ -39,6 +39,43 @@ def _condition(run_id):
     return "RC/Train"
 
 
+def _split_target_keys(target_text, char_list):
+    """Recover grid-key boundaries from concatenated channel labels.
+
+    Multi-character key labels (for example ``Pause`` and ``PgUp``) are
+    concatenated without delimiters by the EDF parser, while ordinary text
+    labels are one character each. Prefer the longest exact grid label and
+    uppercase single-letter targets as a fallback for lowercase Dyn strings.
+    """
+    keys = sorted((str(key) for key in char_list), key=lambda key: (-len(key), key))
+    result = []
+    offset = 0
+    while offset < len(target_text):
+        exact = next((key for key in keys if target_text.startswith(key, offset)), None)
+        if exact is not None:
+            result.append(exact)
+            offset += len(exact)
+            continue
+        upper = target_text[offset].upper()
+        if len(target_text[offset]) == 1 and upper in char_list:
+            result.append(upper)
+            offset += 1
+            continue
+        raise RuntimeError(f"Could not map target text at offset {offset}: {target_text[offset:offset + 12]!r}")
+    return result
+
+
+def _context_for_keys(keys, llm):
+    chunks = []
+    for key in keys:
+        text = llm._candidate_text(key)
+        if len(key) > 1 and len(text.strip()) > 1:
+            chunks.append(" " + text.strip() + " ")
+        else:
+            chunks.append(text)
+    return "".join(chunks).strip()
+
+
 def _softmax_log_prior(prior, rung, lock):
     rung_cfg = lock["rungs"][str(rung)]
     if rung == 0:
@@ -103,7 +140,9 @@ def _evaluate_run(run_id, edf_path, target_text, lock, scorer, spelling, char_li
         baseline_correction=False, decim=1, sequences_per_selection=20,
         verbose=False,
     )
-    if len(parsed_targets) != len(target_text):
+    target_keys = _split_target_keys(target_text, char_list)
+    parsed_keys = _split_target_keys(parsed_targets, char_list)
+    if len(parsed_keys) != len(target_keys):
         raise RuntimeError(f"{run_id}: parsed target length differs from vault labels")
     channels = list(scorer.channels)
     epochs = _channel_order(epochs, channels)
@@ -130,11 +169,9 @@ def _evaluate_run(run_id, edf_path, target_text, lock, scorer, spelling, char_li
     seq_seconds = 2.0
     seconds_per_flash = seq_seconds / 17.0
 
-    for char_idx, target in enumerate(target_text):
-        if target not in char_list:
-            raise RuntimeError(f"{run_id}: target key {target!r} is not on the Study D grid")
+    for char_idx, target in enumerate(target_keys):
         target_idx = char_list.index(target)
-        context = target_text[:char_idx]
+        context = _context_for_keys(target_keys[:char_idx], llm)
         base_prior = llm.predict_next_char(context)
         priors = {1: base_prior}
         rag_diag = {}
