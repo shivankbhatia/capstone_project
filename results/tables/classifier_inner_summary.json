@@ -1,0 +1,56 @@
+{
+  "status": "inner_validation_only",
+  "heldout_manifest_used_for_tuning": false,
+  "preprocessing_lock": "configs/classifier_optimization/phase2_lock.json",
+  "cv": "3-fold GroupKFold grouped by run_id; evaluation on 17 clean-pool subjects",
+  "results": [
+    {
+      "model": "M0 clean legacy SGD",
+      "epoch_auc": 0.8027056418444863,
+      "character_accuracy": 0.321285140562249,
+      "locked_stopping_accuracy_uncalibrated": 0.30120481927710846
+    },
+    {
+      "model": "M2 shrinkage LDA",
+      "epoch_auc": 0.7986189604468745,
+      "character_accuracy": 0.3654618473895582,
+      "locked_stopping_accuracy_uncalibrated": 0.30522088353413657,
+      "subjects_with_auc_above_M0": 11,
+      "subjects_total": 17,
+      "temperature": 1.6024559893774486,
+      "nll_before_after_temperature": [0.565724809686405, 0.5369593293859516],
+      "ece_before_after_temperature": [0.24243283054472498, 0.2727119644944063],
+      "locked_stopping_accuracy_after_temperature": 0.30120481927710846
+    },
+    {
+      "model": "M3a xDAWN + shrinkage LDA",
+      "epoch_auc": 0.8129341704166062,
+      "character_accuracy": 0.3453815261044177,
+      "locked_stopping_accuracy_uncalibrated": 0.30522088353413657,
+      "subjects_with_auc_above_M0": 14,
+      "subjects_total": 17,
+      "temperature": 1.2416938363830041,
+      "nll_before_after_temperature": [0.5239767457669202, 0.5183598908917502],
+      "ece_before_after_temperature": [0.24625264973405195, 0.26121191734131516],
+      "locked_stopping_accuracy_after_temperature": 0.30522088353413657
+    },
+    {
+      "model": "M3b xDAWN + tangent space + LR",
+      "epoch_auc": 0.8031783559942581,
+      "character_accuracy": 0.3172690763052209
+    },
+    {
+      "model": "M3c Riemannian MDM",
+      "epoch_auc": 0.7936157225958721,
+      "character_accuracy": 0.3253012048192771
+    }
+  ],
+  "interpretation": "M2 currently leads full-repetition character accuracy but its pooled AUC is slightly below M0. M3a has the strongest AUC and is above M0 in 14/17 subjects, while its character accuracy is below M2. Temperature scaling reduces NLL for M2 and M3a, increases ECE for both, and does not improve locked-stopping accuracy on these OOF sequences.",
+  "limitations": [
+    "Locked-stopping results remain on the clean-pool OOF data, not the frozen evaluation population.",
+    "NLL/ECE after temperature fitting are in-sample with respect to the OOF calibration scores; use nested cross-fitting for an unbiased calibration estimate.",
+    "Fusion has not been evaluated on inner OOF scores, so finalist selection is not locked.",
+    "CNN sequence-level grouped CV did not finish on the available CPU; no CNN result is reported."
+  ],
+  "next_gate": "Evaluate the saved OOF logits through the fixed LM fusion and stopping pipeline on inner validation only; lock finalists before Phase 8."
+}

@@ -15,15 +15,19 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
 class LLMPredictor:
-    def __init__(self, spelling_matrix, model_name='distilgpt2'):
+    def __init__(self, spelling_matrix, model_name='distilgpt2', *, local_files_only=False):
         self.grid_matrix = spelling_matrix
         self.char_list = list(self.grid_matrix.flatten())
 
         import logging
         logging.getLogger("transformers").setLevel(logging.ERROR)
 
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.model = AutoModelForCausalLM.from_pretrained(model_name)
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            model_name, local_files_only=local_files_only
+        )
+        self.model = AutoModelForCausalLM.from_pretrained(
+            model_name, local_files_only=local_files_only
+        )
         self.model.eval()
 
         self.bos_token_id = self.tokenizer.bos_token_id or self.tokenizer.eos_token_id

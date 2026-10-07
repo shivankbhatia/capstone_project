@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-07",
+  "frozen_manifest_sha256": "de2fd72215e6f2766cc66c629ebd08fd9a1c55b6dab40c63a2e7890a0a8bac7b",
+  "deviation": "The first 300 bytes of data/processed/ground_truth_registry.json were read while checking LM availability. The registry begins with held-out Study D session IDs and target strings, so a small number of held-out labels were exposed to the analyst/model.",
+  "use_in_analysis": false,
+  "heldout_eeg_epochs_read": false,
+  "heldout_runs_used_for_tuning_or_model_selection": false,
+  "user_assessment": "Minor, documented metadata exposure; the original 57-run manifest remains in use and no replacement holdout is created.",
+  "action": "Disclose the exposure in the methodology, retain the manifest for the planned one-time evaluation, and keep all training/tuning restricted to the clean pool and run-grouped inner validation."
+}

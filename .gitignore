@@ -9,6 +9,7 @@ venv/
 data/raw/*
 !data/raw/.gitkeep
 data/processed
+data/cache/
 data/raw/bigP3BCI_dataset/bigP3BCI-data
 !data/processed/.gitkeep
 data/processed.zip
@@ -30,3 +31,5 @@ results/tables/*.csv
 *.md
 
 *.log
+
+data/evaluation/

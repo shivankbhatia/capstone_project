@@ -82,6 +82,16 @@ _adaptive_index_cache = {}
 _legacy_index_warning_paths = set()
 
 
+def fixed_sequence_epoch_slice(char_idx, sequence_num, flashes_per_seq,
+                               sequences_per_char=20):
+    """Index fixed RC data using its acquisition repetitions, not stop max."""
+    if char_idx < 0 or sequence_num < 1 or flashes_per_seq < 1 or sequences_per_char < 1:
+        raise ValueError("invalid fixed-sequence indices")
+    flashes_per_char = flashes_per_seq * sequences_per_char
+    start = char_idx * flashes_per_char + (sequence_num - 1) * flashes_per_seq
+    return slice(start, start + flashes_per_seq)
+
+
 def row_column_posterior(flash_probs, stim_codes, n_rows, n_cols):
     """Convert row/column flash probabilities into a grid posterior.
 
@@ -119,6 +129,25 @@ def row_column_posterior(flash_probs, stim_codes, n_rows, n_cols):
     return grid_probs / grid_probs.sum()
 
 
+def row_column_logit_posterior(flash_logits, stim_codes, n_rows, n_cols):
+    """Decode calibrated target-vs-nontarget flash logits into a grid posterior."""
+    logits = np.asarray(flash_logits, dtype=float)
+    codes = np.asarray(stim_codes, dtype=int)
+    if logits.shape != codes.shape:
+        raise ValueError("flash_logits and stim_codes must have the same shape")
+    row_scores = np.zeros(n_rows)
+    col_scores = np.zeros(n_cols)
+    for score, code in zip(logits, codes):
+        if 1 <= code <= n_rows:
+            row_scores[code - 1] += score
+        elif n_rows < code <= n_rows + n_cols:
+            col_scores[code - n_rows - 1] += score
+    scores = (row_scores[:, None] + col_scores[None, :]).ravel()
+    scores -= scores.max()
+    probs = np.exp(scores)
+    return probs / probs.sum()
+
+
 def membership_posterior(flash_probs, lit_masks):
     """Grid posterior for group-flash studies (Q/E/G/N).
 
@@ -130,6 +159,18 @@ def membership_posterior(flash_probs, lit_masks):
     log_odds = np.log(p) - np.log1p(-p)
     membership = np.array([[int(ch) for ch in m] for m in lit_masks], dtype=float)
     scores = membership.T @ log_odds
+    scores -= scores.max()
+    probs = np.exp(scores)
+    return probs / probs.sum()
+
+
+def membership_logit_posterior(flash_logits, lit_masks):
+    """Decode calibrated per-flash logits for group-flash membership masks."""
+    logits = np.asarray(flash_logits, dtype=float)
+    membership = np.array([[int(ch) for ch in m] for m in lit_masks], dtype=float)
+    if membership.shape[0] != len(logits):
+        raise ValueError("flash_logits and lit_masks must have the same length")
+    scores = membership.T @ logits
     scores -= scores.max()
     probs = np.exp(scores)
     return probs / probs.sum()
@@ -155,7 +196,7 @@ def _build_adaptive_index_map(epochs):
 
 def real_eeg_classifier_flash_stream(eeg_data_path, char_idx, sequence_num, clf,
                                      n_rows, n_cols, flashes_per_seq,
-                                     max_seqs_per_char=15):
+                                     max_seqs_per_char=20):
     """Return the classifier score for every row/column flash in a sequence.
 
     Keeping the per-flash records lets consumers render the actual RC evidence
@@ -204,30 +245,43 @@ def real_eeg_classifier_flash_stream(eeg_data_path, char_idx, sequence_num, clf,
             )
             _legacy_index_warning_paths.add(eeg_data_path)
 
-        flashes_per_char = flashes_per_seq * max_seqs_per_char
-        start_idx = (char_idx * flashes_per_char) + ((sequence_num - 1) * flashes_per_seq)
-        seq_epochs = epochs[start_idx:start_idx + flashes_per_seq]
+        epoch_slice = fixed_sequence_epoch_slice(
+            char_idx, sequence_num, flashes_per_seq, max_seqs_per_char
+        )
+        seq_epochs = epochs[epoch_slice]
 
     if len(seq_epochs) == 0:
         return []
 
     seq_epochs.pick('eeg', exclude='bads')
-    flash_probs = clf.predict_proba(seq_epochs.get_data(copy=False))[:, 1]
+    X = seq_epochs.get_data(copy=False)
+    if hasattr(clf, "calibrated_logits"):
+        flash_logits = np.asarray(clf.calibrated_logits(X), dtype=float).reshape(-1)
+    elif hasattr(clf, "decision_function"):
+        raw_logits = np.asarray(clf.decision_function(X), dtype=float).reshape(-1)
+        # Legacy estimators may expose decision_function but no fitted scaler.
+        flash_logits = raw_logits / float(getattr(clf, "temperature", 1.0))
+    else:
+        probs = np.clip(clf.predict_proba(X)[:, 1], 1e-6, 1 - 1e-6)
+        flash_logits = np.log(probs) - np.log1p(-probs)
+    flash_probs = 1.0 / (1.0 + np.exp(-np.clip(flash_logits, -60, 60)))
     stim_codes = seq_epochs.metadata["stimulus_code"].to_numpy()
     if is_group_flash:
         lit = seq_epochs.metadata["lit_mask"].to_numpy()
         return [
-            {"stimulus_code": int(code), "target_probability": float(probability), "lit_mask": mask}
-            for probability, code, mask in zip(flash_probs, stim_codes, lit)
+            {"stimulus_code": int(code), "target_logit": float(logit),
+             "target_probability": float(probability), "lit_mask": mask}
+            for logit, probability, code, mask in zip(flash_logits, flash_probs, stim_codes, lit)
         ]
     return [
-        {"stimulus_code": int(code), "target_probability": float(probability)}
-        for probability, code in zip(flash_probs, stim_codes)
+        {"stimulus_code": int(code), "target_logit": float(logit),
+         "target_probability": float(probability)}
+        for logit, probability, code in zip(flash_logits, flash_probs, stim_codes)
         if 1 <= code <= n_rows + n_cols
     ]
 
 def real_eeg_classifier_stream(eeg_data_path, char_idx, sequence_num, clf, char_list,
-                                n_rows, n_cols, flashes_per_seq, max_seqs_per_char=15):
+                                n_rows, n_cols, flashes_per_seq, max_seqs_per_char=20):
     """
     Loads real EEG data, runs it through the calibrated SWLDA,
     and returns the posterior over the full grid (n_rows * n_cols classes,
@@ -240,17 +294,17 @@ def real_eeg_classifier_stream(eeg_data_path, char_idx, sequence_num, clf, char_
     if not flashes:
         return np.ones(n_rows * n_cols) / (n_rows * n_cols)
     if "lit_mask" in flashes[0]:
-        return membership_posterior(
-            [f["target_probability"] for f in flashes], [f["lit_mask"] for f in flashes])
-    return row_column_posterior(
-        [flash["target_probability"] for flash in flashes],
+        return membership_logit_posterior(
+            [f["target_logit"] for f in flashes], [f["lit_mask"] for f in flashes])
+    return row_column_logit_posterior(
+        [flash["target_logit"] for flash in flashes],
         [flash["stimulus_code"] for flash in flashes], n_rows, n_cols,
     )
 
 
 def real_eeg_single_flash_trace(eeg_data_path, char_idx, sequence_num, stimulus_code,
                                 n_rows, n_cols, flashes_per_seq,
-                                max_seqs_per_char=15, channel=None):
+                                max_seqs_per_char=20, channel=None):
     """Return the real averaged EEG voltage trace for one recorded flash."""
     global _epoch_cache, _adaptive_index_cache
 
@@ -312,7 +366,8 @@ def mock_eeg_classifier_stream(target_char, char_list):
 def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
                     confidence_threshold=0.85, max_sequences=15, min_flashes=2,
                     clf=None, session_ids=None, enable_session_growth=False,
-                    study="StudyD", seconds_per_sequence=2.0):
+                    study="StudyD", seconds_per_sequence=2.0,
+                    allow_heldout_labels=False, sequences_per_char=20):
     """Runs the dataset through the spelling simulation."""
 
     class Metrics:
@@ -324,9 +379,16 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
 
     metrics = Metrics()
 
-    trials = list(yield_character_trials("data/processed/ground_truth_registry.json", "data/processed", study=study))
+    if not allow_heldout_labels:
+        raise RuntimeError(
+            "Evaluation labels are sealed. Pass allow_heldout_labels=True only for a pre-registered evaluation."
+        )
+    trials = list(yield_character_trials(
+        "data/processed/ground_truth_registry.json", "data/processed", study=study,
+        include_heldout=True,
+    ))
 
-    test_split_path = ("data/processed/test_sessions.json" if study == "StudyD"
+    test_split_path = ("splits/heldout_manifest.json" if study == "StudyD"
                        else f"data/processed/test_sessions_{study}.json")
     if not os.path.exists(test_split_path) and study != "StudyD":
         # No explicit split: evaluate on Test runs only (classifier trains on Train runs).
@@ -334,7 +396,11 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
         print(f"No {test_split_path}; evaluating {study} on Test runs only ({len(trials)} char trials).")
     if os.path.exists(test_split_path):
         with open(test_split_path) as f:
-            test_sessions = set(json.load(f))
+            split = json.load(f)
+        if study == "StudyD":
+            test_sessions = {run for runs in split.values() for run in runs}
+        else:
+            test_sessions = set(split)
         trials = [t for t in trials if t.get('session_id') in test_sessions]
         print(f"Restricted eval to {len(test_sessions)} held-out test sessions "
               f"({len(trials)} char trials).")
@@ -385,7 +451,8 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
             if clf is not None and resolved_path:
                 eeg_posteriors = real_eeg_classifier_stream(
                     resolved_path, char_idx, seq, clf, char_list,
-                    n_rows, n_cols, flashes_per_seq, max_seqs_per_char=max_sequences
+                    n_rows, n_cols, flashes_per_seq,
+                    max_seqs_per_char=sequences_per_char,
                 )
             else:
                 if seq == 1:
@@ -439,6 +506,13 @@ if __name__ == "__main__":
     _ap = argparse.ArgumentParser()
     _ap.add_argument("--study", default="StudyD")
     _ap.add_argument("--model", default=None)
+    _ap.add_argument("--tau", type=float, default=0.80)
+    _ap.add_argument("--min-sequences", type=int, default=2)
+    _ap.add_argument("--max-sequences", type=int, default=10)
+    _ap.add_argument(
+        "--allow-heldout-eval", action="store_true",
+        help="Required to read the evaluation-only label vault and run a registered evaluation.",
+    )
     _args = _ap.parse_args()
     STUDY = _args.study
     print(f"Initializing components for Phase 6 Evaluation (REAL DATA - {STUDY})...\n")
@@ -484,8 +558,12 @@ if __name__ == "__main__":
                                 "Please update MODEL_PATH to point to your saved .pkl file.")
 
     eval_kwargs = dict(n_rows=n_rows, n_cols=n_cols, flashes_per_seq=flashes_per_seq,
-                        confidence_threshold=0.85, clf=clf,
-                        study=STUDY, seconds_per_sequence=seconds_per_sequence)
+                        confidence_threshold=_args.tau,
+                        min_flashes=_args.min_sequences,
+                        max_sequences=_args.max_sequences,
+                        clf=clf,
+                        study=STUDY, seconds_per_sequence=seconds_per_sequence,
+                        allow_heldout_labels=_args.allow_heldout_eval)
 
     # ---------------------------------------------------------
     # EXPERIMENT 1: Baseline (No LLM, EEG Only)

@@ -1,0 +1,93 @@
+{
+  "D_01": [
+    "D_01_SE001_DynBigram_Test03",
+    "D_01_SE001_DynBigram_Test04",
+    "D_01_SE001_Dyn_Test02",
+    "D_01_SE001_RC_Train06"
+  ],
+  "D_02": [
+    "D_02_SE001_DynBigram_Test05",
+    "D_02_SE001_Dyn_Test01",
+    "D_02_SE001_Dyn_Test06"
+  ],
+  "D_03": [
+    "D_03_SE001_DynBigram_Test03",
+    "D_03_SE001_DynBigram_Test08",
+    "D_03_SE001_Dyn_Test01",
+    "D_03_SE001_Dyn_Test04",
+    "D_03_SE001_RC_Train06"
+  ],
+  "D_04": [
+    "D_04_SE001_DynBigram_Test03",
+    "D_04_SE001_DynBigram_Test05",
+    "D_04_SE001_Dyn_Test07",
+    "D_04_SE001_RC_Train04",
+    "D_04_SE001_RC_Train06"
+  ],
+  "D_05": [
+    "D_05_SE001_Dyn_Test04",
+    "D_05_SE001_Dyn_Test05",
+    "D_05_SE001_RC_Train03",
+    "D_05_SE001_RC_Train04"
+  ],
+  "D_06": [
+    "D_06_SE001_DynBigram_Test04",
+    "D_06_SE001_Dyn_Test02",
+    "D_06_SE001_RC_Train03"
+  ],
+  "D_07": [
+    "D_07_SE001_Dyn_Test02",
+    "D_07_SE001_RC_Train05"
+  ],
+  "D_08": [
+    "D_08_SE001_DynBigram_Test02",
+    "D_08_SE001_DynBigram_Test06",
+    "D_08_SE001_Dyn_Test07",
+    "D_08_SE001_RC_Train02",
+    "D_08_SE001_RC_Train03"
+  ],
+  "D_09": [
+    "D_09_SE001_DynBigram_Test05",
+    "D_09_SE001_RC_Train04"
+  ],
+  "D_10": [
+    "D_10_SE001_Dyn_Test01",
+    "D_10_SE001_Dyn_Test03",
+    "D_10_SE001_Dyn_Test04",
+    "D_10_SE001_Dyn_Test05",
+    "D_10_SE001_RC_Train01",
+    "D_10_SE001_RC_Train05"
+  ],
+  "D_11": [
+    "D_11_SE001_DynBigram_Test05",
+    "D_11_SE001_Dyn_Test03",
+    "D_11_SE001_RC_Train02",
+    "D_11_SE001_RC_Train03"
+  ],
+  "D_12": [
+    "D_12_SE001_DynBigram_Test01",
+    "D_12_SE001_Dyn_Test03"
+  ],
+  "D_13": [
+    "D_13_SE001_DynBigram_Test03",
+    "D_13_SE001_DynBigram_Test05",
+    "D_13_SE001_DynBigram_Test06",
+    "D_13_SE001_Dyn_Test05",
+    "D_13_SE001_RC_Train01"
+  ],
+  "D_14": [
+    "D_14_SE001_Dyn_Test04",
+    "D_14_SE001_RC_Train02"
+  ],
+  "D_15": [
+    "D_15_SE001_RC_Train06"
+  ],
+  "D_16": [
+    "D_16_SE001_RC_Train04"
+  ],
+  "D_17": [
+    "D_17_SE001_DynBigram_Test01",
+    "D_17_SE001_DynBigram_Test06",
+    "D_17_SE001_Dyn_Test05"
+  ]
+}

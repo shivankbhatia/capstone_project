@@ -1,0 +1,25 @@
+{
+  "M2": {
+    "fold_temperatures": [
+      1.730881478761385,
+      1.7828778876273939
+    ],
+    "raw_sequence_metrics": {
+      "complete_sequences": 4980,
+      "row_column_nll": 1.778521965073603,
+      "top_label_ece": 0.14652677805370054,
+      "row_accuracy": 0.4283132530120482,
+      "column_accuracy": 0.4734939759036145
+    },
+    "calibrated_sequence_metrics": {
+      "complete_sequences": 4980,
+      "row_column_nll": 1.6146565032292755,
+      "top_label_ece": 0.038555910148501585,
+      "row_accuracy": 0.4283132530120482,
+      "column_accuracy": 0.4734939759036145
+    },
+    "raw_epoch_auc": 0.7951508739106359,
+    "calibrated_oof_epochs": 84660,
+    "calibration_protocol": "inner run-grouped OOF within each outer training fold"
+  }
+}

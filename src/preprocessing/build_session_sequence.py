@@ -1,7 +1,11 @@
 import json
 import os
 
-def yield_character_trials(registry_path="data/processed/ground_truth_registry.json", dataset_dir=None, study="StudyD"):
+def yield_character_trials(
+    registry_path="data/processed/ground_truth_registry.json", dataset_dir=None,
+    study="StudyD", *, include_heldout=False,
+    evaluation_registry_path="data/evaluation/ground_truth_vault.json",
+):
     """
     Yields character trials for the end-to-end replay loop.
     
@@ -19,6 +23,14 @@ def yield_character_trials(registry_path="data/processed/ground_truth_registry.j
     if os.path.exists(registry_path):
         with open(registry_path, 'r') as f:
             registry = json.load(f)
+
+        if include_heldout:
+            if not os.path.exists(evaluation_registry_path):
+                raise FileNotFoundError(
+                    "Evaluation label vault is unavailable; held-out replay cannot run."
+                )
+            with open(evaluation_registry_path, 'r') as f:
+                registry.update(json.load(f))
         
         total_yielded = 0
         

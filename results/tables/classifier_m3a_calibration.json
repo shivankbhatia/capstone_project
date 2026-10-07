@@ -1,0 +1,180 @@
+{
+  "scores": "results/tables/classifier_m3a_inner_scores.npz",
+  "calibration_fit": "all run-grouped out-of-fold training-pool logits",
+  "temperature": 1.2416938363830041,
+  "epochs": 84660,
+  "subjects": 17,
+  "before": {
+    "nll": 0.5239767457669202,
+    "ece": 0.24625264973405195
+  },
+  "after": {
+    "nll": 0.5183598908917502,
+    "ece": 0.26121191734131516
+  },
+  "before_characters": {
+    "characters": 249,
+    "full_repetition_accuracy": 0.3453815261044177,
+    "locked_stopping_accuracy": 0.30522088353413657,
+    "mean_sequences_at_stop": 4.0843373493975905,
+    "prefix_accuracy": {
+      "2": 0.2248995983935743,
+      "5": 0.30120481927710846,
+      "10": 0.3333333333333333,
+      "20": 0.3453815261044177
+    },
+    "per_subject": {
+      "D_01": {
+        "characters": 15,
+        "full_repetition_accuracy": 0.3333333333333333
+      },
+      "D_02": {
+        "characters": 18,
+        "full_repetition_accuracy": 0.4444444444444444
+      },
+      "D_03": {
+        "characters": 15,
+        "full_repetition_accuracy": 0.26666666666666666
+      },
+      "D_04": {
+        "characters": 12,
+        "full_repetition_accuracy": 0.4166666666666667
+      },
+      "D_05": {
+        "characters": 12,
+        "full_repetition_accuracy": 0.4166666666666667
+      },
+      "D_06": {
+        "characters": 15,
+        "full_repetition_accuracy": 0.3333333333333333
+      },
+      "D_07": {
+        "characters": 15,
+        "full_repetition_accuracy": 0.4
+      },
+      "D_08": {
+        "characters": 12,
+        "full_repetition_accuracy": 0.08333333333333333
+      },
+      "D_09": {
+        "characters": 15,
+        "full_repetition_accuracy": 0.13333333333333333
+      },
+      "D_10": {
+        "characters": 12,
+        "full_repetition_accuracy": 0.5833333333333334
+      },
+      "D_11": {
+        "characters": 12,
+        "full_repetition_accuracy": 0.3333333333333333
+      },
+      "D_12": {
+        "characters": 18,
+        "full_repetition_accuracy": 0.3333333333333333
+      },
+      "D_13": {
+        "characters": 15,
+        "full_repetition_accuracy": 0.4666666666666667
+      },
+      "D_14": {
+        "characters": 15,
+        "full_repetition_accuracy": 0.3333333333333333
+      },
+      "D_15": {
+        "characters": 15,
+        "full_repetition_accuracy": 0.13333333333333333
+      },
+      "D_16": {
+        "characters": 15,
+        "full_repetition_accuracy": 0.5333333333333333
+      },
+      "D_17": {
+        "characters": 18,
+        "full_repetition_accuracy": 0.3333333333333333
+      }
+    }
+  },
+  "after_characters": {
+    "characters": 249,
+    "full_repetition_accuracy": 0.3453815261044177,
+    "locked_stopping_accuracy": 0.30522088353413657,
+    "mean_sequences_at_stop": 4.6546184738955825,
+    "prefix_accuracy": {
+      "2": 0.2248995983935743,
+      "5": 0.30120481927710846,
+      "10": 0.3333333333333333,
+      "20": 0.3453815261044177
+    },
+    "per_subject": {
+      "D_01": {
+        "characters": 15,
+        "full_repetition_accuracy": 0.3333333333333333
+      },
+      "D_02": {
+        "characters": 18,
+        "full_repetition_accuracy": 0.4444444444444444
+      },
+      "D_03": {
+        "characters": 15,
+        "full_repetition_accuracy": 0.26666666666666666
+      },
+      "D_04": {
+        "characters": 12,
+        "full_repetition_accuracy": 0.4166666666666667
+      },
+      "D_05": {
+        "characters": 12,
+        "full_repetition_accuracy": 0.4166666666666667
+      },
+      "D_06": {
+        "characters": 15,
+        "full_repetition_accuracy": 0.3333333333333333
+      },
+      "D_07": {
+        "characters": 15,
+        "full_repetition_accuracy": 0.4
+      },
+      "D_08": {
+        "characters": 12,
+        "full_repetition_accuracy": 0.08333333333333333
+      },
+      "D_09": {
+        "characters": 15,
+        "full_repetition_accuracy": 0.13333333333333333
+      },
+      "D_10": {
+        "characters": 12,
+        "full_repetition_accuracy": 0.5833333333333334
+      },
+      "D_11": {
+        "characters": 12,
+        "full_repetition_accuracy": 0.3333333333333333
+      },
+      "D_12": {
+        "characters": 18,
+        "full_repetition_accuracy": 0.3333333333333333
+      },
+      "D_13": {
+        "characters": 15,
+        "full_repetition_accuracy": 0.4666666666666667
+      },
+      "D_14": {
+        "characters": 15,
+        "full_repetition_accuracy": 0.3333333333333333
+      },
+      "D_15": {
+        "characters": 15,
+        "full_repetition_accuracy": 0.13333333333333333
+      },
+      "D_16": {
+        "characters": 15,
+        "full_repetition_accuracy": 0.5333333333333333
+      },
+      "D_17": {
+        "characters": 18,
+        "full_repetition_accuracy": 0.3333333333333333
+      }
+    }
+  },
+  "per_subject_temperature": "not fit; only 17 subject groups, inspect data sufficiency first"
+}

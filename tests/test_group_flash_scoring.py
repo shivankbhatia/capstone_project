@@ -44,6 +44,11 @@ def test_membership_matches_row_column_exactly():
     row_column = rp.row_column_posterior(probs, codes, N_ROWS, N_COLS)
     membership = rp.membership_posterior(probs, masks)
     assert np.allclose(row_column, membership, atol=1e-12)
+    logits = np.log(probs) - np.log1p(-probs)
+    assert np.allclose(
+        rp.row_column_logit_posterior(logits, codes, N_ROWS, N_COLS),
+        rp.membership_logit_posterior(logits, masks), atol=1e-12,
+    )
 
 
 def test_recorded_study_q_file_end_to_end():

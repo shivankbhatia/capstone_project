@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "status": "pre_manifest_lock",
+  "created_utc_date": "2026-10-07",
+  "selection_scope": "inner run-grouped OOF on the clean Study D RC/Train pool only",
+  "manifest_path": "splits/heldout_manifest.json",
+  "manifest_sha256": "de2fd72215e6f2766cc66c629ebd08fd9a1c55b6dab40c63a2e7890a0a8bac7b",
+  "pre_lock_git_hash": "53837ad058bb280f5c638ba472a9fdb3f144a2c2",
+  "finalist_model_ids": ["M3a"],
+  "baseline_model_id": "M0",
+  "models": {
+    "M0": {
+      "role": "clean reference comparator",
+      "implementation": "clean-pool legacy SWLDA/streaming SGD reference",
+      "sequence_temperature": 4.1869360663,
+      "temperature_fit_scope": "full clean-pool run-grouped OOF scores; sequence row/column NLL"
+    },
+    "M3a": {
+      "role": "single finalist",
+      "implementation": "xDAWN (4 filters, SCM covariance) + StandardScaler + shrinkage LDA",
+      "xDAWN_filters": 4,
+      "xDAWN_estimator": "scm",
+      "lda_solver": "lsqr",
+      "lda_shrinkage": "auto",
+      "lda_class_priors": [0.5, 0.5],
+      "max_fit_samples": 3000,
+      "fit_sample_class_balance": "balanced",
+      "fit_sample_seed": 2000,
+      "sequence_temperature": 1.2981389855,
+      "temperature_fit_scope": "full clean-pool run-grouped OOF scores; sequence row/column NLL"
+    }
+  },
+  "not_selected": {
+    "M2_M3a_stack": {
+      "reason": "failed pre-set rule: fused stopped accuracy was lower than M3a despite lower sequence NLL",
+      "fused_accuracy_delta_vs_M3a": -0.0120915033,
+      "fused_sequence_nll_delta_vs_M3a": -0.0482224182,
+      "per_subject_bootstrap_ci_accuracy": [-0.0408496732, 0.0163398693]
+    },
+    "EEGNet": {
+      "reason": "training runtime has no Apple MPS; per instructions no CPU training was attempted",
+      "status": "unavailable"
+    }
+  },
+  "preprocessing": {
+    "study": "Study D",
+    "bandpass_hz": [1.0, 12.0],
+    "epoch_window_s": [0.0, 0.8],
+    "decimation": 2,
+    "channels": "all common channels in cached Study D pool",
+    "baseline_correction": false,
+    "artifact_rejection": false,
+    "training_pool_runs": 83
+  },
+  "calibration": {
+    "method": "scalar temperature scaling minimizing row/column sequence NLL",
+    "fit_data": "run-grouped OOF logits from clean training pool only",
+    "heldout_access": false
+  },
+  "fusion": {
+    "method": "BayesianFusionEngine fixed initial character prior",
+    "alpha": 0.1,
+    "prior_source": "local DistilGPT2",
+    "prior_applied": "once before EEG sequence accumulation"
+  },
+  "stopping_policy": {
+    "M3a": {
+      "tau": 0.6,
+      "min_sequences": 2,
+      "max_sequences": 5,
+      "selection_rule": "fewest mean sequences with no pooled fused-accuracy loss versus default tau=0.8/min=2/max=10",
+      "inner_oof_characters": 249,
+      "accuracy": 0.2971887550,
+      "mean_sequences": 3.0321285141,
+      "decision_flips_vs_default": 42,
+      "flips_corrected": 7,
+      "flips_regressed": 7
+    },
+    "M0": {
+      "tau": 0.7,
+      "min_sequences": 2,
+      "max_sequences": 8,
+      "selection_rule": "fewest mean sequences with no pooled fused-accuracy loss versus default tau=0.8/min=2/max=10",
+      "inner_oof_characters": 249,
+      "accuracy": 0.2891566265,
+      "mean_sequences": 4.6787148594
+    }
+  },
+  "inner_oof_summary": {
+    "M0_fused_accuracy_default": 0.2891566265,
+    "M0_fused_sequence_nll": 1.6280638666,
+    "M3a_fused_accuracy_default": 0.2971887550,
+    "M3a_fused_sequence_nll": 1.5160952612,
+    "M3a_subjects_with_higher_accuracy_than_M0": 6,
+    "M3a_subjects_tied_accuracy_with_M0": 7,
+    "M3a_subjects_with_lower_accuracy_than_M0": 4,
+    "M3a_vs_M0_accuracy_p_holm": 1.0,
+    "M3a_vs_M0_accuracy_bootstrap_ci": [-0.0248366013, 0.0398692810],
+    "M3a_vs_M0_sequence_nll_p_holm": 0.0654,
+    "M3a_vs_M0_sequence_nll_bootstrap_ci": [-0.1608, -0.0483]
+  },
+  "seeds": {
+    "final_balanced_fit_sample_seed": 2000,
+    "nested_oof_base_seed_scheme": "per-fold fixed seeds recorded in nested score sidecars"
+  },
+  "library_versions": {
+    "scikit_learn": "1.5.2",
+    "torch": "2.8.0",
+    "pyriemann": "0.7",
+    "numpy": "1.26.4",
+    "mps_available": false
+  },
+  "manifest_evaluation": {
+    "status": "not_started",
+    "run_count": 57,
+    "per_character_records_required": true,
+    "evaluation_vault_opt_in_required": true
+  }
+}

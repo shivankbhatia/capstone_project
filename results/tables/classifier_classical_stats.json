@@ -1,0 +1,59 @@
+{
+  "method": "paired Wilcoxon across subjects; Holm correction across all comparisons; hierarchical character bootstrap resampled within subjects",
+  "seed": 407,
+  "iterations": 20000,
+  "comparisons": [
+    {
+      "config": "baseline_off",
+      "comparison": "M1_tuned_SWLDA vs M0_clean_SGD",
+      "subjects": 17,
+      "mean_paired_difference": -0.056209150326797394,
+      "wilcoxon_p": 0.03912340128593419,
+      "paired_rank_biserial": -0.6483516483516484,
+      "bootstrap_95_ci": [
+        -0.15163398692810456,
+        0.03758169934640523
+      ],
+      "holm_p": 0.15649360514373675
+    },
+    {
+      "config": "baseline_off",
+      "comparison": "M2_shrinkage_LDA vs M0_clean_SGD",
+      "subjects": 17,
+      "mean_paired_difference": 0.04313725490196078,
+      "wilcoxon_p": 0.1252147095452067,
+      "paired_rank_biserial": 0.5,
+      "bootstrap_95_ci": [
+        -0.05261437908496733,
+        0.13758169934640524
+      ],
+      "holm_p": 0.2504294190904134
+    },
+    {
+      "config": "baseline_on",
+      "comparison": "M1_tuned_SWLDA vs M0_clean_SGD",
+      "subjects": 17,
+      "mean_paired_difference": -0.03169934640522875,
+      "wilcoxon_p": 0.2779727087682675,
+      "paired_rank_biserial": -0.34065934065934067,
+      "bootstrap_95_ci": [
+        -0.12254901960784315,
+        0.05915032679738562
+      ],
+      "holm_p": 0.2779727087682675
+    },
+    {
+      "config": "baseline_on",
+      "comparison": "M2_shrinkage_LDA vs M0_clean_SGD",
+      "subjects": 17,
+      "mean_paired_difference": 0.061111111111111116,
+      "wilcoxon_p": 0.05505186512351926,
+      "paired_rank_biserial": 0.580952380952381,
+      "bootstrap_95_ci": [
+        -0.037581699346405234,
+        0.15915032679738564
+      ],
+      "holm_p": 0.1651555953705578
+    }
+  ]
+}

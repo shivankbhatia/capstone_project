@@ -1,0 +1,35 @@
+{
+  "selection_model": "M2 shrinkage LDA probe",
+  "cv": {
+    "method": "GroupKFold",
+    "groups": "run_id",
+    "folds": 3,
+    "fit_sample_cap_per_fold": 3000,
+    "fit_sampling": "balanced target/non-target",
+    "validation": "all epochs in held-out runs"
+  },
+  "primary": {
+    "bandpass_hz": [1.0, 12.0],
+    "window_ms": [0, 800],
+    "decimation": 2,
+    "channels": "all",
+    "baseline_correction": false,
+    "artifact_rejection": false,
+    "artifact_threshold_uv": 150
+  },
+  "secondary_close_candidate": {
+    "bandpass_hz": [1.0, 12.0],
+    "window_ms": [0, 800],
+    "decimation": 2,
+    "channels": "all",
+    "baseline_correction": true,
+    "artifact_rejection": false,
+    "artifact_threshold_uv": 150
+  },
+  "selection_metrics": {
+    "primary_character_accuracy": "full-repetition sequence accumulation",
+    "primary_cv_accuracy": 0.3654618473895582,
+    "secondary_cv_accuracy": 0.3614457831325301,
+    "note": "The 0-600 ms setting had the highest epoch AUC, but lower character accuracy; it was not selected as primary. Locked-stopping values remain uncalibrated diagnostics until Phase 5."
+  }
+}

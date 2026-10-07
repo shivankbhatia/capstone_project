@@ -8,6 +8,14 @@ The main research question is:
 
 The system answers this by preprocessing raw EDF recordings, training a memory-efficient P300 classifier, replaying character-level trials, and comparing EEG-only decoding against fixed, adaptive, and retrieval-augmented EEG+LLM fusion. The reported RAG condition uses a leakage-safe global pooled phrase bank while preserving the EEG classifier and Bayesian decoder.
 
+### 1.2 Classifier-selection and held-out protocol correction (October 2026)
+
+The classifier study freezes `splits/heldout_manifest.json` (57 Study D runs, 17 subjects) and uses run-grouped cross-validation on the remaining RC/Train pool; held-out targets are sealed in `data/evaluation/ground_truth_vault.json`, while training-visible labels remain in `data/processed/ground_truth_registry.json`. A few held-out session IDs and target strings were inadvertently exposed by reading the registry prefix, but those labels and no held-out EEG were used in tuning or model selection.
+
+**Historical Study D results are not valid held-out estimates.** The old classifier-training pool overlaps the frozen manifest in 19 runs, and the stopping-policy sweep also selected its threshold on held-out sessions; this affects the prior 58.9% baseline, the rung 0–4 ladder, Focus Scan, stopping, and other Study D held-out claims. Retain those values only as historical outputs until the clean classifier, inner-CV stopping policy, and fixed manifest are replayed once. Report that replay separately for RC/Train, Dyn, and DynBigram because the clean training pool contains RC/Train only. Studies E/G/N/Q are reserved for external validation after the harness and finalist are locked.
+
+**Clean-pool classifier screen (nested inner OOF; not held-out performance):** run-grouped calibration gave M0 AUC 0.8028, M2 0.7954, M3a (xDAWN+LDA) 0.8155, and M3b (xDAWN+tangent+LR) 0.8030. M3a improved AUC on 12/17 subjects, but the paired Wilcoxon comparison was not significant after Holm correction. With fixed alpha=0.1 fusion and τ=.80/min=2/max=10, M3a improved stopped character accuracy by 0.8 percentage points versus M0; this difference was not significant. Its fused sequence NLL was lower by 0.107 (subject-bootstrap 95% CI −0.161 to −0.048), but this did not survive Holm correction after adding the stack comparison. The M2+M3a stack was not selected: its fused character accuracy was 1.2 points below M3a, despite better NLL. EEGNet was not trained because MPS is unavailable in the current runtime; CPU training was not attempted. The policy sweep selected τ=.60/min=2/max=5 for M3a by minimizing flashes at no pooled accuracy loss versus the default policy. It changed 42/249 decisions (7 corrected, 7 regressed, and 28 changed without changing correctness), so the selected operating point is sensitive and that flip count must be reported. The pre-manifest lock and replay checklist are `splits/finalist_lock.json` and `docs/classifier_manifest_replay_checklist.md`. Full scores and paired statistics are in `results/tables/classifier_nested_calibration.json`, `results/tables/classifier_inner_fusion.json`, and `results/tables/classifier_inner_fusion_stats.json`.
+
 ---
 
 ## 1. Novelty and contribution
@@ -700,6 +708,8 @@ This design measures whether language context can reduce the number of flashes r
 
 ### 6.1 Main five-arm results (held-out test split, real EEG + SWLDA)
 
+> **Superseded pending clean rerun:** the following table and discussion are historical outputs. The classifier overlapped 19 manifest runs, and the stopping threshold was tuned on the held-out sessions; do not cite these values as valid held-out performance.
+
 The RAG phrase bank is built exclusively from an 80% train split of Study D sessions (`scripts/build_phrase_bank_from_registry.py`); evaluation runs only on the remaining 20% held-out sessions (`data/processed/test_sessions.json`), so no target-vocabulary leaks between the phrase bank and the reported numbers. `rag_weight`/`retrieval_confidence_threshold` were selected via a 15-point grid sweep (`scripts/sweep_rag_params.py`, results in `results/tables/rag_sweep.json`) on that same train split.
 
 **Reported RAG condition.** The primary RAG result uses the global pooled
@@ -913,7 +923,7 @@ Implemented:
 - Dataset analytics exports.
 - Train/test session split with leakage-safe RAG phrase bank (`scripts/build_phrase_bank_from_registry.py`).
 - RAG hyperparameter sweep over `rag_weight` and `retrieval_confidence_threshold` (`scripts/sweep_rag_params.py`).
-- Final five-arm results measured on real EEG + SWLDA over the held-out test split (§6.1).
+- Historical five-arm results measured on real EEG + the contaminated SWLDA/held-out split (§6.1); clean rerun pending.
 - Per-subject five-rung diagnostic with corrected paired comparisons (`scripts/run_personalization_ablations.py`).
 - Isolated synthetic sufficiency-gate validation and pooled raw-count summary.
 
@@ -926,7 +936,9 @@ Planned next work:
 - Expand the phrase bank with consented, deployment-representative data once available.
 # Dynamic-stopping operating point
 
-The selected standard row/column replay policy is `tau=0.80`,
+> **Superseded:** this operating point was selected on the held-out sessions and is not a locked policy. Re-tune `tau`, `min_sequences`, and `max_sequences` on nested run-grouped OOF sequences with the selected classifier and fusion, then freeze them before the one-time manifest evaluation.
+
+The historical standard row/column replay policy was `tau=0.80`,
 `min_sequences=2`, and `max_sequences=10`. It was evaluated on the 100
 held-out characters with at least one real recorded row/column sequence.
 Against the historical default (`tau=0.85`, `min_sequences=2`,

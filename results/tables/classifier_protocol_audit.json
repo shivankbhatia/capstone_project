@@ -1,0 +1,220 @@
+{
+  "manifest_path": "splits/heldout_manifest.json",
+  "manifest_sha256": "de2fd72215e6f2766cc66c629ebd08fd9a1c55b6dab40c63a2e7890a0a8bac7b",
+  "heldout_runs": 57,
+  "heldout_subjects": 17,
+  "processed_runs": 307,
+  "existing_swlda_training_glob": "D_*_SE001*Train*-epo.fif",
+  "existing_swlda_training_runs": 102,
+  "existing_swlda_manifest_overlap_runs": [
+    "D_01_SE001_RC_Train06",
+    "D_03_SE001_RC_Train06",
+    "D_04_SE001_RC_Train04",
+    "D_04_SE001_RC_Train06",
+    "D_05_SE001_RC_Train03",
+    "D_05_SE001_RC_Train04",
+    "D_06_SE001_RC_Train03",
+    "D_07_SE001_RC_Train05",
+    "D_08_SE001_RC_Train02",
+    "D_08_SE001_RC_Train03",
+    "D_09_SE001_RC_Train04",
+    "D_10_SE001_RC_Train01",
+    "D_10_SE001_RC_Train05",
+    "D_11_SE001_RC_Train02",
+    "D_11_SE001_RC_Train03",
+    "D_13_SE001_RC_Train01",
+    "D_14_SE001_RC_Train02",
+    "D_15_SE001_RC_Train06",
+    "D_16_SE001_RC_Train04"
+  ],
+  "existing_swlda_test_labelled_runs": 0,
+  "clean_training_pool_runs": 83,
+  "current_swlda_pool_condition_counts": {
+    "RC/Train": 102
+  },
+  "clean_training_condition_counts": {
+    "RC/Train": 83
+  },
+  "manifest_condition_counts": {
+    "Dyn": 20,
+    "DynBigram": 18,
+    "RC/Train": 19
+  },
+  "condition_shift_note": "Clean training pool is RC/Train only; held-out manifest contains Dyn and DynBigram runs plus 19 RC/Train runs.",
+  "clean_training_epoch_counts_by_subject": {
+    "D_01": {
+      "target": 600,
+      "non_target": 4500,
+      "runs": 5
+    },
+    "D_02": {
+      "target": 720,
+      "non_target": 5400,
+      "runs": 6
+    },
+    "D_03": {
+      "target": 600,
+      "non_target": 4500,
+      "runs": 5
+    },
+    "D_04": {
+      "target": 480,
+      "non_target": 3600,
+      "runs": 4
+    },
+    "D_05": {
+      "target": 480,
+      "non_target": 3600,
+      "runs": 4
+    },
+    "D_06": {
+      "target": 600,
+      "non_target": 4500,
+      "runs": 5
+    },
+    "D_07": {
+      "target": 600,
+      "non_target": 4500,
+      "runs": 5
+    },
+    "D_08": {
+      "target": 480,
+      "non_target": 3600,
+      "runs": 4
+    },
+    "D_09": {
+      "target": 600,
+      "non_target": 4500,
+      "runs": 5
+    },
+    "D_10": {
+      "target": 480,
+      "non_target": 3600,
+      "runs": 4
+    },
+    "D_11": {
+      "target": 480,
+      "non_target": 3600,
+      "runs": 4
+    },
+    "D_12": {
+      "target": 720,
+      "non_target": 5400,
+      "runs": 6
+    },
+    "D_13": {
+      "target": 600,
+      "non_target": 4500,
+      "runs": 5
+    },
+    "D_14": {
+      "target": 600,
+      "non_target": 4500,
+      "runs": 5
+    },
+    "D_15": {
+      "target": 600,
+      "non_target": 4500,
+      "runs": 5
+    },
+    "D_16": {
+      "target": 600,
+      "non_target": 4500,
+      "runs": 5
+    },
+    "D_17": {
+      "target": 720,
+      "non_target": 5400,
+      "runs": 6
+    }
+  },
+  "training_pool_run_ids": [
+    "D_01_SE001_RC_Train01",
+    "D_01_SE001_RC_Train02",
+    "D_01_SE001_RC_Train03",
+    "D_01_SE001_RC_Train04",
+    "D_01_SE001_RC_Train05",
+    "D_02_SE001_RC_Train01",
+    "D_02_SE001_RC_Train02",
+    "D_02_SE001_RC_Train03",
+    "D_02_SE001_RC_Train04",
+    "D_02_SE001_RC_Train05",
+    "D_02_SE001_RC_Train06",
+    "D_03_SE001_RC_Train01",
+    "D_03_SE001_RC_Train02",
+    "D_03_SE001_RC_Train03",
+    "D_03_SE001_RC_Train04",
+    "D_03_SE001_RC_Train05",
+    "D_04_SE001_RC_Train01",
+    "D_04_SE001_RC_Train02",
+    "D_04_SE001_RC_Train03",
+    "D_04_SE001_RC_Train05",
+    "D_05_SE001_RC_Train01",
+    "D_05_SE001_RC_Train02",
+    "D_05_SE001_RC_Train05",
+    "D_05_SE001_RC_Train06",
+    "D_06_SE001_RC_Train01",
+    "D_06_SE001_RC_Train02",
+    "D_06_SE001_RC_Train04",
+    "D_06_SE001_RC_Train05",
+    "D_06_SE001_RC_Train06",
+    "D_07_SE001_RC_Train02",
+    "D_07_SE001_RC_Train03",
+    "D_07_SE001_RC_Train04",
+    "D_07_SE001_RC_Train06",
+    "D_07_SE001_RC_Train07",
+    "D_08_SE001_RC_Train01",
+    "D_08_SE001_RC_Train04",
+    "D_08_SE001_RC_Train05",
+    "D_08_SE001_RC_Train06",
+    "D_09_SE001_RC_Train01",
+    "D_09_SE001_RC_Train02",
+    "D_09_SE001_RC_Train03",
+    "D_09_SE001_RC_Train05",
+    "D_09_SE001_RC_Train06",
+    "D_10_SE001_RC_Train02",
+    "D_10_SE001_RC_Train03",
+    "D_10_SE001_RC_Train04",
+    "D_10_SE001_RC_Train06",
+    "D_11_SE001_RC_Train01",
+    "D_11_SE001_RC_Train04",
+    "D_11_SE001_RC_Train05",
+    "D_11_SE001_RC_Train06",
+    "D_12_SE001_RC_Train11",
+    "D_12_SE001_RC_Train12",
+    "D_12_SE001_RC_Train13",
+    "D_12_SE001_RC_Train14",
+    "D_12_SE001_RC_Train15",
+    "D_12_SE001_RC_Train16",
+    "D_13_SE001_RC_Train02",
+    "D_13_SE001_RC_Train03",
+    "D_13_SE001_RC_Train04",
+    "D_13_SE001_RC_Train05",
+    "D_13_SE001_RC_Train06",
+    "D_14_SE001_RC_Train01",
+    "D_14_SE001_RC_Train03",
+    "D_14_SE001_RC_Train04",
+    "D_14_SE001_RC_Train05",
+    "D_14_SE001_RC_Train06",
+    "D_15_SE001_RC_Train01",
+    "D_15_SE001_RC_Train02",
+    "D_15_SE001_RC_Train03",
+    "D_15_SE001_RC_Train04",
+    "D_15_SE001_RC_Train05",
+    "D_16_SE001_RC_Train01",
+    "D_16_SE001_RC_Train02",
+    "D_16_SE001_RC_Train03",
+    "D_16_SE001_RC_Train05",
+    "D_16_SE001_RC_Train06",
+    "D_17_SE001_RC_Train01",
+    "D_17_SE001_RC_Train02",
+    "D_17_SE001_RC_Train03",
+    "D_17_SE001_RC_Train04",
+    "D_17_SE001_RC_Train05",
+    "D_17_SE001_RC_Train06"
+  ],
+  "existing_cnn_training_run_count": 213,
+  "existing_cnn_manifest_overlap_runs": [],
+  "existing_cnn_test_labelled_run_count": 143,
+  "existing_cnn_note": "Existing CNN metadata lists Test-labelled training runs; retrain on the clean RC/Train pool before using it as a classifier control."
+}

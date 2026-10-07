@@ -105,7 +105,8 @@ def sequence_coverage(lit_masks, char_index, sequence_in_char, flashes_per_seq):
 
 
 def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
-                           notch_freq=None, sequences_per_selection=20, verbose=False):
+                           notch_freq=None, sequences_per_selection=20, verbose=False,
+                           baseline_correction=True, reject_threshold=None, decim=1):
     """
     Parses bigP3BCI EDF files into epoched EEG data.
 
@@ -327,6 +328,7 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
     # -------------------------------------------------------------------------
     event_id = {'non_target': 0, 'target': 1}
 
+    reject = None if reject_threshold is None else {"eeg": float(reject_threshold)}
     epochs = mne.Epochs(
         raw,
         events=events,
@@ -334,7 +336,9 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
         tmin=tmin,
         tmax=tmax,
         picks=actual_eeg_channels,
-        baseline=(tmin, 0),
+        baseline=(tmin, 0) if baseline_correction else None,
+        reject=reject,
+        decim=int(decim),
         preload=True,
         verbose=False
     )
@@ -435,6 +439,8 @@ if __name__ == "__main__":
     study_processed_root = processed_root / STUDY
     grid_layout_path = processed_root / "grid_layout.json"
     registry_path = processed_root / "ground_truth_registry.json"
+    evaluation_registry_path = project_root / "data" / "evaluation" / "ground_truth_vault.json"
+    heldout_manifest_path = project_root / "splits" / "heldout_manifest.json"
     quality_flags_path = processed_root / "quality_flags.csv"
     failure_log_path = processed_root / "batch_preprocess_failures.log"
 
@@ -452,6 +458,13 @@ if __name__ == "__main__":
 
     grid_layouts = json.loads(grid_layout_path.read_text()) if grid_layout_path.exists() else {}
     ground_truth_registry = json.loads(registry_path.read_text()) if registry_path.exists() else {}
+    evaluation_registry = (
+        json.loads(evaluation_registry_path.read_text()) if evaluation_registry_path.exists() else {}
+    )
+    heldout_ids = set()
+    if heldout_manifest_path.exists():
+        heldout_manifest = json.loads(heldout_manifest_path.read_text())
+        heldout_ids = {run for runs in heldout_manifest.values() for run in runs}
     quality_flags = []
 
     print(f"Found {len(edf_files)} {STUDY} EDF files under {raw_root}")
@@ -490,7 +503,16 @@ if __name__ == "__main__":
                     f"across all {STUDY} files. This should never happen; investigate before continuing."
                 )
 
-            ground_truth_registry[edf_path.stem] = ground_truth_text
+            keep_training_label = (
+                STUDY == "StudyD"
+                and "_RC_Train" in edf_path.stem
+                and "_Test" not in edf_path.stem
+                and edf_path.stem not in heldout_ids
+            )
+            if keep_training_label:
+                ground_truth_registry[edf_path.stem] = ground_truth_text
+            else:
+                evaluation_registry[edf_path.stem] = ground_truth_text
 
             agreement = grid_info.get("agreement", {})
             if agreement.get("is_adaptive"):
@@ -503,6 +525,9 @@ if __name__ == "__main__":
                 ))
             _write_json(grid_layout_path, grid_layouts)
             _write_json(registry_path, ground_truth_registry)
+            if not keep_training_label:
+                _write_json(evaluation_registry_path, evaluation_registry)
+                evaluation_registry_path.chmod(0o600)
 
             processed_count += 1
             tqdm.write(f"Saved epochs to {output_path}")

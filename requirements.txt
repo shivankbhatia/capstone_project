@@ -2,7 +2,8 @@ moabb
 mne
 braindecode
 torch
-scikit-learn
+# MNE 1.8's sklearn estimator tags require sklearn <1.6.
+scikit-learn>=1.4,<1.6
 transformers
 scipy
 matplotlib

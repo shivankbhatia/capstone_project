@@ -18,8 +18,8 @@ GLOBAL_BANK_OUT = Path("data/rag/phrase_bank_global.csv")
 # Kept for compatibility with existing callers such as run_pipeline.py.
 LEGACY_BANK_OUT = Path("data/rag/phrase_bank.csv")
 SUBJECT_BANK_DIR = Path("data/rag/by_subject")
-TEST_SPLIT_OUT = Path("data/processed/test_sessions.json")
-TEST_BY_SUBJECT_OUT = Path("data/processed/test_sessions_by_subject.json")
+TEST_SPLIT_OUT = Path("data/rag/phrase_bank_internal_validation_sessions.json")
+TEST_BY_SUBJECT_OUT = Path("data/rag/phrase_bank_internal_validation_sessions_by_subject.json")
 SUBJECT_BANK_SIZES_OUT = Path("data/processed/subject_bank_sizes.json")
 TEST_FRACTION = 0.2
 DEFAULT_MIN_SUBJECT_PHRASES = 10

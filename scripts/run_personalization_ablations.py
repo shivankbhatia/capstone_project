@@ -21,7 +21,7 @@ from src.models.llm_predictor import LLMPredictor
 from src.models.rag_predictor import RAGPredictor
 
 
-TEST_SESSIONS = Path("data/processed/test_sessions_by_subject.json")
+TEST_SESSIONS = Path("splits/heldout_manifest.json")
 MODEL_PATH = Path("data/processed/swlda_model.pkl")
 GLOBAL_BANK_PATH = "data/rag/phrase_bank_global.csv"
 RESULT_PATH = Path("results/tables/personalization_ablation_studyd.json")
@@ -122,6 +122,13 @@ def main():
     parser.add_argument("--bigram-min-count", type=int, default=2)
     parser.add_argument("--bigram-max-normalized-entropy", type=float, default=0.65)
     parser.add_argument(
+        "--allow-heldout-eval", action="store_true",
+        help="Required to read sealed Study D evaluation labels for the final ladder replay.",
+    )
+    parser.add_argument("--tau", type=float, default=0.80)
+    parser.add_argument("--min-sequences", type=int, default=2)
+    parser.add_argument("--max-sequences", type=int, default=10)
+    parser.add_argument(
         "--debug-trace-calls", type=int, default=0,
         help="Print the first N RAG distributions per rung.",
     )
@@ -130,6 +137,8 @@ def main():
         help="Optional result-table path for an isolated diagnostic run.",
     )
     args = parser.parse_args()
+    if not args.allow_heldout_eval:
+        parser.error("pass --allow-heldout-eval only for the pre-registered final evaluation")
     if args.output:
         RESULT_PATH = args.output
     with TEST_SESSIONS.open(encoding="utf-8") as handle:
@@ -178,6 +187,10 @@ def main():
                 n_rows=n_rows, n_cols=n_cols,
                 flashes_per_seq=n_rows + n_cols, clf=clf,
                 session_ids=session_ids, enable_session_growth=growth,
+                allow_heldout_labels=True,
+                confidence_threshold=args.tau,
+                min_flashes=args.min_sequences,
+                max_sequences=args.max_sequences,
             )
             flashes = metrics.total_flashes_used / max(1, metrics.total_characters)
             tracker.add_subject_result(

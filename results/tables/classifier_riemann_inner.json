@@ -1,0 +1,492 @@
+{
+  "baseline_off": {
+    "cache": "data/cache/classifier_1_12_no_baseline.h5",
+    "preprocessing": {
+      "name": "baseline_off",
+      "window_s": 0.8,
+      "decim": 2,
+      "channels": "all",
+      "artifact_rejection": false,
+      "artifact_threshold_uv": 150
+    },
+    "cv": {
+      "method": "GroupKFold",
+      "groups": "run_id",
+      "folds": 3
+    },
+    "fit_sample_cap": 3000,
+    "class_balance": "balanced target/non-target training sample",
+    "xdawn_filters": 4,
+    "pyriemann_version": "0.7",
+    "models": {
+      "M3_xDAWN_TS_LR": {
+        "oof_epochs": 84660,
+        "epoch_auc": 0.8031783559942581,
+        "per_subject_epoch_auc": {
+          "D_01": {
+            "epochs": 5100,
+            "epoch_auc": 0.8347785185185186
+          },
+          "D_02": {
+            "epochs": 6120,
+            "epoch_auc": 0.8662397119341563
+          },
+          "D_03": {
+            "epochs": 5100,
+            "epoch_auc": 0.7288618518518518
+          },
+          "D_04": {
+            "epochs": 4080,
+            "epoch_auc": 0.8141116898148149
+          },
+          "D_05": {
+            "epochs": 4080,
+            "epoch_auc": 0.8072586805555555
+          },
+          "D_06": {
+            "epochs": 5100,
+            "epoch_auc": 0.7164125925925926
+          },
+          "D_07": {
+            "epochs": 5100,
+            "epoch_auc": 0.7350588888888888
+          },
+          "D_08": {
+            "epochs": 4080,
+            "epoch_auc": 0.791652199074074
+          },
+          "D_09": {
+            "epochs": 5100,
+            "epoch_auc": 0.7987055555555554
+          },
+          "D_10": {
+            "epochs": 4080,
+            "epoch_auc": 0.8631348379629629
+          },
+          "D_11": {
+            "epochs": 4080,
+            "epoch_auc": 0.713207175925926
+          },
+          "D_12": {
+            "epochs": 6120,
+            "epoch_auc": 0.8684133230452675
+          },
+          "D_13": {
+            "epochs": 5100,
+            "epoch_auc": 0.7363277777777777
+          },
+          "D_14": {
+            "epochs": 5100,
+            "epoch_auc": 0.8207174074074074
+          },
+          "D_15": {
+            "epochs": 5100,
+            "epoch_auc": 0.8137670370370371
+          },
+          "D_16": {
+            "epochs": 5100,
+            "epoch_auc": 0.8671748148148148
+          },
+          "D_17": {
+            "epochs": 6120,
+            "epoch_auc": 0.8180259773662552
+          }
+        },
+        "character_metrics": {
+          "characters": 249,
+          "full_repetition_accuracy": 0.3172690763052209,
+          "locked_stopping_accuracy": 0.3172690763052209,
+          "mean_sequences_at_stop": 4.397590361445783,
+          "prefix_accuracy": {
+            "2": 0.1927710843373494,
+            "5": 0.30120481927710846,
+            "10": 0.3293172690763052,
+            "20": 0.3172690763052209
+          },
+          "per_subject": {
+            "D_01": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.3333333333333333
+            },
+            "D_02": {
+              "characters": 18,
+              "full_repetition_accuracy": 0.3333333333333333
+            },
+            "D_03": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.3333333333333333
+            },
+            "D_04": {
+              "characters": 12,
+              "full_repetition_accuracy": 0.3333333333333333
+            },
+            "D_05": {
+              "characters": 12,
+              "full_repetition_accuracy": 0.3333333333333333
+            },
+            "D_06": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.3333333333333333
+            },
+            "D_07": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.2
+            },
+            "D_08": {
+              "characters": 12,
+              "full_repetition_accuracy": 0.08333333333333333
+            },
+            "D_09": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.13333333333333333
+            },
+            "D_10": {
+              "characters": 12,
+              "full_repetition_accuracy": 0.5
+            },
+            "D_11": {
+              "characters": 12,
+              "full_repetition_accuracy": 0.4166666666666667
+            },
+            "D_12": {
+              "characters": 18,
+              "full_repetition_accuracy": 0.3333333333333333
+            },
+            "D_13": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.4
+            },
+            "D_14": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.26666666666666666
+            },
+            "D_15": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.2
+            },
+            "D_16": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.5333333333333333
+            },
+            "D_17": {
+              "characters": 18,
+              "full_repetition_accuracy": 0.3333333333333333
+            }
+          }
+        }
+      },
+      "M3c_Riemannian_MDM": {
+        "oof_epochs": 84660,
+        "epoch_auc": 0.7936157225958721,
+        "per_subject_epoch_auc": {
+          "D_01": {
+            "epochs": 5100,
+            "epoch_auc": 0.8038455555555556
+          },
+          "D_02": {
+            "epochs": 6120,
+            "epoch_auc": 0.8556049382716051
+          },
+          "D_03": {
+            "epochs": 5100,
+            "epoch_auc": 0.7152525925925927
+          },
+          "D_04": {
+            "epochs": 4080,
+            "epoch_auc": 0.8002951388888888
+          },
+          "D_05": {
+            "epochs": 4080,
+            "epoch_auc": 0.8013894675925926
+          },
+          "D_06": {
+            "epochs": 5100,
+            "epoch_auc": 0.7121881481481481
+          },
+          "D_07": {
+            "epochs": 5100,
+            "epoch_auc": 0.7250003703703704
+          },
+          "D_08": {
+            "epochs": 4080,
+            "epoch_auc": 0.8042465277777777
+          },
+          "D_09": {
+            "epochs": 5100,
+            "epoch_auc": 0.7822659259259259
+          },
+          "D_10": {
+            "epochs": 4080,
+            "epoch_auc": 0.8496788194444445
+          },
+          "D_11": {
+            "epochs": 4080,
+            "epoch_auc": 0.6992876157407407
+          },
+          "D_12": {
+            "epochs": 6120,
+            "epoch_auc": 0.8679524176954733
+          },
+          "D_13": {
+            "epochs": 5100,
+            "epoch_auc": 0.7359285185185186
+          },
+          "D_14": {
+            "epochs": 5100,
+            "epoch_auc": 0.8217355555555557
+          },
+          "D_15": {
+            "epochs": 5100,
+            "epoch_auc": 0.8150570370370371
+          },
+          "D_16": {
+            "epochs": 5100,
+            "epoch_auc": 0.8803455555555555
+          },
+          "D_17": {
+            "epochs": 6120,
+            "epoch_auc": 0.8116345164609053
+          }
+        },
+        "character_metrics": {
+          "characters": 249,
+          "full_repetition_accuracy": 0.3253012048192771,
+          "locked_stopping_accuracy": 0.3293172690763052,
+          "mean_sequences_at_stop": 10.0,
+          "prefix_accuracy": {
+            "2": 0.21285140562248997,
+            "5": 0.285140562248996,
+            "10": 0.3293172690763052,
+            "20": 0.3253012048192771
+          },
+          "per_subject": {
+            "D_01": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.3333333333333333
+            },
+            "D_02": {
+              "characters": 18,
+              "full_repetition_accuracy": 0.2222222222222222
+            },
+            "D_03": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.26666666666666666
+            },
+            "D_04": {
+              "characters": 12,
+              "full_repetition_accuracy": 0.25
+            },
+            "D_05": {
+              "characters": 12,
+              "full_repetition_accuracy": 0.3333333333333333
+            },
+            "D_06": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.3333333333333333
+            },
+            "D_07": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.26666666666666666
+            },
+            "D_08": {
+              "characters": 12,
+              "full_repetition_accuracy": 0.3333333333333333
+            },
+            "D_09": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.13333333333333333
+            },
+            "D_10": {
+              "characters": 12,
+              "full_repetition_accuracy": 0.5
+            },
+            "D_11": {
+              "characters": 12,
+              "full_repetition_accuracy": 0.4166666666666667
+            },
+            "D_12": {
+              "characters": 18,
+              "full_repetition_accuracy": 0.3888888888888889
+            },
+            "D_13": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.4
+            },
+            "D_14": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.4
+            },
+            "D_15": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.26666666666666666
+            },
+            "D_16": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.4
+            },
+            "D_17": {
+              "characters": 18,
+              "full_repetition_accuracy": 0.3333333333333333
+            }
+          }
+        }
+      },
+      "M3a_xDAWN_LDA": {
+        "oof_epochs": 84660,
+        "epoch_auc": 0.8129341704166062,
+        "per_subject_epoch_auc": {
+          "D_01": {
+            "epochs": 5100,
+            "epoch_auc": 0.8460174074074074
+          },
+          "D_02": {
+            "epochs": 6120,
+            "epoch_auc": 0.8822299382716049
+          },
+          "D_03": {
+            "epochs": 5100,
+            "epoch_auc": 0.7434218518518518
+          },
+          "D_04": {
+            "epochs": 4080,
+            "epoch_auc": 0.8444126157407407
+          },
+          "D_05": {
+            "epochs": 4080,
+            "epoch_auc": 0.8234322916666666
+          },
+          "D_06": {
+            "epochs": 5100,
+            "epoch_auc": 0.708401111111111
+          },
+          "D_07": {
+            "epochs": 5100,
+            "epoch_auc": 0.7413644444444445
+          },
+          "D_08": {
+            "epochs": 4080,
+            "epoch_auc": 0.8124461805555555
+          },
+          "D_09": {
+            "epochs": 5100,
+            "epoch_auc": 0.8114062962962963
+          },
+          "D_10": {
+            "epochs": 4080,
+            "epoch_auc": 0.8910694444444445
+          },
+          "D_11": {
+            "epochs": 4080,
+            "epoch_auc": 0.698552662037037
+          },
+          "D_12": {
+            "epochs": 6120,
+            "epoch_auc": 0.886905864197531
+          },
+          "D_13": {
+            "epochs": 5100,
+            "epoch_auc": 0.7351351851851853
+          },
+          "D_14": {
+            "epochs": 5100,
+            "epoch_auc": 0.8444837037037037
+          },
+          "D_15": {
+            "epochs": 5100,
+            "epoch_auc": 0.8500770370370371
+          },
+          "D_16": {
+            "epochs": 5100,
+            "epoch_auc": 0.8764725925925927
+          },
+          "D_17": {
+            "epochs": 6120,
+            "epoch_auc": 0.8289565329218107
+          }
+        },
+        "character_metrics": {
+          "characters": 249,
+          "full_repetition_accuracy": 0.3453815261044177,
+          "locked_stopping_accuracy": 0.30522088353413657,
+          "mean_sequences_at_stop": 4.0843373493975905,
+          "prefix_accuracy": {
+            "2": 0.2248995983935743,
+            "5": 0.30120481927710846,
+            "10": 0.3333333333333333,
+            "20": 0.3453815261044177
+          },
+          "per_subject": {
+            "D_01": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.3333333333333333
+            },
+            "D_02": {
+              "characters": 18,
+              "full_repetition_accuracy": 0.4444444444444444
+            },
+            "D_03": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.26666666666666666
+            },
+            "D_04": {
+              "characters": 12,
+              "full_repetition_accuracy": 0.4166666666666667
+            },
+            "D_05": {
+              "characters": 12,
+              "full_repetition_accuracy": 0.4166666666666667
+            },
+            "D_06": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.3333333333333333
+            },
+            "D_07": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.4
+            },
+            "D_08": {
+              "characters": 12,
+              "full_repetition_accuracy": 0.08333333333333333
+            },
+            "D_09": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.13333333333333333
+            },
+            "D_10": {
+              "characters": 12,
+              "full_repetition_accuracy": 0.5833333333333334
+            },
+            "D_11": {
+              "characters": 12,
+              "full_repetition_accuracy": 0.3333333333333333
+            },
+            "D_12": {
+              "characters": 18,
+              "full_repetition_accuracy": 0.3333333333333333
+            },
+            "D_13": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.4666666666666667
+            },
+            "D_14": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.3333333333333333
+            },
+            "D_15": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.13333333333333333
+            },
+            "D_16": {
+              "characters": 15,
+              "full_repetition_accuracy": 0.5333333333333333
+            },
+            "D_17": {
+              "characters": 18,
+              "full_repetition_accuracy": 0.3333333333333333
+            }
+          }
+        }
+      }
+    }
+  }
+}
