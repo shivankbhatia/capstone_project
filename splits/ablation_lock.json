@@ -1,0 +1,138 @@
+{
+  "lock_version": 1,
+  "created_git_hash": "fe044b6",
+  "parent_locks": {
+    "classifier_lock_sha256": "46e7c2008f89c772158e3f11aedb4af799e09b1fbc30a0c628df6c079731509a",
+    "manifest_sha256": "de2fd72215e6f2766cc66c629ebd08fd9a1c55b6dab40c63a2e7890a0a8bac7b"
+  },
+  "classifier": {
+    "id": "clean_m0",
+    "scorer_path": "data/processed/clean_m0_epoch_scorer.pkl",
+    "scorer_export_script": "scripts/export_locked_clean_m0.py",
+    "calibration": {
+      "method": "scalar temperature scaling",
+      "level": "row_column_sequence_nll",
+      "temperature": 4.1869360663,
+      "fit_scope": "clean training pool run_grouped OOF"
+    }
+  },
+  "rungs": {
+    "0": {
+      "name": "eeg_only",
+      "lm": false,
+      "rag": false,
+      "fusion_alpha": 0.0
+    },
+    "1": {
+      "name": "fixed_eeg_llm",
+      "lm": "distilgpt2",
+      "fusion_mode": "fixed",
+      "fusion_weight": 0.85,
+      "weight_fit_scope": "20_percent_salted_sha256_training_run_OOF_validation"
+    },
+    "2": {
+      "name": "adaptive_calibrated_global_rag",
+      "lm": "distilgpt2",
+      "rag_bank": "data/rag/phrase_bank_global.csv",
+      "rag_weight": 0.7,
+      "retrieval_confidence_threshold": 0.0,
+      "fusion_mode": "adaptive",
+      "adaptive_weight": 1.5,
+      "weight_fit_scope": "20_percent_salted_sha256_training_run_OOF_validation"
+    },
+    "3": {
+      "name": "subject_only_rag",
+      "lm": "distilgpt2",
+      "rag_bank": "data/rag/by_subject/phrase_bank_{subject_id}.csv",
+      "subject_only": true,
+      "rag_weight": 1.0,
+      "retrieval_confidence_threshold": 0.6,
+      "fusion_mode": "adaptive",
+      "adaptive_weight": 1.5,
+      "weight_fit_scope": "20_percent_salted_sha256_training_run_OOF_validation"
+    },
+    "4": {
+      "name": "personalized_gated_rag",
+      "lm": "distilgpt2",
+      "rag_bank": "global_plus_subject_blend",
+      "rag_weight": 0.7,
+      "retrieval_confidence_threshold": 0.0,
+      "fusion_mode": "adaptive",
+      "adaptive_weight": 1.5,
+      "weight_fit_scope": "20_percent_salted_sha256_training_run_OOF_validation"
+    }
+  },
+  "rag": {
+    "phrase_bank_split": {
+      "method": "sha256('phrase-bank-v1:' + run_id) modulo 100",
+      "validation_remainder": "0..19",
+      "training_remainder": "20..99",
+      "OOF_validation_runs": 14,
+      "global_unique_training_phrases": 66
+    },
+    "sufficiency_gate": {
+      "type": "sigmoid",
+      "midpoint_tokens": 15.0,
+      "sharpness": 0.2
+    },
+    "backoff_gate": {
+      "min_successor_count": 2,
+      "max_normalized_entropy": 0.65,
+      "ngram": 2,
+      "subject_confidence_threshold": 0.2,
+      "personalization_bonus": 1.5,
+      "subject_min_unique_phrases": 10
+    },
+    "bank_built_from": "clean training pool only; excludes the deterministic 20% OOF weight-fit runs and all manifest runs",
+    "global_bank_sha256": "0826a089022eefa3824e310561bba02f41d76e7bea49dadf2fe1b87a0cbacfb9"
+  },
+  "lm": {
+    "model": "distilgpt2",
+    "transformers_version": "4.57.6",
+    "token_mapping": "full_string_scoring_with_special_key_map",
+    "special_key_map_path": "configs/llm/special_key_map.json"
+  },
+  "stopping": {
+    "policy_source": "clean M0 nested run-grouped OOF only",
+    "tau": 0.8,
+    "min_sequences": 2,
+    "max_sequences": 10,
+    "legacy_rc_clamp": 15,
+    "rc_sequences_per_char": 10,
+    "selection_rule": "fewest mean sequences with no pooled accuracy loss versus default tau=0.8/min=2/max=10",
+    "decision_flips_vs_default": 0,
+    "inner_oof_characters": 498,
+    "inner_oof_fused_accuracy": 0.8433734939759037,
+    "inner_oof_mean_sequences": 4.911646586345381
+  },
+  "evaluation": {
+    "population": "manifest_57_runs",
+    "exclusions": "zero_coverage_terminal_chars reported separately",
+    "strata": ["overall", "RC/Train", "Dyn/DynBigram"],
+    "metrics": ["char_acc", "flashes_per_char", "itr_variable_time", "wpm", "seq_nll"],
+    "stats": {
+      "test": "paired_wilcoxon_per_subject",
+      "correction": "holm",
+      "family": ["1v0", "2v1", "3v1", "4v1", "4v2"],
+      "bootstrap": "resample_subjects",
+      "n_boot": 10000,
+      "seed": 0
+    },
+    "one_shot_guard": true
+  },
+  "seeds": {
+    "global": 0,
+    "OOF_weight_fit_split": "salted_sha256_run_id"
+  },
+  "versions": {
+    "python": "3.9.6",
+    "numpy": "1.26.4",
+    "torch": "2.8.0",
+    "sklearn": "1.5.2",
+    "mne": "1.8.0"
+  },
+  "training_oof_weight_artifact": "results/tables/ablation_oof_weights.json",
+  "training_oof_weight_artifact_sha256": "5e9447119c312056a60aa30c4c534d3bd934802c515157fc6bc5050b6309295d",
+  "training_oof_stopping_artifact": "results/tables/ablation_inner_m0_policy.json",
+  "training_oof_stopping_artifact_sha256": "55fab73621c776f78973fabb20fe7cef91076ac42858fb1540babde0cf1e6cad"
+}
