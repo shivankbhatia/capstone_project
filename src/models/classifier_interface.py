@@ -76,3 +76,41 @@ class SklearnP300Adapter(P300Classifier):
             raise TypeError("Estimator must expose decision_function or predict_proba")
         probabilities = np.clip(self.estimator.predict_proba(X)[:, 1], 1e-7, 1 - 1e-7)
         return np.log(probabilities) - np.log1p(-probabilities)
+
+
+class EpochFeatureScorer:
+    """Serializable inference wrapper for a trained epoch-level estimator.
+
+    It applies the locked time window and decimation before scoring. The input
+    channel order must match the saved channel list from the clean epoch cache.
+    """
+
+    def __init__(self, estimator, scaler, channels, sfreq, tmin, config, temperature=1.0):
+        self.estimator = estimator
+        self.scaler = scaler
+        self.channels = tuple(channels)
+        self.sfreq = float(sfreq)
+        self.tmin = float(tmin)
+        self.config = dict(config)
+        self.temperature = float(temperature)
+
+    def _features(self, X):
+        X = np.asarray(X)
+        if X.ndim != 3:
+            raise ValueError("Expected epochs shaped (n_epochs, n_channels, n_times)")
+        if X.shape[1] != len(self.channels):
+            raise ValueError(
+                f"Expected {len(self.channels)} channels in locked order, received {X.shape[1]}"
+            )
+        times = self.tmin + np.arange(X.shape[-1]) / self.sfreq
+        keep = (times >= 0.0) & (times <= float(self.config["window_s"]) + 1e-8)
+        features = X[:, :, keep][:, :, ::int(self.config["decim"])].reshape(len(X), -1)
+        return features
+
+    def decision_function(self, X):
+        return np.asarray(self.estimator.decision_function(
+            self.scaler.transform(self._features(X))
+        )).reshape(-1)
+
+    def calibrated_logits(self, X):
+        return self.decision_function(X) / self.temperature

@@ -40,7 +40,7 @@ if str(ROOT) not in sys.path:
 GRID_PATH = ROOT / "data/processed/grid_layout.json"
 REGISTRY_PATH = ROOT / "data/processed/ground_truth_registry.json"
 TEST_SPLIT_PATH = ROOT / "data/processed/test_sessions.json"
-MODEL_PATH = ROOT / "data/processed/swlda_model.pkl"
+MODEL_PATH = ROOT / "data/processed/clean_m0_epoch_scorer.pkl"
 GLOBAL_BANK_PATH = ROOT / "data/rag/phrase_bank_global.csv"
 
 

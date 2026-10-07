@@ -83,7 +83,7 @@ _legacy_index_warning_paths = set()
 
 
 def fixed_sequence_epoch_slice(char_idx, sequence_num, flashes_per_seq,
-                               sequences_per_char=20):
+                               sequences_per_char=10):
     """Index fixed RC data using its acquisition repetitions, not stop max."""
     if char_idx < 0 or sequence_num < 1 or flashes_per_seq < 1 or sequences_per_char < 1:
         raise ValueError("invalid fixed-sequence indices")
@@ -196,7 +196,7 @@ def _build_adaptive_index_map(epochs):
 
 def real_eeg_classifier_flash_stream(eeg_data_path, char_idx, sequence_num, clf,
                                      n_rows, n_cols, flashes_per_seq,
-                                     max_seqs_per_char=20):
+                                     max_seqs_per_char=10):
     """Return the classifier score for every row/column flash in a sequence.
 
     Keeping the per-flash records lets consumers render the actual RC evidence
@@ -281,7 +281,7 @@ def real_eeg_classifier_flash_stream(eeg_data_path, char_idx, sequence_num, clf,
     ]
 
 def real_eeg_classifier_stream(eeg_data_path, char_idx, sequence_num, clf, char_list,
-                                n_rows, n_cols, flashes_per_seq, max_seqs_per_char=20):
+                                n_rows, n_cols, flashes_per_seq, max_seqs_per_char=10):
     """
     Loads real EEG data, runs it through the calibrated SWLDA,
     and returns the posterior over the full grid (n_rows * n_cols classes,
@@ -304,7 +304,7 @@ def real_eeg_classifier_stream(eeg_data_path, char_idx, sequence_num, clf, char_
 
 def real_eeg_single_flash_trace(eeg_data_path, char_idx, sequence_num, stimulus_code,
                                 n_rows, n_cols, flashes_per_seq,
-                                max_seqs_per_char=20, channel=None):
+                                max_seqs_per_char=10, channel=None):
     """Return the real averaged EEG voltage trace for one recorded flash."""
     global _epoch_cache, _adaptive_index_cache
 
@@ -367,7 +367,7 @@ def run_evaluation(decoder, llm, fusion_engine, n_rows, n_cols, flashes_per_seq,
                     confidence_threshold=0.85, max_sequences=15, min_flashes=2,
                     clf=None, session_ids=None, enable_session_growth=False,
                     study="StudyD", seconds_per_sequence=2.0,
-                    allow_heldout_labels=False, sequences_per_char=20):
+                    allow_heldout_labels=False, sequences_per_char=10):
     """Runs the dataset through the spelling simulation."""
 
     class Metrics:
@@ -548,8 +548,13 @@ if __name__ == "__main__":
     tracker = SimpleAblationTracker()
 
     # 2. Load Real SWLDA Classifier
-    MODEL_PATH = _args.model or ('data/processed/swlda_model.pkl' if STUDY == 'StudyD'
+    MODEL_PATH = _args.model or ('data/processed/clean_m0_epoch_scorer.pkl' if STUDY == 'StudyD'
                                  else f'data/processed/swlda_model_{STUDY}.pkl')
+    if STUDY == 'StudyD' and not os.path.exists(MODEL_PATH):
+        raise FileNotFoundError(
+            f"Clean Study D classifier not found at {MODEL_PATH}. "
+            "Export it with scripts/export_locked_clean_m0.py before running the pipeline."
+        )
     if os.path.exists(MODEL_PATH):
         print(f"Loading SWLDA Classifier from {MODEL_PATH}...")
         clf = joblib.load(MODEL_PATH)

@@ -42,7 +42,8 @@ def test_logits_path_matches_probability_path():
 
 
 def test_fixed_run_epoch_index_uses_acquisition_sequences_not_stop_limit():
-    # Study D RC/Train stores 20 repetitions per character; a max stop count
-    # of 10 must not shift the start of the next character.
-    assert fixed_sequence_epoch_slice(1, 1, 17, sequences_per_char=20) == slice(340, 357)
-    assert fixed_sequence_epoch_slice(1, 10, 17, sequences_per_char=20) == slice(493, 510)
+    # Clean Study D RC/Train runs store 10 repetitions per character. The
+    # decoder's stop limit is a separate setting and must not shift indexing.
+    assert fixed_sequence_epoch_slice(1, 1, 17) == slice(170, 187)
+    assert fixed_sequence_epoch_slice(1, 10, 17) == slice(323, 340)
+    assert fixed_sequence_epoch_slice(1, 2, 17, sequences_per_char=20) == slice(357, 374)

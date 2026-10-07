@@ -319,6 +319,9 @@ def _aggregate(records, model, condition=None):
             "characters": len(sr),
             "eeg_accuracy": float(np.mean([r["correct_eeg"] for r in sr])),
             "fused_accuracy": float(np.mean([r["correct_fused"] for r in sr])),
+            "sequence_row_column_nll": float(np.mean([
+                r["sequence_nll"] for r in sr if r.get("sequence_nll") is not None
+            ])) if any(r.get("sequence_nll") is not None for r in sr) else None,
         }
     return {
         "characters": n, "zero_coverage_terminal_characters": len(rows) - n,
@@ -341,40 +344,43 @@ def _paired_subject_statistics(records, baseline="M0", candidates=("M3a",), seed
         subjects = sorted(set(base) & set(candidate))
         if not subjects:
             continue
-        deltas = np.asarray([
-            candidate[s]["fused_accuracy"] - base[s]["fused_accuracy"]
-            for s in subjects
-        ], dtype=float)
-        try:
-            statistic, p_value = wilcoxon(deltas, zero_method="wilcox", alternative="two-sided")
-        except ValueError:
-            statistic, p_value = 0.0, 1.0
-        boot = np.mean(rng.choice(deltas, size=(20000, len(deltas)), replace=True), axis=1)
-        comparisons.append({
-            "comparison": f"{model} vs {baseline}",
-            "metric": "fused character accuracy",
-            "subjects": len(subjects),
-            "subject_ids": subjects,
-            "mean_paired_delta": float(deltas.mean()),
-            "subjects_better": int(np.sum(deltas > 0)),
-            "subjects_tied": int(np.sum(deltas == 0)),
-            "subjects_worse": int(np.sum(deltas < 0)),
-            "wilcoxon_statistic": float(statistic),
-            "p_uncorrected": float(p_value),
-            "bootstrap_95_ci_subject_resampling": [
-                float(np.quantile(boot, .025)), float(np.quantile(boot, .975))
-            ],
-        })
-    order = np.argsort([row["p_uncorrected"] for row in comparisons])
-    adjusted = np.ones(len(comparisons), dtype=float)
+        metric_specs = (
+            ("fused character accuracy", "fused_accuracy", True),
+            ("sequence row/column NLL", "sequence_row_column_nll", False),
+        )
+        for label, key, primary in metric_specs:
+            available = [s for s in subjects if base[s].get(key) is not None and candidate[s].get(key) is not None]
+            deltas = np.asarray([candidate[s][key] - base[s][key] for s in available], dtype=float)
+            try:
+                statistic, p_value = wilcoxon(deltas, zero_method="wilcox", alternative="two-sided")
+            except ValueError:
+                statistic, p_value = 0.0, 1.0
+            boot = np.mean(rng.choice(deltas, size=(20000, len(deltas)), replace=True), axis=1)
+            comparisons.append({
+                "comparison": f"{model} vs {baseline}", "metric": label,
+                "holm_family_member": primary,
+                "subjects": len(available), "subject_ids": available,
+                "mean_paired_delta": float(deltas.mean()),
+                "subjects_better": int(np.sum(deltas > 0)) if primary else None,
+                "subjects_tied": int(np.sum(deltas == 0)) if primary else None,
+                "subjects_worse": int(np.sum(deltas < 0)) if primary else None,
+                "wilcoxon_statistic": float(statistic),
+                "p_uncorrected": float(p_value),
+                "bootstrap_95_ci_subject_resampling": [
+                    float(np.quantile(boot, .025)), float(np.quantile(boot, .975))
+                ],
+            })
+    family_idxs = [i for i, row in enumerate(comparisons) if row["holm_family_member"]]
+    order = sorted(family_idxs, key=lambda i: comparisons[i]["p_uncorrected"])
+    adjusted = np.full(len(comparisons), np.nan, dtype=float)
     running = 0.0
     for rank, idx in enumerate(order):
-        running = max(running, (len(comparisons) - rank) * comparisons[idx]["p_uncorrected"])
+        running = max(running, (len(order) - rank) * comparisons[idx]["p_uncorrected"])
         adjusted[idx] = min(1.0, running)
     for row, p_adj in zip(comparisons, adjusted):
-        row["p_holm"] = float(p_adj)
-        row["significant_holm_0p05"] = bool(p_adj < .05)
-    return {"correction": "Holm across finalist vs M0 comparisons; maximum two",
+        row["p_holm"] = float(p_adj) if np.isfinite(p_adj) else None
+        row["significant_holm_0p05"] = bool(p_adj < .05) if np.isfinite(p_adj) else None
+    return {"correction": "Holm across finalist vs M0 fused-accuracy comparisons; maximum two. NLL is secondary and reported separately.",
             "comparisons": comparisons}
 
 
