@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_LOCK_SHA256 = "2bebe94fbd0497536624dae8b77728aabb717266736bc87aa6a463ceb5306efc"
+EXPECTED_LOCK_SHA256 = "46e7c2008f89c772158e3f11aedb4af799e09b1fbc30a0c628df6c079731509a"
 EXPECTED_MANIFEST_SHA256 = "de2fd72215e6f2766cc66c629ebd08fd9a1c55b6dab40c63a2e7890a0a8bac7b"
 
 

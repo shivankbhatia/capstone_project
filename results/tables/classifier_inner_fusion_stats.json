@@ -68,12 +68,12 @@
       "mode": "eeg_only",
       "metric": "stopped_accuracy",
       "subjects": 17,
-      "mean_paired_delta": 0.01699346405228758,
-      "wilcoxon_statistic": 2.0,
-      "p_uncorrected": 0.07313979965890892,
+      "mean_paired_delta": -0.01045751633986928,
+      "wilcoxon_statistic": 53.5,
+      "p_uncorrected": 0.4528598472737545,
       "bootstrap_95_ci_subject_resampling": [
-        -0.0006535947712418269,
-        0.03562091503267973
+        -0.050163398692810446,
+        0.031209150326797372
       ],
       "p_holm": 1.0,
       "significant_holm_0p05": false
@@ -98,12 +98,12 @@
       "mode": "eeg_only",
       "metric": "stopped_accuracy",
       "subjects": 17,
-      "mean_paired_delta": 0.01176470588235294,
-      "wilcoxon_statistic": 9.5,
-      "p_uncorrected": 0.4460595493707439,
+      "mean_paired_delta": 0.004575163398692824,
+      "wilcoxon_statistic": 60.5,
+      "p_uncorrected": 0.6979603375803276,
       "bootstrap_95_ci_subject_resampling": [
-        -0.015686274509803925,
-        0.041176470588235294
+        -0.03986928104575161,
+        0.04852941176470588
       ],
       "p_holm": 1.0,
       "significant_holm_0p05": false
@@ -128,12 +128,12 @@
       "mode": "eeg_only",
       "metric": "stopped_accuracy",
       "subjects": 17,
-      "mean_paired_delta": 0.005882352941176468,
-      "wilcoxon_statistic": 6.0,
-      "p_uncorrected": 0.6844698210251553,
+      "mean_paired_delta": -0.031699346405228764,
+      "wilcoxon_statistic": 32.5,
+      "p_uncorrected": 0.11794163538761533,
       "bootstrap_95_ci_subject_resampling": [
-        -0.0215686274509804,
-        0.03235294117647058
+        -0.06960784313725489,
+        0.00424836601307188
       ],
       "p_holm": 1.0,
       "significant_holm_0p05": false
@@ -158,12 +158,12 @@
       "mode": "eeg_only",
       "metric": "stopped_accuracy",
       "subjects": 17,
-      "mean_paired_delta": -0.014379084967320273,
-      "wilcoxon_statistic": 27.5,
-      "p_uncorrected": 0.3664319887723254,
+      "mean_paired_delta": 0.006209150326797373,
+      "wilcoxon_statistic": 47.5,
+      "p_uncorrected": 0.7523082620482853,
       "bootstrap_95_ci_subject_resampling": [
-        -0.047712418300653606,
-        0.017973856209150325
+        -0.03120915032679738,
+        0.04771241830065358
       ],
       "p_holm": 1.0,
       "significant_holm_0p05": false
@@ -188,12 +188,12 @@
       "mode": "fusion",
       "metric": "stopped_accuracy",
       "subjects": 17,
-      "mean_paired_delta": 0.0019607843137254945,
-      "wilcoxon_statistic": 18.0,
-      "p_uncorrected": 0.5933057333639251,
+      "mean_paired_delta": -0.0013071895424836685,
+      "wilcoxon_statistic": 26.5,
+      "p_uncorrected": 0.9182821610274703,
       "bootstrap_95_ci_subject_resampling": [
-        -0.03398692810457516,
-        0.03464052287581701
+        -0.023856209150326817,
+        0.021895424836601302
       ],
       "p_holm": 1.0,
       "significant_holm_0p05": false
@@ -218,12 +218,12 @@
       "mode": "fusion",
       "metric": "stopped_accuracy",
       "subjects": 17,
-      "mean_paired_delta": 0.007843137254901962,
-      "wilcoxon_statistic": 24.5,
-      "p_uncorrected": 0.7596144888058398,
+      "mean_paired_delta": -0.0009803921568627481,
+      "wilcoxon_statistic": 26.5,
+      "p_uncorrected": 0.9186546126918693,
       "bootstrap_95_ci_subject_resampling": [
-        -0.024836601307189544,
-        0.03986928104575164
+        -0.028431372549019618,
+        0.025490196078431362
       ],
       "p_holm": 1.0,
       "significant_holm_0p05": false
@@ -248,12 +248,12 @@
       "mode": "fusion",
       "metric": "stopped_accuracy",
       "subjects": 17,
-      "mean_paired_delta": -0.012418300653594769,
-      "wilcoxon_statistic": 16.0,
-      "p_uncorrected": 0.4396586365458026,
+      "mean_paired_delta": -0.010457516339869289,
+      "wilcoxon_statistic": 16.5,
+      "p_uncorrected": 0.2612615255398738,
       "bootstrap_95_ci_subject_resampling": [
-        -0.04183006535947713,
-        0.017973856209150332
+        -0.03333333333333335,
+        0.010947712418300655
       ],
       "p_holm": 1.0,
       "significant_holm_0p05": false
@@ -278,12 +278,12 @@
       "mode": "fusion",
       "metric": "stopped_accuracy",
       "subjects": 17,
-      "mean_paired_delta": -0.012091503267973855,
-      "wilcoxon_statistic": 19.5,
-      "p_uncorrected": 0.4133023795226214,
+      "mean_paired_delta": -0.002777777777777781,
+      "wilcoxon_statistic": 22.5,
+      "p_uncorrected": 0.6098340436734595,
       "bootstrap_95_ci_subject_resampling": [
-        -0.04084967320261438,
-        0.016339869281045756
+        -0.03169934640522878,
+        0.0300653594771242
       ],
       "p_holm": 1.0,
       "significant_holm_0p05": false

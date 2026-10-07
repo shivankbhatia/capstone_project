@@ -47,12 +47,14 @@ def _sequence_and_character_indices(epochs, run_id: str) -> tuple[np.ndarray, np
         return seq_idx, char_idx
 
     # Fixed RC calibration files contain 17 row/column flashes per sequence
-    # and 20 sequences per character. The cache records 0-based indices.
+    # and 10 sequences per character (20 target flashes: row + column for
+    # each sequence). The cache records 0-based sequence indices.
     n_rows, n_cols = 9, 8
     flashes_per_sequence = n_rows + n_cols
     event_order = np.arange(len(epochs), dtype=np.int32)
-    seq_idx = (event_order // flashes_per_sequence) % 20
-    char_idx = event_order // (flashes_per_sequence * 20)
+    sequences_per_char = 10
+    seq_idx = (event_order // flashes_per_sequence) % sequences_per_char
+    char_idx = event_order // (flashes_per_sequence * sequences_per_char)
     return seq_idx, char_idx
 
 

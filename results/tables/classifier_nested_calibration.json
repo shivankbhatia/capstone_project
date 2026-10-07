@@ -20,8 +20,6 @@
       "column_accuracy": 0.5050200803212851
     },
     "raw_epoch_auc": 0.8028088438089709,
-    "calibrated_oof_epochs": 84660,
-    "calibration_protocol": "inner run-grouped OOF within each outer training fold",
     "per_subject_raw_epoch_auc": {
       "D_01": 0.894244074074074,
       "D_02": 0.8393984053497942,
@@ -59,7 +57,9 @@
       "D_15": 0.8501688888888889,
       "D_16": 0.8761892592592593,
       "D_17": 0.8240776748971194
-    }
+    },
+    "calibrated_oof_epochs": 84660,
+    "calibration_protocol": "inner run-grouped OOF within each outer training fold"
   },
   "M2": {
     "fold_temperatures": [
@@ -82,8 +82,6 @@
       "column_accuracy": 0.47309236947791167
     },
     "raw_epoch_auc": 0.7954097850572303,
-    "calibrated_oof_epochs": 84660,
-    "calibration_protocol": "inner run-grouped OOF within each outer training fold",
     "per_subject_raw_epoch_auc": {
       "D_01": 0.8107088888888889,
       "D_02": 0.8452685185185185,
@@ -121,7 +119,9 @@
       "D_15": 0.8425459259259259,
       "D_16": 0.8808199999999999,
       "D_17": 0.8226805555555556
-    }
+    },
+    "calibrated_oof_epochs": 84660,
+    "calibration_protocol": "inner run-grouped OOF within each outer training fold"
   },
   "M3a": {
     "fold_temperatures": [
@@ -144,8 +144,6 @@
       "column_accuracy": 0.5144578313253012
     },
     "raw_epoch_auc": 0.8155220950737353,
-    "calibrated_oof_epochs": 84660,
-    "calibration_protocol": "inner run-grouped OOF within each outer training fold",
     "per_subject_raw_epoch_auc": {
       "D_01": 0.8456155555555556,
       "D_02": 0.8801363168724279,
@@ -183,7 +181,9 @@
       "D_15": 0.8394677777777777,
       "D_16": 0.8873307407407407,
       "D_17": 0.8431918724279835
-    }
+    },
+    "calibrated_oof_epochs": 84660,
+    "calibration_protocol": "inner run-grouped OOF within each outer training fold"
   },
   "M3b": {
     "fold_temperatures": [

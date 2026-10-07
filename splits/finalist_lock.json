@@ -1,6 +1,7 @@
 {
   "schema_version": 1,
-  "status": "pre_manifest_lock",
+  "status": "pre_manifest_lock_corrected_sequence_indexing",
+  "supersedes": "The first lock commit used 20 sequence indices per fixed-RC character. A training-only replay check found six labeled characters with ten sequences each. Cache indices, nested sequence calibration, fusion, and policy results were recomputed before this lock update.",
   "created_utc_date": "2026-10-07",
   "selection_scope": "inner run-grouped OOF on the clean Study D RC/Train pool only",
   "manifest_path": "splits/heldout_manifest.json",
@@ -33,9 +34,9 @@
   "not_selected": {
     "M2_M3a_stack": {
       "reason": "failed pre-set rule: fused stopped accuracy was lower than M3a despite lower sequence NLL",
-      "fused_accuracy_delta_vs_M3a": -0.0120915033,
+      "fused_accuracy_delta_vs_M3a": -0.0028039216,
       "fused_sequence_nll_delta_vs_M3a": -0.0482224182,
-      "per_subject_bootstrap_ci_accuracy": [-0.0408496732, 0.0163398693]
+      "per_subject_bootstrap_ci_accuracy": [-0.0316993464, 0.0300653595]
     },
     "EEGNet": {
       "reason": "training runtime has no Apple MPS; per instructions no CPU training was attempted",
@@ -65,37 +66,37 @@
   },
   "stopping_policy": {
     "M3a": {
-      "tau": 0.6,
-      "min_sequences": 2,
-      "max_sequences": 5,
-      "selection_rule": "fewest mean sequences with no pooled fused-accuracy loss versus default tau=0.8/min=2/max=10",
-      "inner_oof_characters": 249,
-      "accuracy": 0.2971887550,
-      "mean_sequences": 3.0321285141,
-      "decision_flips_vs_default": 42,
-      "flips_corrected": 7,
-      "flips_regressed": 7
-    },
-    "M0": {
       "tau": 0.7,
       "min_sequences": 2,
-      "max_sequences": 8,
+      "max_sequences": 10,
       "selection_rule": "fewest mean sequences with no pooled fused-accuracy loss versus default tau=0.8/min=2/max=10",
-      "inner_oof_characters": 249,
-      "accuracy": 0.2891566265,
-      "mean_sequences": 4.6787148594
+      "inner_oof_characters": 498,
+      "accuracy": 0.8734939759,
+      "mean_sequences": 3.2791164659,
+      "decision_flips_vs_default": 13,
+      "flips_corrected": 5,
+      "flips_regressed": 5
+    },
+    "M0": {
+      "tau": 0.8,
+      "min_sequences": 2,
+      "max_sequences": 10,
+      "selection_rule": "fewest mean sequences with no pooled fused-accuracy loss versus default tau=0.8/min=2/max=10",
+      "inner_oof_characters": 498,
+      "accuracy": 0.8714859438,
+      "mean_sequences": 4.5120481928
     }
   },
   "inner_oof_summary": {
-    "M0_fused_accuracy_default": 0.2891566265,
+    "M0_fused_accuracy_default": 0.8714859438,
     "M0_fused_sequence_nll": 1.6280638666,
-    "M3a_fused_accuracy_default": 0.2971887550,
+    "M3a_fused_accuracy_default": 0.8734939759,
     "M3a_fused_sequence_nll": 1.5160952612,
-    "M3a_subjects_with_higher_accuracy_than_M0": 6,
+    "M3a_subjects_with_higher_accuracy_than_M0": 5,
     "M3a_subjects_tied_accuracy_with_M0": 7,
-    "M3a_subjects_with_lower_accuracy_than_M0": 4,
+    "M3a_subjects_with_lower_accuracy_than_M0": 5,
     "M3a_vs_M0_accuracy_p_holm": 1.0,
-    "M3a_vs_M0_accuracy_bootstrap_ci": [-0.0248366013, 0.0398692810],
+    "M3a_vs_M0_accuracy_bootstrap_ci": [-0.0284313725, 0.0254901961],
     "M3a_vs_M0_sequence_nll_p_holm": 0.0654,
     "M3a_vs_M0_sequence_nll_bootstrap_ci": [-0.1608, -0.0483]
   },

@@ -114,9 +114,10 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
     None by default -- confirm which applies to this dataset's recording
     site before setting it, rather than guessing.
 
-    sequences_per_selection: number of consecutive target flashes that
-    belong to one character selection. Confirmed at 20 for FIXED-sequence
-    conditions (RC/Train) only -- Dyn/DynBigram (adaptive stopping) files
+    sequences_per_selection: number of target flashes per character
+    selection. Fixed row/column runs have 10 cycles with two target flashes
+    (row and column) per cycle, so use 20 target flashes per character.
+    Dyn/DynBigram (adaptive stopping) files
     use segment_by_target_transitions instead, see module docstring.
     """
     if verbose:
