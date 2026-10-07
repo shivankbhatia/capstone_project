@@ -1,0 +1,7 @@
+{
+  "status": "superseded_audit_only",
+  "artifact": "results/tables/personalization_ablation_studyd.json",
+  "reason": "Uses the contaminated historical SWLDA base and pre-correction held-out tuning. Do not cite its rung 3/4 effect claims as current evidence.",
+  "superseded_by": "results/tables/ablation_ladder_clean_m0.json",
+  "frozen_manifest_sha256": "de2fd72215e6f2766cc66c629ebd08fd9a1c55b6dab40c63a2e7890a0a8bac7b"
+}

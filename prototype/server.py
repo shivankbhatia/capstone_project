@@ -40,6 +40,7 @@ if str(ROOT) not in sys.path:
 GRID_PATH = ROOT / "data/processed/grid_layout.json"
 REGISTRY_PATH = ROOT / "data/processed/ground_truth_registry.json"
 TEST_SPLIT_PATH = ROOT / "data/processed/test_sessions.json"
+GROUND_TRUTH_VAULT_PATH = ROOT / "data/evaluation/ground_truth_vault.json"
 MODEL_PATH = ROOT / "data/processed/clean_m0_epoch_scorer.pkl"
 GLOBAL_BANK_PATH = ROOT / "data/rag/phrase_bank_global.csv"
 
@@ -47,7 +48,8 @@ GLOBAL_BANK_PATH = ROOT / "data/rag/phrase_bank_global.csv"
 class ReplayService:
     """Thin adapter around the repository's evaluation components."""
 
-    def __init__(self) -> None:
+    def __init__(self, allow_heldout_eval: bool = False) -> None:
+        self.allow_heldout_eval = allow_heldout_eval
         self.matrix, self.n_rows, self.n_cols = self._load_matrix()
         self.char_list = list(self.matrix.flatten())
         self._classifier = None
@@ -113,6 +115,7 @@ class ReplayService:
                 "keys": [str(key) for key in self.char_list],
             },
             "processed_data_available": REGISTRY_PATH.exists() and MODEL_PATH.exists(),
+            "heldout_evaluation_enabled": self.allow_heldout_eval,
             "language_model": "loads on first run",
             "custom_text_notice": "Custom text uses simulated target-conditioned EEG; Study-D replay uses recorded epochs.",
         }
@@ -120,9 +123,15 @@ class ReplayService:
     def samples(self) -> list[dict[str, str]]:
         registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
         held_out = set(json.loads(TEST_SPLIT_PATH.read_text(encoding="utf-8")))
+        if self.allow_heldout_eval:
+            if not GROUND_TRUTH_VAULT_PATH.exists():
+                raise RuntimeError("Held-out evaluation was enabled, but the label vault is unavailable.")
+            targets = json.loads(GROUND_TRUTH_VAULT_PATH.read_text(encoding="utf-8"))
+        else:
+            targets = registry
         samples = []
         for session_id in sorted(held_out):
-            target = registry.get(session_id, "")
+            target = targets.get(session_id, "")
             fif = ROOT / "data/processed/StudyD" / f"{session_id}-epo.fif"
             # The UI deliberately offers simple one-key-per-character targets.
             if fif.exists() and target and all(self._grid_key(char) is not None for char in target):
@@ -564,6 +573,15 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Serve the Neural Type prototype.")
+    parser.add_argument(
+        "--allow-heldout-eval", action="store_true",
+        help="Explicitly allow the GUI to read frozen held-out targets for a replay.",
+    )
+    args = parser.parse_args()
+    SERVICE = ReplayService(allow_heldout_eval=args.allow_heldout_eval)
     port = int(os.environ.get("P300_PROTOTYPE_PORT", "8000"))
     print(f"Neural Type prototype: http://127.0.0.1:{port}")
     ThreadingHTTPServer(("127.0.0.1", port), Handler).serve_forever()

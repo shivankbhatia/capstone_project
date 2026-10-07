@@ -1,0 +1,15 @@
+{
+  "status": "completed_gui_integration_smoke_only",
+  "session_id": "D_01_SE001_DynBigram_Test03",
+  "scan_mode": "compact",
+  "classifier": "clean M0 SWLDA",
+  "source": "recorded Study D epochs",
+  "target_characters": 6,
+  "correct_characters": 2,
+  "accuracy": 0.3333,
+  "flashes_used": 86,
+  "mean_flashes_per_character": 14.3333,
+  "gui_label_verified": "recorded Study D data / RECORDED EEG / SWLDA POSTERIOR",
+  "not_included_in_locked_ladder_metrics": true,
+  "not_used_for_tuning": true
+}

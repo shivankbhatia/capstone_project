@@ -1,6 +1,22 @@
 import numpy as np
+import pytest
 
 from prototype.server import ReplayService
+
+
+def test_heldout_labels_require_explicit_service_opt_in(monkeypatch, tmp_path):
+    registry = tmp_path / "registry.json"
+    split = tmp_path / "split.json"
+    vault = tmp_path / "vault.json"
+    registry.write_text("{}", encoding="utf-8")
+    split.write_text('["heldout-session"]', encoding="utf-8")
+    monkeypatch.setattr("prototype.server.REGISTRY_PATH", registry)
+    monkeypatch.setattr("prototype.server.TEST_SPLIT_PATH", split)
+    monkeypatch.setattr("prototype.server.GROUND_TRUTH_VAULT_PATH", vault)
+
+    assert ReplayService().samples() == []
+    with pytest.raises(RuntimeError, match="label vault is unavailable"):
+        ReplayService(allow_heldout_eval=True).samples()
 
 
 def test_first_sequence_is_row_then_column_and_exposes_classifier_score():

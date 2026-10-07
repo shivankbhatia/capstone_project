@@ -1,5 +1,7 @@
 # P300-LLM Speller: EEG + Language-Model Bayesian Fusion
 
+> **Current Study D ablation status (October 2026):** the corrected, locked clean-M0 ladder is reported in [the final ablation section](#391-clean-m0-ablation-ladder-final-locked-replay). The earlier personalization table and its rung 3/4 claims are superseded; see `results/tables/personalization_ablation_studyd_status.json`. Older descriptions below are historical unless explicitly labeled current.
+
 This repository implements an end-to-end P300 brain-computer-interface (BCI) spelling pipeline that combines real EEG evidence with a lightweight language-model prior. The project is centered on **bigP3BCI Study D**, whose recordings use an extended **9×8 keyboard layout with 72 possible classes** rather than the smaller 6×6 matrix used by many classic P300 speller examples.
 
 The main research question is:
@@ -438,6 +440,8 @@ A pretrained LLM may under-prioritize user-specific names, clinical phrases, com
 
 ## 3.10 `scripts/run_personalization_ablations.py` — subject-aware RAG diagnostic
 
+> **Superseded for current Study D claims.** This historical artifact used the contaminated SWLDA classifier and held-out-informed stopping selection. Keep it for audit only; use the locked clean-M0 replay in section 3.11. Its old rung 3/4 uplift claims are withdrawn.
+
 ### What it does
 
 Runs a five-rung, held-out Study-D comparison for each subject:
@@ -453,6 +457,24 @@ It writes per-subject metrics and paired Wilcoxon tests with Holm–Bonferroni a
 ### Interpretation
 
 The subject-only and personalized rungs are diagnostic stress tests, not headline performance claims. Their purpose is to verify that the data-sufficiency gate limits the influence of sparse personal corpora and to document the failure mode of naive subject-only retrieval on Study D.
+
+### Current clean-M0 ablation ladder: final locked replay
+
+The replay used the committed [`splits/ablation_lock.json`](splits/ablation_lock.json), the frozen 57-run manifest, clean M0, inner-OOF stopping (τ=.80, min=2, max=10), and training-pool-only fusion/RAG weights. Results are in `results/tables/ablation_ladder_clean_m0.json`; the lock SHA-256 is `840c12db474735757ece08ae70b489795870c09933dfd18819a34a32de895095`. A first attempt read six EDFs and stopped on multi-character target parsing before writing any metrics. The parser was fixed, recorded in `results/tables/ablation_replay_deviation.json`, and all reported metrics come from the complete second attempt only.
+
+| Rung | Condition | Character accuracy | Flashes/char | Sequences/char | ITR (bits/min) | WPM |
+|---|---|---:|---:|---:|---:|---:|
+| 0 | EEG only | 70.80% | 80.22 | 4.92 | 22.27 | 4.45 |
+| 1 | Fixed EEG + LM | 75.81% | 62.05 | 3.79 | 31.92 | 6.38 |
+| 2 | Adaptive global RAG | 76.11% | 58.80 | 3.59 | 33.89 | 6.78 |
+| 3 | Subject-only RAG | 75.52% | 63.04 | 3.86 | 31.24 | 6.25 |
+| 4 | Personalized gated RAG | 76.11% | 58.80 | 3.59 | 33.89 | 6.78 |
+
+Condition accuracy (rungs 0→4) was 79.82→86.84→85.96→86.84→85.96% on RC/Train and 66.22→70.22→71.11→69.78→71.11% on Dyn/DynBigram. No terminal characters had zero coverage. Rung 4 deferred to the global share on 92.0% of decisions, and its outputs matched rung 2 exactly.
+
+**Paired inference is inconclusive:** none of the five declared per-subject comparisons survived Holm correction (adjusted p≥.861). Rung 1 vs EEG-only improved by 3.79 percentage points on average (8 better, 4 tied, 5 worse; 95% subject-bootstrap CI −1.29 to +9.08 points; Holm p=.861). Rung 2 vs rung 1 was −0.29 points (5/7/5; CI −2.71 to +2.06; Holm p=1). Rung 3 vs rung 1 was −1.04 points (3/10/4; CI −3.72 to +1.13; Holm p=1). Rung 4 vs rung 1 was −0.29 points (5/7/5; CI −2.72 to +2.17; Holm p=1), and rung 4 tied rung 2 for all 17 subjects. The historical +0.245pp/+0.490pp personalization claims are withdrawn. Do not interpret the modest overall point estimates as evidence of a reliable rung 2–4 gain.
+
+The GUI can expose held-out samples only when launched with `python prototype/server.py --allow-heldout-eval`; its default remains unable to read the label vault. The requested compact-mode smoke replay used `D_01_SE001_DynBigram_Test03`: it decoded 2/6 characters (33.3%) from recorded epochs and is recorded separately in `results/tables/ablation_gui_smoke.json`. This is an integration check, not part of the locked ladder or a tuning result. The UI source label was corrected and verified. Study Q should reuse the lock's recipe but build its own training-only phrase bank and weights; do not reuse Study D's fitted values.
 
 ---
 
@@ -753,9 +775,9 @@ Full table: `results/tables/ablation_results.csv`. Figures: `results/figures/abl
 
 ### 6.2 Subject-aware RAG diagnostic
 
-`results/tables/personalization_ablation_studyd.json` records a separate five-rung analysis over 17 held-out subjects. It compares classifier-only, plain LLM, global RAG, hard subject-only RAG, and the gated subject/global configuration. The comparisons are paired at the subject level and use Holm–Bonferroni correction across the planned tests.
+`results/tables/personalization_ablation_studyd.json` is retained as an audit artifact only. Its contaminated base and held-out-informed stopping selection make its earlier effect claims invalid; current Study D inference is in the clean-M0 ladder section above.
 
-The diagnostic confirms the intended limitation: hard subject-only retrieval is materially worse than global RAG on this sparse fixed-vocabulary corpus. The gated personalized rung likewise should not be read as a gain claim for Study D. It demonstrates the fallback architecture; global pooled RAG remains the supported retrieval condition for this dataset.
+The old diagnostic's interpretation is superseded. The clean-M0 replay found no corrected significant improvement for subject-only or personalized retrieval; personalized rung 4 matched rung 2 on every subject.
 
 ### 6.3 Synthetic sufficiency-gate validation
 
