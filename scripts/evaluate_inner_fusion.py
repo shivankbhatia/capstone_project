@@ -175,7 +175,8 @@ def _summarize(char_results, sequence_nll, sequence_calibration):
 
 
 def run(scores_path, cache_path, study="StudyD", alpha=0.1, tau=0.8,
-        min_seq=2, max_seq=10, output_path=None, policy_sweep=False):
+        min_seq=2, max_seq=10, output_path=None, policy_sweep=False,
+        policy_models=None):
     matrix, _, _ = load_spelling_matrix("data/processed/grid_layout.json", study_name=study)
     llm = LLMPredictor(matrix, local_files_only=True)
     char_list = llm.char_list
@@ -235,9 +236,14 @@ def run(scores_path, cache_path, study="StudyD", alpha=0.1, tau=0.8,
             "fusion": _summarize(fused, fused_nll, fused_cal),
         }
     if policy_sweep:
+        policy_models = list(policy_models or models)
+        unknown_policy_models = set(policy_models) - set(models)
+        if unknown_policy_models:
+            raise ValueError(f"Unknown policy model(s): {sorted(unknown_policy_models)}")
         grid = []
         default_predictions = {}
-        for model_name, logits in models.items():
+        for model_name in policy_models:
+            logits = models[model_name]
             default_rows, _, _ = _decode_model(
                 logits, meta, char_list, llm_priors,
                 tau=0.80, min_seq=2, max_seq=10, alpha=alpha,
@@ -253,7 +259,8 @@ def run(scores_path, cache_path, study="StudyD", alpha=0.1, tau=0.8,
                 if min_count > max_count:
                     continue
                 for threshold in (0.60, 0.70, 0.80, 0.90):
-                    for model_name, logits in models.items():
+                    for model_name in policy_models:
+                        logits = models[model_name]
                         fused, nll, cal = _decode_model(
                             logits, meta, char_list, llm_priors,
                             tau=threshold, min_seq=min_count,
@@ -291,8 +298,9 @@ def run(scores_path, cache_path, study="StudyD", alpha=0.1, tau=0.8,
         output["policy_selection"] = {
             "criterion": "fewest mean sequences at no pooled fused stopped-accuracy loss versus default; ties prefer higher accuracy then ITR",
             "best_per_model": {},
+            "policy_models": policy_models,
         }
-        for model_name in models:
+        for model_name in policy_models:
             candidates = [row for row in grid if row["model"] == model_name]
             default_accuracy = output["models"][model_name]["fusion"]["stopped_accuracy"]
             eligible = [row for row in candidates
@@ -330,9 +338,11 @@ def main():
     parser.add_argument("--max-seq", type=int, default=10)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--policy-sweep", action="store_true")
+    parser.add_argument("--policy-models", nargs="+", default=None)
     args = parser.parse_args()
     result = run(args.scores, args.cache, args.study, args.alpha, args.tau,
-                 args.min_seq, args.max_seq, args.output, args.policy_sweep)
+                 args.min_seq, args.max_seq, args.output, args.policy_sweep,
+                 args.policy_models)
     print(json.dumps({name: model["fusion"] for name, model in result["models"].items()}, indent=2))
 
 

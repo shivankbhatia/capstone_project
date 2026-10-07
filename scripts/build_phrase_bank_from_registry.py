@@ -38,7 +38,9 @@ def subject_id_from_session_id(session_id: str) -> str:
 
 
 def is_test(session_id: str) -> bool:
-    h = int(hashlib.sha256(session_id.encode()).hexdigest(), 16)
+    # Domain separation avoids inheriting the historical holdout's hash
+    # selection. The salt is stable, so the 80/20 split is reproducible.
+    h = int(hashlib.sha256(f"phrase-bank-v1:{session_id}".encode()).hexdigest(), 16)
     return (h % 100) < int(TEST_FRACTION * 100)
 
 

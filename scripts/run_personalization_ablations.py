@@ -22,7 +22,7 @@ from src.models.rag_predictor import RAGPredictor
 
 
 TEST_SESSIONS = Path("splits/heldout_manifest.json")
-MODEL_PATH = Path("data/processed/swlda_model.pkl")
+MODEL_PATH = Path("data/processed/clean_m0_epoch_scorer.pkl")
 GLOBAL_BANK_PATH = "data/rag/phrase_bank_global.csv"
 RESULT_PATH = Path("results/tables/personalization_ablation_studyd.json")
 RAG_WEIGHT = 0.15  # The existing held-out global-RAG configuration.
