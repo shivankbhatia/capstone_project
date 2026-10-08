@@ -1,76 +1,243 @@
 {
-  "study": "StudyQ",
-  "phase": "1_clean_classifier",
-  "manifest": {
-    "path": "splits/study_q_manifest.json",
-    "sha256": "39ed6801b2545f37f5f0b1019c01bec0e8fd6b7a6b4418c7014c00b9c689c973",
-    "heldout_session": "SE003",
-    "heldout_test_runs": 180,
-    "excluded_same_session_train_runs": 180,
-    "clean_training_runs": 360,
-    "heldout_labels_separated": true
-  },
   "classifier_gate": {
+    "epoch_auc": 0.7464507518,
+    "gate": "passed; EEG signal is above chance under session-grouped and leave-subject-out CV",
+    "loso_epoch_auc": 0.7524019527,
+    "loso_folds": 36,
+    "loso_full_10_sequence_character_accuracy": 0.60686728395,
+    "loso_subject_auc_mean": 0.7563679474,
     "model": "clean M0, locked D recipe",
     "primary_cv": "3-fold session-grouped OOF on SE001/SE002",
-    "epoch_auc": 0.7464507518,
     "primary_cv_subject_auc_mean": 0.75,
     "primary_cv_subject_auc_median": 0.742,
-    "subjects_with_auc_above_0_60": 36,
-    "loso_folds": 36,
-    "loso_epoch_auc": 0.7524019527,
-    "loso_subject_auc_mean": 0.7563679474,
-    "loso_full_10_sequence_character_accuracy": 0.60686728395,
-    "gate": "passed; EEG signal is above chance under session-grouped and leave-subject-out CV"
+    "subjects_with_auc_above_0_60": 36
+  },
+  "heldout_evaluation_gate": {
+    "by_condition": {
+      "ColorIntensification": {
+        "characters": 396,
+        "depth_distribution": {
+          "10": 144,
+          "5": 72,
+          "6": 108,
+          "7": 36,
+          "9": 36
+        },
+        "eeg_accuracy": 0.6237373737373737,
+        "fused_accuracy": 0.6565656565656566,
+        "fused_minus_eeg": 0.03282828282828283,
+        "wilcoxon_holm_p": 0.027281171477618,
+        "wilcoxon_p": 0.027281171477618
+      },
+      "Grey-to-Color": {
+        "characters": 432,
+        "depth_distribution": {
+          "10": 144,
+          "6": 72,
+          "7": 72,
+          "8": 36,
+          "9": 108
+        },
+        "eeg_accuracy": 0.5324074074074074,
+        "fused_accuracy": 0.5671296296296297,
+        "fused_minus_eeg": 0.03472222222222223,
+        "wilcoxon_holm_p": 0.021226312076211427,
+        "wilcoxon_p": 0.010613156038105713
+      },
+      "Grey-to-White": {
+        "characters": 468,
+        "depth_distribution": {
+          "10": 108,
+          "4": 36,
+          "5": 36,
+          "6": 36,
+          "7": 108,
+          "8": 72,
+          "9": 72
+        },
+        "eeg_accuracy": 0.5277777777777778,
+        "fused_accuracy": 0.5662393162393162,
+        "fused_minus_eeg": 0.03846153846153844,
+        "wilcoxon_holm_p": 0.00908101014389232,
+        "wilcoxon_p": 0.00302700338129744
+      }
+    },
+    "characters": 1296,
+    "decision": {
+      "depth_bucket_conclusion_does_not_flip": true,
+      "gate_g1": "passed narrowly; session-shift gap is 9.30 percentage points versus the predeclared 10-point flag threshold",
+      "most_subjects_improve": true,
+      "same_positive_fusion_effect_sign_as_inner": true,
+      "simulator_q_data_use": "permitted with explicit session/depth caveat",
+      "test_not_far_below_inner": true
+    },
+    "depth_bucket_sensitivity": {
+      "4-6": {
+        "characters": 360,
+        "nonnegative_mean": true,
+        "paired_delta": {
+          "ci95": [
+            0.011111111111111117,
+            0.04722222222222224
+          ],
+          "mean": 0.02777777777777779,
+          "n_subjects": 10
+        },
+        "positive_subjects": 6
+      },
+      "7-8": {
+        "characters": 324,
+        "nonnegative_mean": true,
+        "paired_delta": {
+          "ci95": [
+            0.027777777777777776,
+            0.061728395061728385
+          ],
+          "mean": 0.043209876543209846,
+          "n_subjects": 9
+        },
+        "positive_subjects": 9
+      },
+      "9-10": {
+        "characters": 612,
+        "nonnegative_mean": true,
+        "paired_delta": {
+          "ci95": [
+            0.017973856209150325,
+            0.057189542483660136
+          ],
+          "mean": 0.03594771241830066,
+          "n_subjects": 17
+        },
+        "positive_subjects": 10
+      }
+    },
+    "manifest_sha256": "39ed6801b2545f37f5f0b1019c01bec0e8fd6b7a6b4418c7014c00b9c689c973",
+    "paired_subjects": {
+      "bootstrap_95_ci": [
+        0.024691358024691343,
+        0.047839506172839504
+      ],
+      "holm_p": 3.954953214496595e-05,
+      "negative": 0,
+      "positive": 25,
+      "tied": 11,
+      "wilcoxon_p": 9.887383036241487e-06
+    },
+    "primary_as_recorded_depth": {
+      "depth_distribution": {
+        "10": 396,
+        "4": 36,
+        "5": 108,
+        "6": 216,
+        "7": 216,
+        "8": 108,
+        "9": 216
+      },
+      "eeg_accuracy": 0.558641975308642,
+      "far_below_inner": false,
+      "fused_accuracy": 0.5941358024691358,
+      "fused_minus_eeg": 0.03549382716049376,
+      "inner_full_depth_fused_reference": 0.6871141975308642,
+      "inner_minus_test_fused": 0.09297839506172845,
+      "note": "The inner reference uses all 10 available sequences; Test uses naturally variable recorded depth.",
+      "predeclared_far_below_threshold": 0.1
+    },
+    "prohibited_test_claims": [
+      "stopping policy",
+      "flashes per character",
+      "ITR"
+    ],
+    "runs": 180,
+    "status": "evaluated_once_after_q-inner-final",
+    "test_classifier_evaluation_performed": true,
+    "test_source": "results/tables/study_q_test_once.json"
+  },
+  "language_data_caveat": "Q provides a small number of repeated typed-key sequences per subject; whitespace-separated tokens are key labels, not conventional language words. The positive teacher-forced LM effect does not establish prospective RAG benefit.",
+  "manifest": {
+    "clean_training_runs": 360,
+    "excluded_same_session_train_runs": 180,
+    "heldout_labels_separated": true,
+    "heldout_session": "SE003",
+    "heldout_test_runs": 180,
+    "path": "splits/study_q_manifest.json",
+    "sha256": "39ed6801b2545f37f5f0b1019c01bec0e8fd6b7a6b4418c7014c00b9c689c973"
   },
   "nested_calibration_and_fusion": {
+    "bootstrap_95_ci": [
+      0.07214506173,
+      0.09799382716
+    ],
+    "calibration_transfer": {
+      "interpretation": "Temperature scaling reduced sequence NLL in all folds but worsened top-label ECE and Brier; calibration benefit is mixed.",
+      "sequence_nll_calibrated_by_outer_fold": [
+        3.9918395517,
+        3.97177392973,
+        3.97415008238
+      ],
+      "sequence_nll_raw_by_outer_fold": [
+        4.03790791435,
+        3.97581417928,
+        4.01986973944
+      ],
+      "top_label_ece_calibrated_by_outer_fold": [
+        0.08308787687,
+        0.09975398723,
+        0.09809706285
+      ],
+      "top_label_ece_raw_by_outer_fold": [
+        0.05070986338,
+        0.06037048131,
+        0.05708267143
+      ]
+    },
+    "eeg_only_accuracy": 0.60262345679,
+    "fixed_policy_reference": {
+      "max_sequences": 10,
+      "min_sequences": 2,
+      "tau": 0.8
+    },
     "folds": 3,
     "fusion": "local DistilGPT2 prior; alpha=0.1; teacher-forced previous key context",
-    "fixed_policy_reference": {"tau": 0.8, "min_sequences": 2, "max_sequences": 10},
-    "eeg_only_accuracy": 0.60262345679,
     "fusion_accuracy": 0.6875,
     "mean_sequences_eeg_only": 9.73765432099,
     "mean_sequences_fusion": 9.58333333333,
-    "paired_subjects_improved_tied_worse": [36, 0, 0],
     "mean_subject_accuracy_difference": 0.08487654321,
-    "bootstrap_95_ci": [0.07214506173, 0.09799382716],
-    "wilcoxon_p": 2.91038304567337e-11,
-    "calibration_transfer": {
-      "sequence_nll_raw_by_outer_fold": [4.03790791435, 3.97581417928, 4.01986973944],
-      "sequence_nll_calibrated_by_outer_fold": [3.99183955170, 3.97177392973, 3.97415008238],
-      "top_label_ece_raw_by_outer_fold": [0.05070986338, 0.06037048131, 0.05708267143],
-      "top_label_ece_calibrated_by_outer_fold": [0.08308787687, 0.09975398723, 0.09809706285],
-      "interpretation": "Temperature scaling reduced sequence NLL in all folds but worsened top-label ECE and Brier; calibration benefit is mixed."
-    },
+    "paired_subjects_improved_tied_worse": [
+      36,
+      0,
+      0
+    ],
     "policy_tuning": {
-      "selection_rule": "preserve default fusion accuracy, then minimize mean sequences",
-      "selected": {"tau": 0.6, "min_sequences": 2, "max_sequences": 10},
       "fusion_accuracy": 0.6875,
+      "heldout_test_data_read": false,
       "mean_sequences": 9.09259259259,
-      "heldout_test_data_read": false
-    }
-  },
-  "pooled_d_q_inner_fusion": {
-    "subjects": 53,
-    "mean_subject_accuracy_difference": 0.06540880503,
-    "bootstrap_95_ci": [0.05566037736, 0.07562893082],
-    "improved_tied_worse": [44, 9, 0],
-    "study_effect_difference_q_minus_d": 0.06069353667,
-    "study_effect_heterogeneity_p_unadjusted": 6.89517040445e-7,
-    "caveat": "Q uses group-flash scores and D uses row/column scores; the pooled summary is cross-study support, not exact measurement equivalence."
-  },
-  "heldout_evaluation_gate": {
-    "test_characters": 1296,
-    "characters_with_10_recorded_sequences": 396,
-    "characters_with_fewer_than_10_recorded_sequences": 900,
-    "by_condition": {
-      "ColorIntensification": {"characters": 396, "depth_histogram": {"5": 72, "6": 108, "7": 36, "9": 36, "10": 144}},
-      "Grey-to-Color": {"characters": 432, "depth_histogram": {"6": 72, "7": 72, "8": 36, "9": 108, "10": 144}},
-      "Grey-to-White": {"characters": 468, "depth_histogram": {"4": 36, "5": 36, "6": 36, "7": 108, "8": 72, "9": 72, "10": 108}}
+      "selected": {
+        "max_sequences": 10,
+        "min_sequences": 2,
+        "tau": 0.6
+      },
+      "selection_rule": "preserve default fusion accuracy, then minimize mean sequences"
     },
-    "test_classifier_evaluation_performed": false,
-    "decision": "stop before Phase 8: the frozen recordings are right-censored for the selected max-10 stopping policy; do not infer unrecorded flashes or report stopping metrics as observed."
+    "wilcoxon_p": 2.91038304567337e-11
   },
-  "language_data_caveat": "Q provides a small number of repeated typed-key sequences per subject; whitespace-separated tokens are key labels, not conventional language words. The positive teacher-forced LM effect does not establish prospective RAG benefit.",
-  "next_action": "Agree a prespecified estimand limited to available recorded prefixes or collect complete fixed-depth data before any one-shot Q Test replay."
+  "next_action": "Proceed to D+Q descriptive analysis and simulator validation; treat the 9.30 pp inner-to-Test fused gap and variable Test depth as session-shift caveats.",
+  "phase": "1_clean_classifier",
+  "pooled_d_q_inner_fusion": {
+    "bootstrap_95_ci": [
+      0.05566037736,
+      0.07562893082
+    ],
+    "caveat": "Q uses group-flash scores and D uses row/column scores; the pooled summary is cross-study support, not exact measurement equivalence.",
+    "improved_tied_worse": [
+      44,
+      9,
+      0
+    ],
+    "mean_subject_accuracy_difference": 0.06540880503,
+    "study_effect_difference_q_minus_d": 0.06069353667,
+    "study_effect_heterogeneity_p_unadjusted": 6.89517040445e-07,
+    "subjects": 53
+  },
+  "study": "StudyQ"
 }

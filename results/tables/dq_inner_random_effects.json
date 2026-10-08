@@ -1,0 +1,43 @@
+{
+  "analysis": "DerSimonian-Laird random-effects summary across the two clean inner-OOF studies; descriptive only",
+  "caveats": [
+    "Only two studies; random-effects variance is unstable and the interval is descriptive, not a strong generalization claim.",
+    "D uses row/column flashes; Q uses group flashes.",
+    "Q uses teacher-forced previous typed keys; this is not evidence for prospective RAG.",
+    "Separate Q Test as-recorded result and its G1 gate are in study_q_phase1_gate.json."
+  ],
+  "endpoint": "subject-level paired fixed-policy character-accuracy difference (fusion minus EEG-only), tau=.80/min=2/max=10",
+  "heterogeneity": {
+    "Q": 34.722772627150064,
+    "df": 1,
+    "tau_squared": 0.0017888081801650697
+  },
+  "normal_95_ci": [
+    -0.004841242176509178,
+    0.11411733258575092
+  ],
+  "random_effects_mean": 0.05463804520462087,
+  "studies": {
+    "D": {
+      "mean_paired_fusion_minus_eeg": 0.024183006535947706,
+      "n_subjects": 17,
+      "positive_tied_negative": [
+        8,
+        9,
+        0
+      ],
+      "standard_error": 0.007721128555979737
+    },
+    "Q": {
+      "mean_paired_fusion_minus_eeg": 0.08487654320987653,
+      "n_subjects": 36,
+      "positive_tied_negative": [
+        36,
+        0,
+        0
+      ],
+      "standard_error": 0.0068171260426544795
+    }
+  },
+  "study_count": 2
+}

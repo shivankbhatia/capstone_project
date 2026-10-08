@@ -1,0 +1,32 @@
+{
+  "lock_version": 1,
+  "status": "preregistered_natural_text_arm_no_go_pending_participant_corpora",
+  "created_before_natural_text_evaluation": true,
+  "scope": "Prospective per-user next-character personalization; Study D and Study Q do not qualify as natural-text personalization corpora.",
+  "corpus_requirements": {
+    "source": "consented user-authored text or real decoded text collected before the evaluation period",
+    "minimum_history_tokens": 300,
+    "chronological_split": {"bank_fraction": 0.8, "evaluation_fraction": 0.2},
+    "no_evaluation_period_text_in_bank": true,
+    "no synthetic or generated text as primary evidence": true
+  },
+  "available_data_audit": {
+    "study_q": "typed grid-key labels; five repeated task phrases per subject; not conventional natural language and too small for personalization evaluation",
+    "study_d": "fixed prompted task text; not user-authored history suitable for prospective personalization",
+    "participant_access": "pending",
+    "natural_user_corpus_available": false
+  },
+  "models": ["base LM", "LM + global bank", "LM + subject bank", "gated blend"],
+  "primary_metrics": ["next-character cross-entropy", "top-k accuracy", "true-character rank", "keystroke savings"],
+  "secondary": ["learning curve by bank token count", "cold-start to personalized curve", "topic-switch degradation", "OOV and special-key robustness", "backspace and empty-bank robustness", "adversarial-bank robustness"],
+  "training_only_gates": {
+    "sufficiency_and_backoff_gates_fit_on_training_text_only": true,
+    "test_or_future_text_may_not_tune_gates": true,
+    "worst_case_degradation_bound": "predeclare with participant protocol before corpus access"
+  },
+  "current_gate": {
+    "g2_language_gain": "not evaluable; no qualifying natural-text user corpus",
+    "decision": "no-go for personalization claims and further RAG performance engineering; retain generic session-local update API and report limitation",
+    "synthetic_results_are_primary_evidence": false
+  }
+}

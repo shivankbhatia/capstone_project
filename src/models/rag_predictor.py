@@ -237,6 +237,16 @@ class RAGPredictor:
         self._add_phrase_to_char_ngram_table(phrase)
         return True
 
+    def update(self, decoded_text: str) -> bool:
+        """Add newly decoded text to the in-memory user bank.
+
+        Call with completed text supplied by the UI, not with a hidden target.
+        Updates are deliberately session-local and are never persisted by this
+        predictor. Empty/whitespace updates and predictors without a subject
+        bank are no-ops.
+        """
+        return self.add_observed_phrase(decoded_text)
+
     @staticmethod
     def _normalize_text(text: str) -> str:
         return " ".join(str(text).replace("_", " ").lower().split())

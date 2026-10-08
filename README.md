@@ -1,5 +1,17 @@
 # P300-LLM Speller: EEG + Language-Model Bayesian Fusion
 
+### Study Q and Phase 1–3 close-out (October 2026)
+
+Study Q uses a frozen SE003 Test manifest (180 runs, 36 subjects) and a separate label vault. The clean M0 was trained only on 360 SE001/SE002 runs; session-grouped OOF epoch AUC was 0.746. The pre-Test state is tagged `q-inner-final`. The previous Q classifier's artifact and provenance were unavailable, so every earlier Q number is exploratory.
+
+The one-shot Test result is **as-recorded depth only**: 1,296 characters had 4–10 sequences (396 had 10). EEG-only accuracy was 55.86%; fixed LM fusion accuracy was 59.41%, a +3.55-point paired subject effect (95% subject-bootstrap CI +2.47 to +4.78 points; Holm-adjusted Wilcoxon p=3.95e-5). Twenty-seven subjects improved, nine tied, and none worsened. The three conditions were 65.66% fused for ColorIntensification, 56.71% for Grey-to-Color, and 56.62% for Grey-to-White. All recorded-depth buckets retained a positive mean fusion effect. The fused result is 9.30 points below the 68.71% full-depth inner-OOF reference, just inside the preregistered 10-point session-shift flag. G1 therefore passes narrowly, with the depth and session caveat. **No Q stopping, flashes-per-character, or ITR claim is made.** Details and per-character outputs are in `results/tables/study_q_test_once.json` and `results/tables/study_q_phase1_gate.json`.
+
+The clean inner-OOF D+Q fusion effect is +5.46 percentage points under a descriptive DerSimonian–Laird random-effects summary (95% normal interval −0.48 to +11.41 points, only two studies). D and Q use different flash paradigms; this estimate is descriptive, not a precise cross-study generalization claim. See `results/tables/dq_inner_random_effects.json`.
+
+The RAG personalization gate is **no-go for performance claims**: Study Q provides repeated grid-key strings, not natural-language user history, and participant-authored corpora are not available. `splits/rag_lock.json` pre-registers the requirements for a later chronological corpus study. `RAGPredictor.update(decoded_text)` now supports session-local updates; no RAG language-level gain, learning curve, cold-start result, or topic-switch result is claimed.
+
+The target-blind scheduler supports group masks and an idealized information-gain weighting variant. `splits/scheduler_lock.json` freezes the four modes, exploration-floor grid, target mix, and metrics before simulation. **The simulator and scheduler simulation have not run**, so G3 is unevaluated and no adaptive-flashing or Phase 4 go decision is authorized. Uniform flashing remains the live-data default; hardware and an ethics path exist, but participant access is pending.
+
 > **Current Study D ablation status (October 2026):** the corrected, locked clean-M0 ladder is reported in [the final ablation section](#391-clean-m0-ablation-ladder-final-locked-replay). The earlier personalization table and its rung 3/4 claims are superseded; see `results/tables/personalization_ablation_studyd_status.json`. Older descriptions below are historical unless explicitly labeled current.
 
 This repository implements an end-to-end P300 brain-computer-interface (BCI) spelling pipeline that combines real EEG evidence with a lightweight language-model prior. The project is centered on **bigP3BCI Study D**, whose recordings use an extended **9×8 keyboard layout with 72 possible classes** rather than the smaller 6×6 matrix used by many classic P300 speller examples.

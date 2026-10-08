@@ -32,7 +32,8 @@ class LanguageGuidedScheduler:
     """Select the next row/column code without access to ground truth."""
 
     def __init__(self, mode="uniform", exploration_floor=0.20,
-                 confidence_stop=0.80, min_flashes=2, seed=0):
+                 confidence_stop=0.80, min_flashes=2, seed=0,
+                 information_gain_variant=False):
         if mode not in SCHEDULER_MODES:
             raise ValueError(f"mode must be one of {SCHEDULER_MODES}")
         if not 0.0 <= exploration_floor <= 1.0:
@@ -45,7 +46,14 @@ class LanguageGuidedScheduler:
         self.exploration_floor = float(exploration_floor)
         self.confidence_stop = float(confidence_stop)
         self.min_flashes = int(min_flashes)
+        self.information_gain_variant = bool(information_gain_variant)
         self._rng = np.random.default_rng(seed)
+
+    @staticmethod
+    def _information_gain_weights(group_masses):
+        """Idealized binary-partition information for each candidate group."""
+        p = np.clip(np.asarray(group_masses, dtype=float), 1e-12, 1.0 - 1e-12)
+        return -(p * np.log2(p) + (1.0 - p) * np.log2(1.0 - p))
 
     @staticmethod
     def _distribution(values, n_classes):
@@ -77,26 +85,31 @@ class LanguageGuidedScheduler:
                 return np.ones(len(masks), dtype=float)
             lm = self._distribution(state.lm_prior, n_classes)
             if self.mode == "lm_guided":
-                return group_masses(lm)
+                masses = group_masses(lm)
+                return self._information_gain_weights(masses) if self.information_gain_variant else masses
             rag = self._distribution(state.rag_prior, n_classes)
             if self.mode == "lm_rag":
-                return 0.5 * (group_masses(lm) + group_masses(rag))
+                masses = 0.5 * (group_masses(lm) + group_masses(rag))
+                return self._information_gain_weights(masses) if self.information_gain_variant else masses
             posterior = self._distribution(state.posterior, n_classes)
             closed = self._distribution(posterior * lm * rag, n_classes)
-            return group_masses(closed)
+            masses = group_masses(closed)
+            return self._information_gain_weights(masses) if self.information_gain_variant else masses
         if self.mode == "uniform":
             return np.ones(state.n_rows + state.n_cols, dtype=float)
         lm = self._distribution(state.lm_prior, n_classes)
         lm_masses = self._group_masses(lm, state.n_rows, state.n_cols)
         if self.mode == "lm_guided":
-            return lm_masses
+            return self._information_gain_weights(lm_masses) if self.information_gain_variant else lm_masses
         rag = self._distribution(state.rag_prior, n_classes)
         rag_masses = self._group_masses(rag, state.n_rows, state.n_cols)
         if self.mode == "lm_rag":
-            return 0.5 * (lm_masses + rag_masses)
+            masses = 0.5 * (lm_masses + rag_masses)
+            return self._information_gain_weights(masses) if self.information_gain_variant else masses
         posterior = self._distribution(state.posterior, n_classes)
         closed = self._distribution(posterior * lm * rag, n_classes)
-        return self._group_masses(closed, state.n_rows, state.n_cols)
+        masses = self._group_masses(closed, state.n_rows, state.n_cols)
+        return self._information_gain_weights(masses) if self.information_gain_variant else masses
 
     def next_flash(self, state: SchedulerState):
         """Return a 1-based row/column stimulus code, or None when confidence stops."""

@@ -58,3 +58,18 @@ def test_scheduler_accepts_target_blind_group_masks_for_study_q():
     scheduler = LanguageGuidedScheduler(mode="lm_guided", exploration_floor=0.0, seed=4)
     assert scheduler.next_flash(state) == 1
     assert "target" not in {field.name for field in fields(SchedulerState)}
+
+
+def test_information_gain_variant_weights_balanced_group_partitions_higher():
+    masks = np.zeros((2, 72), dtype=int)
+    masks[0, :36] = 1
+    masks[1, :6] = 1
+    posterior = np.full(72, 1 / 72)
+    scheduler = LanguageGuidedScheduler(
+        mode="lm_guided", exploration_floor=0.0, information_gain_variant=True,
+    )
+    weights = scheduler._weights(SchedulerState(
+        posterior=tuple(posterior), lm_prior=tuple(posterior),
+        rag_prior=tuple(posterior), stimulus_masks=tuple(map(tuple, masks)),
+    ))
+    assert weights[0] > weights[1]

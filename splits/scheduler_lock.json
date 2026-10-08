@@ -1,0 +1,37 @@
+{
+  "lock_version": 1,
+  "status": "preregistered_before_scheduler_simulation",
+  "created_from_git_hash": "f5010b0b5f626753fe22b75adc774ff6c9d9b7a7",
+  "evidence_inputs": {
+    "clean_d_oof": "results/tables/classifier_nested_calibration_scores.npz",
+    "clean_q_oof": "results/tables/study_q_nested_fusion_scores.npz",
+    "q_test_gate": "results/tables/study_q_phase1_gate.json",
+    "q_test_use": "only for the one-shot as-recorded validation; no scheduler tuning"
+  },
+  "modes": ["uniform", "lm_guided", "lm_rag", "closed_loop"],
+  "exploration_floor_lambda_grid": [0.0, 0.05, 0.1, 0.2, 0.3, 0.5],
+  "lambda_selection": "choose only from clean D/Q training-pool OOF simulation; do not select from Test or participant evaluation outcomes",
+  "information_gain_variant": {
+    "enabled_as_preregistered_ablation": true,
+    "definition": "For each candidate group, compute ideal binary-partition entropy H2(p(group)); apply the same exploration floor after normalization.",
+    "no_target_input": true
+  },
+  "target_mix": {
+    "low_probability_target_fraction": 0.25,
+    "definition": "Within each generated text block, sample one quarter of targets from the bottom quartile of the fixed LM next-character prior; sample the remainder from the prior distribution.",
+    "draw_target_before_scheduler_and_keep_target_private": true
+  },
+  "simulation_metrics": [
+    "flashes per character at matched accuracy",
+    "variable-time ITR",
+    "false lock-in rate",
+    "low-probability target recovery accuracy",
+    "calibration error under non-uniform flash density"
+  ],
+  "false_lock_in_bound": 0.05,
+  "calibration_sensitivity": "compare uniform-trained score calibration with group-density-stratified calibration under each locked scheduler mode; do not recalibrate on evaluation outcomes",
+  "matched_accuracy_rule": "report comparisons only at operating points with absolute accuracy difference <= 0.01; otherwise report unmatched",
+  "leakage_test": "scheduler state and call signatures must not accept target or true character; rerun spy test against final code",
+  "decision": "Choose row/column adaptive repetition versus group-flash subsets only from the locked simulation. If G3 fails, keep uniform live flashing.",
+  "run_status": "not_run; simulator and RAG gate outcomes are prerequisites"
+}
