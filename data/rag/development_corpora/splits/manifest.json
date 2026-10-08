@@ -1,0 +1,55 @@
+{
+  "authors": {
+    "Arthur_Conan_Doyle": {
+      "evaluation_words": 266,
+      "source": "Local public-domain excerpt, existing project development fixture",
+      "source_path": "data/rag/development_corpora/source/adventures_sherlock_excerpt_local.txt",
+      "source_sha256": "15464baaf88173cca9a9941b2dbc146f1b1aeb1e9bd88dd81c5a404b5fe13005",
+      "source_url": "https://www.gutenberg.org/ebooks/1661",
+      "title": "The Adventures of Sherlock Holmes excerpt",
+      "token_definition": "whitespace-delimited tokens after header/footer and whitespace normalization",
+      "total_words": 1329,
+      "train_words": 797,
+      "tune_words": 266
+    },
+    "Herman_Melville": {
+      "evaluation_words": 800,
+      "source": "Project Gutenberg eBook 15",
+      "source_path": "data/rag/development_corpora/source/moby_dick_pg15.txt",
+      "source_sha256": "9f94bc67cf59deea31455650800b216cbd809ea5e020130e6b19eda403475ec8",
+      "source_url": "https://www.gutenberg.org/ebooks/15",
+      "title": "Moby-Dick",
+      "token_definition": "whitespace-delimited tokens after header/footer and whitespace normalization",
+      "total_words": 4000,
+      "train_words": 2400,
+      "tune_words": 800
+    },
+    "Jane_Austen": {
+      "evaluation_words": 800,
+      "source": "Project Gutenberg eBook 1342",
+      "source_path": "data/rag/development_corpora/source/pride_and_prejudice_pg1342.txt",
+      "source_sha256": "9cf8491f37a1bf4e6eba3b9f371deaad1980fdc122c29e093190ee0096ca6f02",
+      "source_url": "https://www.gutenberg.org/ebooks/1342",
+      "title": "Pride and Prejudice",
+      "token_definition": "whitespace-delimited tokens after header/footer and whitespace normalization",
+      "total_words": 4000,
+      "train_words": 2400,
+      "tune_words": 800
+    },
+    "Mary_Shelley": {
+      "evaluation_words": 800,
+      "source": "Project Gutenberg eBook 84",
+      "source_path": "data/rag/development_corpora/source/frankenstein_pg84.txt",
+      "source_sha256": "a986f2697c793ce46b284185b654400a470b9c5145fd3524ff9d584c38726a9d",
+      "source_url": "https://www.gutenberg.org/ebooks/84",
+      "title": "Frankenstein",
+      "token_definition": "whitespace-delimited tokens after header/footer and whitespace normalization",
+      "total_words": 4000,
+      "train_words": 2400,
+      "tune_words": 800
+    }
+  },
+  "development_only": true,
+  "split_path": "data/rag/development_corpora/splits/public_domain_authors.json",
+  "split_sha256": "ba48f72b68c786ad26f8185e28df29ba3067a8eb515d91a29a38650f4c55f2da"
+}

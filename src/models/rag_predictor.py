@@ -337,14 +337,19 @@ class RAGPredictor:
         return sorted(suffixes, key=len, reverse=True)
 
     def _char_to_grid_index(self, next_char: str) -> Optional[int]:
+        candidate = " ".join(str(next_char).lower().split())
+        special_map = getattr(self.base_predictor, "special_key_map", {})
         for idx, label in enumerate(self.char_list):
-            semantic = (
-                str(label).lower()
-                if self.token_mode
-                else (" " if label == "Sp" else str(label).lower())
-            )
-
-            if semantic == next_char:
+            label_text = str(label)
+            aliases = {label_text.lower()}
+            if label_text == "Sp":
+                aliases.add(" ")
+            mapped = special_map.get(label_text)
+            if mapped:
+                aliases.add(" ".join(str(mapped).lower().split()))
+            if not self.token_mode and label_text == "Sp":
+                aliases = {" "}
+            if candidate in aliases:
                 return idx
 
         return None
@@ -378,7 +383,15 @@ class RAGPredictor:
                         if self.token_mode:
                             while end < len(phrase.text) and phrase.text[end].isspace():
                                 end += 1
-                            next_char = phrase.text[end:].split(None, 1)[0] if end < len(phrase.text) else ""
+                            continuation = phrase.text[end:].split()
+                            next_char = ""
+                            # Some selectable keys are phrases (for example,
+                            # "page down"); choose the longest grid mapping.
+                            for width in range(min(4, len(continuation)), 0, -1):
+                                candidate = " ".join(continuation[:width])
+                                if self._char_to_grid_index(candidate) is not None:
+                                    next_char = candidate
+                                    break
                         else:
                             next_char = phrase.text[end]
 

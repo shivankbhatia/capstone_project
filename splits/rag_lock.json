@@ -1,32 +1,156 @@
 {
   "lock_version": 1,
-  "status": "preregistered_natural_text_arm_no_go_pending_participant_corpora",
+  "status": "preregistered_development_and_participant_analysis",
   "created_before_natural_text_evaluation": true,
   "scope": "Prospective per-user next-character personalization; Study D and Study Q do not qualify as natural-text personalization corpora.",
   "corpus_requirements": {
-    "source": "consented user-authored text or real decoded text collected before the evaluation period",
-    "minimum_history_tokens": 300,
-    "chronological_split": {"bank_fraction": 0.8, "evaluation_fraction": 0.2},
+    "source": "consented participant-authored text or participant-confirmed decoded text collected before evaluation",
+    "minimum_total_whitespace_tokens": 700,
+    "minimum_training_tokens_after_split": 420,
+    "minimum_gate_tuning_tokens_after_split": 140,
+    "minimum_heldout_tokens_after_split": 140,
+    "chronological_split": {
+      "bank_and_gate_training_fraction": 0.6,
+      "gate_tuning_fraction": 0.2,
+      "heldout_evaluation_fraction": 0.2
+    },
+    "timestamp_policy": "sort by timestamp when available; otherwise preserve the participant-supplied document order",
+    "anonymization": "remove names, email addresses, phone numbers, and user-selected sensitive spans before local storage; keep participant ID pseudonymous",
     "no_evaluation_period_text_in_bank": true,
-    "no synthetic or generated text as primary evidence": true
+    "synthetic_or_public_domain_text_is_development_only": true
   },
   "available_data_audit": {
     "study_q": "typed grid-key labels; five repeated task phrases per subject; not conventional natural language and too small for personalization evaluation",
     "study_d": "fixed prompted task text; not user-authored history suitable for prospective personalization",
     "participant_access": "pending",
-    "natural_user_corpus_available": false
+    "natural_user_corpus_available": false,
+    "development_corpora": "Four author-labelled public-domain sources prepared for software debugging only; no participant inference."
   },
-  "models": ["base LM", "LM + global bank", "LM + subject bank", "gated blend"],
-  "primary_metrics": ["next-character cross-entropy", "top-k accuracy", "true-character rank", "keystroke savings"],
-  "secondary": ["learning curve by bank token count", "cold-start to personalized curve", "topic-switch degradation", "OOV and special-key robustness", "backspace and empty-bank robustness", "adversarial-bank robustness"],
+  "models": [
+    "base LM",
+    "LM + global bank",
+    "LM + subject bank",
+    "gated blend"
+  ],
+  "primary_metrics": [
+    "next-character cross-entropy",
+    "top-k accuracy",
+    "true-character rank",
+    "keystroke savings"
+  ],
+  "secondary": [
+    "learning curve by bank token count",
+    "cold-start to personalized curve",
+    "topic-switch degradation",
+    "OOV and special-key robustness",
+    "backspace and empty-bank robustness",
+    "adversarial-bank robustness"
+  ],
   "training_only_gates": {
     "sufficiency_and_backoff_gates_fit_on_training_text_only": true,
     "test_or_future_text_may_not_tune_gates": true,
-    "worst_case_degradation_bound": "predeclare with participant protocol before corpus access"
+    "worst_case_degradation_bound": {
+      "max_allowed_nll_increase_nats_per_char": 0.1,
+      "max_allowed_top1_accuracy_drop": 0.05
+    }
   },
   "current_gate": {
-    "g2_language_gain": "not evaluable; no qualifying natural-text user corpus",
-    "decision": "no-go for personalization claims and further RAG performance engineering; retain generic session-local update API and report limitation",
+    "g2_language_gain": "public-domain smoke benchmark is development-only; participant claim pending",
+    "g2_simulator_validation": "failed D known-result check: absolute accuracy error 0.179 exceeds locked tolerance 0.05; Q check passed",
+    "decision": "G2 no-go for live use; RAG remains implemented but unproven. Participant offline evaluation may still be reported when consented text is available.",
+    "development_result": "results/tables/rag_development_benchmark.json",
+    "simulator_result": "results/tables/eeg_simulator_loso_validation.json",
     "synthetic_results_are_primary_evidence": false
+  },
+  "created_before_participant_text_access": true,
+  "natural_text_development_benchmark": {
+    "corpora": "public-domain Project Gutenberg works by Jane Austen, Mary Shelley, Herman Melville, plus the existing Arthur Conan Doyle excerpt",
+    "split": "chronological prefix (60% bank), following 20% for training-only gate selection, final 20% evaluation; cap at 4,000 whitespace tokens per author",
+    "development_only": true,
+    "claim_allowed": false,
+    "source_manifest": "data/rag/development_corpora/splits/manifest.json",
+    "evaluation_text_must_not_be_added_or_updated_into_any_bank": true,
+    "max_next_key_cases_per_author_per_split": 24,
+    "gate_grid": {
+      "rag_weight": [
+        0.25,
+        0.7
+      ],
+      "sufficiency_midpoint_tokens": [
+        32,
+        128
+      ],
+      "subject_confidence_threshold": [
+        0.2,
+        0.4
+      ],
+      "bigram_min_count": [
+        2,
+        5
+      ],
+      "bigram_max_normalized_entropy": [
+        0.4,
+        0.8
+      ]
+    },
+    "learning_curve_bank_words": [
+      0,
+      64,
+      128,
+      256,
+      512,
+      1024
+    ],
+    "topic_switch": "Austen-bank to held-out Moby-Dick text, development-only cross-author shift",
+    "gate_tuning_cases_per_author": 8,
+    "sample_note": "Capped software smoke sample for runtime and pipeline debugging only; not an inferential language benchmark."
+  },
+  "analysis_preregistration": {
+    "primary_metric": "mean next-character negative log likelihood in nats on eligible grid characters",
+    "comparison_family_primary": [
+      "LM+global vs LM-only",
+      "LM+subject vs LM-only",
+      "gated blend vs LM-only"
+    ],
+    "primary_correction": "Holm correction across the three paired participant-level comparisons",
+    "secondary_metrics": {
+      "top_k_accuracy": [
+        1,
+        3,
+        5
+      ],
+      "true_character_rank": "mean rank and mean reciprocal rank",
+      "keystroke_savings": "fraction of held-out characters whose true key appears in the top-3 suggestions"
+    },
+    "secondary_correction": "Holm across three RAG comparisons times three secondary metric families",
+    "unit_of_inference": "participant; token-level metric aggregation is within participant",
+    "participant_bootstrap": "95% percentile CI resampling participants with replacement",
+    "worst_case_degradation_bound": {
+      "max_allowed_nll_increase_nats_per_char": 0.1,
+      "max_allowed_top1_accuracy_drop": 0.05
+    },
+    "gate_tuning": "sufficiency, confidence, and backoff thresholds selected using only the first 80% of the chronological training portion (60% overall fit, next 20% tune); the final 20% remains untouched until the locked evaluation",
+    "learning_curve_training_tokens": [
+      0,
+      64,
+      128,
+      256,
+      512,
+      1024
+    ],
+    "topic_switch": "train-bank topic A; report the first 100 eligible characters after a switch to topic B separately; no retuning after switch",
+    "online_adaptation": "teacher-forced updates from decoded prefix only; score each next key before update; test cold-start and cumulative updates"
+  },
+  "participant_text_collection_protocol": {
+    "sample_definition": "one participant-provided, naturally authored text sample in the language used for the speller, with a documented date range and topical source",
+    "collection": "participant transfers a local UTF-8 text export or types a selected natural-text sample; no cloud upload required",
+    "anonymization_before_import": true,
+    "minimum_inclusion": "700 whitespace tokens total, yielding at least 420 bank-training, 140 gate-tuning, and 140 held-out tokens after chronological 60/20/20 split",
+    "storage": "pseudonymous local-only files; never commit source text or phrase banks",
+    "live_bank": "build from the 60% bank-training portion; fit gates on the following 20%; freeze before session; never seed from held-out 20%",
+    "timestamped_input": "accept UTF-8 text or JSONL records containing timestamp and text; order by timestamp when present, otherwise preserve document order",
+    "anonymization_minimum": "remove email addresses and phone numbers automatically; require participant-selected review/redaction of names and sensitive spans before analysis",
+    "no_text_logging": true,
+    "offline_test_is_not_live_evidence": true
   }
 }

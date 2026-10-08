@@ -1,0 +1,149 @@
+{
+  "label": "simulated; not measured EEG",
+  "outputs": {
+    "D": {
+      "accuracy_vs_depth": {
+        "1": {
+          "absolute_error": 0.09797385620915028,
+          "observed_oof": 0.46993464052287576,
+          "simulated_loso": 0.3719607843137255
+        },
+        "10": {
+          "absolute_error": 0.13592320261437885,
+          "observed_oof": 0.8119281045751635,
+          "simulated_loso": 0.9478513071895424
+        },
+        "2": {
+          "absolute_error": 0.06567810457516343,
+          "observed_oof": 0.5802287581699347,
+          "simulated_loso": 0.5145506535947713
+        },
+        "3": {
+          "absolute_error": 0.03577614379084981,
+          "observed_oof": 0.6651960784313725,
+          "simulated_loso": 0.6294199346405227
+        },
+        "4": {
+          "absolute_error": 0.0015114379084967267,
+          "observed_oof": 0.7148692810457516,
+          "simulated_loso": 0.7133578431372549
+        },
+        "5": {
+          "absolute_error": 0.0523529411764706,
+          "observed_oof": 0.7380718954248366,
+          "simulated_loso": 0.7904248366013072
+        },
+        "6": {
+          "absolute_error": 0.0847058823529413,
+          "observed_oof": 0.7602941176470588,
+          "simulated_loso": 0.8450000000000001
+        },
+        "7": {
+          "absolute_error": 0.08545751633986931,
+          "observed_oof": 0.7937908496732026,
+          "simulated_loso": 0.8792483660130719
+        },
+        "8": {
+          "absolute_error": 0.12225490196078437,
+          "observed_oof": 0.788562091503268,
+          "simulated_loso": 0.9108169934640523
+        },
+        "9": {
+          "absolute_error": 0.11060457516339883,
+          "observed_oof": 0.8225490196078431,
+          "simulated_loso": 0.9331535947712419
+        }
+      },
+      "characters": 498,
+      "curve_mae": 0.07922385620915036,
+      "curve_max_pointwise_error": 0.13592320261437885,
+      "curve_validation_pass": true,
+      "input_scope": "clean training-pool nested OOF flash logits only",
+      "known_result_absolute_error": 0.1789481927710843,
+      "known_result_reference_accuracy": 0.7581,
+      "known_result_validation_pass": false,
+      "limitations": [
+        "i.i.d. score sampling ignores within-character temporal dependence, adaptation, fatigue, and nonstationary artifacts."
+      ],
+      "observed_oof_fixed_tau_0p8_accuracy": 0.8192771084337349,
+      "replicates": 20,
+      "simulated": true,
+      "simulated_loso_fixed_tau_0p8_accuracy": 0.9370481927710843,
+      "study": "D",
+      "subjects": 17
+    },
+    "Q": {
+      "accuracy_vs_depth": {
+        "1": {
+          "absolute_error": 0.008140432098765416,
+          "observed_oof": 0.3248456790123457,
+          "simulated_loso": 0.31670524691358026
+        },
+        "10": {
+          "absolute_error": 0.029320987654321007,
+          "observed_oof": 0.6871141975308641,
+          "simulated_loso": 0.7164351851851851
+        },
+        "2": {
+          "absolute_error": 0.0429591049382716,
+          "observed_oof": 0.3927469135802469,
+          "simulated_loso": 0.3497878086419753
+        },
+        "3": {
+          "absolute_error": 0.05111882716049382,
+          "observed_oof": 0.4544753086419753,
+          "simulated_loso": 0.40335648148148145
+        },
+        "4": {
+          "absolute_error": 0.04847608024691363,
+          "observed_oof": 0.5015432098765432,
+          "simulated_loso": 0.4530671296296296
+        },
+        "5": {
+          "absolute_error": 0.035532407407407485,
+          "observed_oof": 0.5420524691358025,
+          "simulated_loso": 0.506520061728395
+        },
+        "6": {
+          "absolute_error": 0.030729166666666585,
+          "observed_oof": 0.5844907407407408,
+          "simulated_loso": 0.5537615740740742
+        },
+        "7": {
+          "absolute_error": 0.01612654320987661,
+          "observed_oof": 0.6199845679012346,
+          "simulated_loso": 0.603858024691358
+        },
+        "8": {
+          "absolute_error": 0.0021026234567899094,
+          "observed_oof": 0.6431327160493828,
+          "simulated_loso": 0.6452353395061727
+        },
+        "9": {
+          "absolute_error": 0.017264660493827133,
+          "observed_oof": 0.6651234567901234,
+          "simulated_loso": 0.6823881172839505
+        }
+      },
+      "characters": 2592,
+      "curve_mae": 0.028177083333333318,
+      "curve_max_pointwise_error": 0.05111882716049382,
+      "curve_validation_pass": true,
+      "input_scope": "clean training-pool nested OOF flash logits only",
+      "known_result_absolute_error": 0.02918595679012348,
+      "known_result_reference_accuracy": 0.6875,
+      "known_result_validation_pass": true,
+      "limitations": [
+        "i.i.d. score sampling ignores within-character temporal dependence, adaptation, fatigue, and nonstationary artifacts."
+      ],
+      "observed_oof_fixed_tau_0p8_accuracy": 0.6875,
+      "replicates": 20,
+      "simulated": true,
+      "simulated_loso_fixed_tau_0p8_accuracy": 0.7166859567901235,
+      "study": "Q",
+      "subjects": 36
+    }
+  },
+  "seed": 20261008,
+  "simulated": true
+}

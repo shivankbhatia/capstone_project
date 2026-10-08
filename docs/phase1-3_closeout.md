@@ -13,23 +13,30 @@
 
 The subject-level fixed-policy fusion effect is summarized with a DerSimonian–Laird random-effects calculation across two studies: +5.46 percentage points, normal 95% interval −0.48 to +11.41. This is descriptive only; between-study variance is unstable at two studies, and D row/column flashing differs from Q group flashing. See `results/tables/dq_inner_random_effects.json`.
 
-## Phase 2: RAG
+## Phase 2: RAG software arm
 
-G2 is **no-go for a natural-text personalization claim**. Q phrases are typed grid-key labels and do not represent natural-language user history; Study D task prompts also do not qualify as prospective user-authored history. Participant access is pending, so there is no qualifying per-user corpus for chronological train/evaluation splits, language-level metrics, learning curves, topic switching, or robustness against real user text.
+The RAG stack is implemented, but G2 is **no-go for a natural-text personalization claim or live-session use**. Participant access is pending; D prompts and Q's repeated grid-key strings are not suitable user-authored history. The participant protocol is locked in `splits/rag_lock.json`: anonymize before import, require 700 whitespace tokens, preserve chronology, allocate 60% to bank building, 20% to gate tuning, and 20% to held-out scoring. The local preparation utility redacts email and phone patterns and keeps text under the ignored `data/rag/participant_local/` path; names and sensitive spans still require participant-reviewed redaction. No participant text was accessed.
 
-The requirements are preregistered in `splits/rag_lock.json`. The generic `RAGPredictor.update(decoded_text)` API adds completed text to an in-memory session bank and does not persist it. It is not a measured gain. Stop RAG performance engineering until consented natural-text histories are available.
+The public-domain development smoke test used four author-separated texts, chronological splits, 24 held-out character cases per author, and 8 gate-tuning cases. Macro next-character cross-entropy was 4.463 nats for LM-only, 4.151 with a global bank, 4.245 with an author bank, and 3.763 for the gated blend; macro top-3 accuracy was 0.323, 0.448, 0.458, and 0.479 respectively. This is a capped software diagnostic with only 96 held-out cases and is **not** evidence of personalization. Per-author results include degradation for global and subject banks, and the cross-author topic switch worsened NLL from 4.739 to 5.217 nats; the bounded-degradation gate therefore fails in this diagnostic. Learning curves, cold-start updates, and OOV/special-key/backspace/empty/adversarial-bank checks run only as software diagnostics. The synthetic self-generated end-to-end dry run scored 12 next-key priors; all were finite and normalized, and its evaluation tail was not added to the bank.
 
-## Phase 3: scheduler
+`RAGPredictor.update(decoded_text)` updates only the in-memory session bank. Participant-level paired comparisons, Holm correction, and participant-bootstrap intervals cannot be computed until eligible participant samples exist. Until then RAG remains implemented but unproven, and is excluded from live-session time.
 
-The scheduler accepts only observable priors/posteriors and history, supports Study Q group masks, and implements the locked idealized information-gain weighting variant. Leakage tests confirm that the target is absent from scheduler state and calls. `splits/scheduler_lock.json` freezes the four modes, λ grid, low-prior target mix, matched-accuracy rule, false-lock-in bound, and calibration sensitivity analysis before any simulation.
+## Phase 3: EEG simulator and scheduler
 
-The EEG simulator and scheduler simulation have **not** run. Thus G3 is unevaluated. Do not select λ, claim reduced flashes, or deploy adaptive flashing from software tests alone. Keep uniform flashing for live data until the simulator and pre-registered simulation pass.
+The preregistered simulator used clean D/Q training-pool OOF logits only. Its leave-subject-out accuracy-vs-depth curves passed the locked curve tolerance in both studies (D MAE 0.079, max point error 0.136; Q MAE 0.028, max 0.051). However, the known-result check failed for D: simulated fixed-policy accuracy was 0.937 versus the locked 0.7581 reference, an absolute error of 0.179 against the 0.05 limit. Q passed (0.7167 versus 0.6875, error 0.0292). The simulator therefore fails validation as a cross-study foundation. It samples i.i.d. flash logits and ignores within-character temporal dependence, adaptation, fatigue, and nonstationary artifacts.
+
+G3 is decided **no-go / future work**. In accordance with `splits/scheduler_lock.json`, no λ was selected and no four-scheduler outcome simulation or calibration-sensitivity result was run after the D validation failure. The target-blind scheduler module remains a software prototype; the final spy test passes. Do not claim matched-accuracy savings, ITR, false-lock performance, or unlikely-target recovery. Live data collection keeps uniform flashing. The validation record is `results/tables/eeg_simulator_loso_validation.json`.
 
 ## Phase 4 go/no-go
 
 | Arm | Gate | Decision |
 |---|---|---|
 | Clean Q M0 EEG and fixed LM fusion | G1 passed narrowly | Retain as a research result; validate session shift before transfer claims |
-| RAG personalization | G2 not evaluable; no qualifying corpus | No-go until participant text is available |
-| Adaptive scheduler | G3 not run; simulator missing | No-go for live deployment; uniform flashing remains |
+| RAG personalization | G2 no-go; small public-domain smoke only, participant study pending | Exclude from live sessions until participant gate passes |
+| EEG simulator | D known-result check fails; Q and depth curves pass | Do not use for scheduler claims |
+| Adaptive scheduler | G3 no-go after simulator failure; scheduler simulation not run | Future work; uniform flashing remains |
 | Real-time participant study | Participants pending | Software self-test/demo only |
+
+## Phase 4 go/no-go note
+
+EEG-only and fixed LM fusion remain the only arms with Study D/Q evaluation evidence. RAG is conditional on participant-text G2; adaptive scheduling is no-go until a corrected simulator passes and a preregistered simulation earns G3. The current real-time plan therefore uses uniform flashing with the existing EEG-only/LM-fusion comparison.

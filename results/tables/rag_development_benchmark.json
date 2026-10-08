@@ -1,0 +1,1363 @@
+{
+  "author_macro_metrics": {
+    "LM": {
+      "keystroke_savings_top3": 0.32291666666666663,
+      "mean_reciprocal_rank": 0.334490417918246,
+      "mean_true_character_rank": 11.333333333333332,
+      "next_character_cross_entropy_nats": 4.462800388613515,
+      "top_k_accuracy": {
+        "1": 0.20833333333333331,
+        "3": 0.32291666666666663,
+        "5": 0.4375
+      }
+    },
+    "LM+global_bank": {
+      "keystroke_savings_top3": 0.44791666666666663,
+      "mean_reciprocal_rank": 0.40796266670416736,
+      "mean_true_character_rank": 10.156250000000002,
+      "next_character_cross_entropy_nats": 4.150940318811121,
+      "top_k_accuracy": {
+        "1": 0.27083333333333337,
+        "3": 0.44791666666666663,
+        "5": 0.5625
+      }
+    },
+    "LM+subject_bank": {
+      "keystroke_savings_top3": 0.4583333333333333,
+      "mean_reciprocal_rank": 0.42722739952181044,
+      "mean_true_character_rank": 10.270833333333334,
+      "next_character_cross_entropy_nats": 4.244758346785673,
+      "top_k_accuracy": {
+        "1": 0.3125,
+        "3": 0.4583333333333333,
+        "5": 0.5625
+      }
+    },
+    "gated_blend": {
+      "keystroke_savings_top3": 0.47916666666666663,
+      "mean_reciprocal_rank": 0.42779974999360637,
+      "mean_true_character_rank": 9.53125,
+      "next_character_cross_entropy_nats": 3.7626875286969197,
+      "top_k_accuracy": {
+        "1": 0.30208333333333337,
+        "3": 0.47916666666666663,
+        "5": 0.5833333333333334
+      }
+    }
+  },
+  "author_results": {
+    "Arthur_Conan_Doyle": {
+      "metrics": {
+        "LM": {
+          "keystroke_savings_top3": 0.4583333333333333,
+          "mean_reciprocal_rank": 0.45545610454852475,
+          "mean_true_character_rank": 10.291666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.8000848219651906,
+          "top_k_accuracy": {
+            "1": 0.3333333333333333,
+            "3": 0.4583333333333333,
+            "5": 0.5416666666666666
+          }
+        },
+        "LM+global_bank": {
+          "keystroke_savings_top3": 0.6666666666666666,
+          "mean_reciprocal_rank": 0.6243650601762303,
+          "mean_true_character_rank": 8.333333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 2.917039401611419,
+          "top_k_accuracy": {
+            "1": 0.5,
+            "3": 0.6666666666666666,
+            "5": 0.7916666666666666
+          }
+        },
+        "LM+subject_bank": {
+          "keystroke_savings_top3": 0.625,
+          "mean_reciprocal_rank": 0.5992557077231279,
+          "mean_true_character_rank": 9.0,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.2478334126175183,
+          "top_k_accuracy": {
+            "1": 0.5,
+            "3": 0.625,
+            "5": 0.7083333333333334
+          }
+        },
+        "gated_blend": {
+          "keystroke_savings_top3": 0.75,
+          "mean_reciprocal_rank": 0.6382539490651192,
+          "mean_true_character_rank": 8.291666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 2.902103742358633,
+          "top_k_accuracy": {
+            "1": 0.5416666666666666,
+            "3": 0.75,
+            "5": 0.7916666666666666
+          }
+        }
+      },
+      "test_characters": 24,
+      "test_words": 266,
+      "train_words": 797,
+      "training_only_fitted_gates": {
+        "bigram_max_normalized_entropy": 0.4,
+        "bigram_min_count": 2,
+        "rag_weight": 0.25,
+        "selection_metric": "training-only tune next-character cross-entropy",
+        "subject_confidence_threshold": 0.2,
+        "sufficiency_midpoint_tokens": 32.0,
+        "tune_cross_entropy": 4.282590542696438
+      },
+      "tune_words": 266
+    },
+    "Herman_Melville": {
+      "metrics": {
+        "LM": {
+          "keystroke_savings_top3": 0.2916666666666667,
+          "mean_reciprocal_rank": 0.2643260684210574,
+          "mean_true_character_rank": 12.125,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.7385874765323175,
+          "top_k_accuracy": {
+            "1": 0.125,
+            "3": 0.2916666666666667,
+            "5": 0.4166666666666667
+          }
+        },
+        "LM+global_bank": {
+          "keystroke_savings_top3": 0.3333333333333333,
+          "mean_reciprocal_rank": 0.2762548803498694,
+          "mean_true_character_rank": 12.5,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 5.051980162380523,
+          "top_k_accuracy": {
+            "1": 0.125,
+            "3": 0.3333333333333333,
+            "5": 0.3333333333333333
+          }
+        },
+        "LM+subject_bank": {
+          "keystroke_savings_top3": 0.3333333333333333,
+          "mean_reciprocal_rank": 0.265750554032513,
+          "mean_true_character_rank": 12.875,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 5.227470541291299,
+          "top_k_accuracy": {
+            "1": 0.125,
+            "3": 0.3333333333333333,
+            "5": 0.4166666666666667
+          }
+        },
+        "gated_blend": {
+          "keystroke_savings_top3": 0.3333333333333333,
+          "mean_reciprocal_rank": 0.2698084256715068,
+          "mean_true_character_rank": 12.666666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.72289617603333,
+          "top_k_accuracy": {
+            "1": 0.125,
+            "3": 0.3333333333333333,
+            "5": 0.3333333333333333
+          }
+        }
+      },
+      "test_characters": 24,
+      "test_words": 800,
+      "train_words": 2400,
+      "training_only_fitted_gates": {
+        "bigram_max_normalized_entropy": 0.4,
+        "bigram_min_count": 2,
+        "rag_weight": 0.25,
+        "selection_metric": "training-only tune next-character cross-entropy",
+        "subject_confidence_threshold": 0.4,
+        "sufficiency_midpoint_tokens": 32.0,
+        "tune_cross_entropy": 5.3354322634423665
+      },
+      "tune_words": 800
+    },
+    "Jane_Austen": {
+      "metrics": {
+        "LM": {
+          "keystroke_savings_top3": 0.20833333333333334,
+          "mean_reciprocal_rank": 0.2632732654363196,
+          "mean_true_character_rank": 12.916666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.901126163530119,
+          "top_k_accuracy": {
+            "1": 0.16666666666666666,
+            "3": 0.20833333333333334,
+            "5": 0.3333333333333333
+          }
+        },
+        "LM+global_bank": {
+          "keystroke_savings_top3": 0.4583333333333333,
+          "mean_reciprocal_rank": 0.4160844832768988,
+          "mean_true_character_rank": 9.333333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.112684551175951,
+          "top_k_accuracy": {
+            "1": 0.2916666666666667,
+            "3": 0.4583333333333333,
+            "5": 0.5833333333333334
+          }
+        },
+        "LM+subject_bank": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.39386226105467653,
+          "mean_true_character_rank": 9.75,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.508348050648638,
+          "top_k_accuracy": {
+            "1": 0.2916666666666667,
+            "3": 0.375,
+            "5": 0.5416666666666666
+          }
+        },
+        "gated_blend": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.3864211181548643,
+          "mean_true_character_rank": 7.458333333333333,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.586588841225417,
+          "top_k_accuracy": {
+            "1": 0.25,
+            "3": 0.375,
+            "5": 0.5833333333333334
+          }
+        }
+      },
+      "test_characters": 24,
+      "test_words": 800,
+      "train_words": 2400,
+      "training_only_fitted_gates": {
+        "bigram_max_normalized_entropy": 0.8,
+        "bigram_min_count": 5,
+        "rag_weight": 0.25,
+        "selection_metric": "training-only tune next-character cross-entropy",
+        "subject_confidence_threshold": 0.4,
+        "sufficiency_midpoint_tokens": 32.0,
+        "tune_cross_entropy": 3.78656396871985
+      },
+      "tune_words": 800
+    },
+    "Mary_Shelley": {
+      "metrics": {
+        "LM": {
+          "keystroke_savings_top3": 0.3333333333333333,
+          "mean_reciprocal_rank": 0.3549062332670823,
+          "mean_true_character_rank": 10.0,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.411403092426436,
+          "top_k_accuracy": {
+            "1": 0.20833333333333334,
+            "3": 0.3333333333333333,
+            "5": 0.4583333333333333
+          }
+        },
+        "LM+global_bank": {
+          "keystroke_savings_top3": 0.3333333333333333,
+          "mean_reciprocal_rank": 0.31514624301367106,
+          "mean_true_character_rank": 10.458333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.522057160076592,
+          "top_k_accuracy": {
+            "1": 0.16666666666666666,
+            "3": 0.3333333333333333,
+            "5": 0.5416666666666666
+          }
+        },
+        "LM+subject_bank": {
+          "keystroke_savings_top3": 0.5,
+          "mean_reciprocal_rank": 0.45004107527692433,
+          "mean_true_character_rank": 9.458333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.9953813825852382,
+          "top_k_accuracy": {
+            "1": 0.3333333333333333,
+            "3": 0.5,
+            "5": 0.5833333333333334
+          }
+        },
+        "gated_blend": {
+          "keystroke_savings_top3": 0.4583333333333333,
+          "mean_reciprocal_rank": 0.41671550708293514,
+          "mean_true_character_rank": 9.708333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.8391613551702988,
+          "top_k_accuracy": {
+            "1": 0.2916666666666667,
+            "3": 0.4583333333333333,
+            "5": 0.625
+          }
+        }
+      },
+      "test_characters": 24,
+      "test_words": 800,
+      "train_words": 2400,
+      "training_only_fitted_gates": {
+        "bigram_max_normalized_entropy": 0.8,
+        "bigram_min_count": 5,
+        "rag_weight": 0.25,
+        "selection_metric": "training-only tune next-character cross-entropy",
+        "subject_confidence_threshold": 0.2,
+        "sufficiency_midpoint_tokens": 32.0,
+        "tune_cross_entropy": 2.287621169707368
+      },
+      "tune_words": 800
+    }
+  },
+  "base_context_chars": 128,
+  "claim_warning": "All outputs debug the offline code path. They are not evidence of participant personalization benefit.",
+  "evaluation_text_entered_bank": false,
+  "gate_tuning_scope": "chronological middle block from each author only; final block untouched until scoring",
+  "learning_curve_by_training_words": {
+    "0": [
+      {
+        "author": "Jane_Austen",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.20833333333333334,
+          "mean_reciprocal_rank": 0.2632732654363196,
+          "mean_true_character_rank": 12.916666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.901126163530119,
+          "top_k_accuracy": {
+            "1": 0.16666666666666666,
+            "3": 0.20833333333333334,
+            "5": 0.3333333333333333
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.20833333333333334,
+          "mean_reciprocal_rank": 0.2632732654363196,
+          "mean_true_character_rank": 12.916666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.901126163530119,
+          "top_k_accuracy": {
+            "1": 0.16666666666666666,
+            "3": 0.20833333333333334,
+            "5": 0.3333333333333333
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.20833333333333334,
+          "mean_reciprocal_rank": 0.2632732654363196,
+          "mean_true_character_rank": 12.916666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.901126163530119,
+          "top_k_accuracy": {
+            "1": 0.16666666666666666,
+            "3": 0.20833333333333334,
+            "5": 0.3333333333333333
+          }
+        }
+      },
+      {
+        "author": "Mary_Shelley",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.3333333333333333,
+          "mean_reciprocal_rank": 0.3549062332670823,
+          "mean_true_character_rank": 10.0,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.411403092426436,
+          "top_k_accuracy": {
+            "1": 0.20833333333333334,
+            "3": 0.3333333333333333,
+            "5": 0.4583333333333333
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.3333333333333333,
+          "mean_reciprocal_rank": 0.3549062332670823,
+          "mean_true_character_rank": 10.0,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.411403092426436,
+          "top_k_accuracy": {
+            "1": 0.20833333333333334,
+            "3": 0.3333333333333333,
+            "5": 0.4583333333333333
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.3333333333333333,
+          "mean_reciprocal_rank": 0.3549062332670823,
+          "mean_true_character_rank": 10.0,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.411403092426436,
+          "top_k_accuracy": {
+            "1": 0.20833333333333334,
+            "3": 0.3333333333333333,
+            "5": 0.4583333333333333
+          }
+        }
+      },
+      {
+        "author": "Herman_Melville",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.2916666666666667,
+          "mean_reciprocal_rank": 0.2643260684210574,
+          "mean_true_character_rank": 12.125,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.7385874765323175,
+          "top_k_accuracy": {
+            "1": 0.125,
+            "3": 0.2916666666666667,
+            "5": 0.4166666666666667
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.2916666666666667,
+          "mean_reciprocal_rank": 0.2643260684210574,
+          "mean_true_character_rank": 12.125,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.7385874765323175,
+          "top_k_accuracy": {
+            "1": 0.125,
+            "3": 0.2916666666666667,
+            "5": 0.4166666666666667
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.2916666666666667,
+          "mean_reciprocal_rank": 0.2643260684210574,
+          "mean_true_character_rank": 12.125,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.7385874765323175,
+          "top_k_accuracy": {
+            "1": 0.125,
+            "3": 0.2916666666666667,
+            "5": 0.4166666666666667
+          }
+        }
+      },
+      {
+        "author": "Arthur_Conan_Doyle",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.4583333333333333,
+          "mean_reciprocal_rank": 0.45545610454852475,
+          "mean_true_character_rank": 10.291666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.8000848219651906,
+          "top_k_accuracy": {
+            "1": 0.3333333333333333,
+            "3": 0.4583333333333333,
+            "5": 0.5416666666666666
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.4583333333333333,
+          "mean_reciprocal_rank": 0.45545610454852475,
+          "mean_true_character_rank": 10.291666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.8000848219651906,
+          "top_k_accuracy": {
+            "1": 0.3333333333333333,
+            "3": 0.4583333333333333,
+            "5": 0.5416666666666666
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.4583333333333333,
+          "mean_reciprocal_rank": 0.45545610454852475,
+          "mean_true_character_rank": 10.291666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.8000848219651906,
+          "top_k_accuracy": {
+            "1": 0.3333333333333333,
+            "3": 0.4583333333333333,
+            "5": 0.5416666666666666
+          }
+        }
+      }
+    ],
+    "1024": [
+      {
+        "author": "Jane_Austen",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.4166666666666667,
+          "mean_reciprocal_rank": 0.3852618337042492,
+          "mean_true_character_rank": 9.708333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.338403970611915,
+          "top_k_accuracy": {
+            "1": 0.25,
+            "3": 0.4166666666666667,
+            "5": 0.5416666666666666
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.4166666666666667,
+          "mean_reciprocal_rank": 0.37137294481536026,
+          "mean_true_character_rank": 9.791666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.230425812443085,
+          "top_k_accuracy": {
+            "1": 0.25,
+            "3": 0.4166666666666667,
+            "5": 0.5416666666666666
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.38900114994356544,
+          "mean_true_character_rank": 9.75,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.30790076190473,
+          "top_k_accuracy": {
+            "1": 0.2916666666666667,
+            "3": 0.375,
+            "5": 0.5416666666666666
+          }
+        }
+      },
+      {
+        "author": "Mary_Shelley",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.3333333333333333,
+          "mean_reciprocal_rank": 0.34581410542495444,
+          "mean_true_character_rank": 10.333333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.5228506464132865,
+          "top_k_accuracy": {
+            "1": 0.20833333333333334,
+            "3": 0.3333333333333333,
+            "5": 0.5
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.3333333333333333,
+          "mean_reciprocal_rank": 0.3268656927265418,
+          "mean_true_character_rank": 10.25,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.398043278844537,
+          "top_k_accuracy": {
+            "1": 0.16666666666666666,
+            "3": 0.3333333333333333,
+            "5": 0.5416666666666666
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.35568080591665496,
+          "mean_true_character_rank": 10.041666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.586646041731581,
+          "top_k_accuracy": {
+            "1": 0.20833333333333334,
+            "3": 0.375,
+            "5": 0.5416666666666666
+          }
+        }
+      },
+      {
+        "author": "Herman_Melville",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.2961518449836761,
+          "mean_true_character_rank": 12.625,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 5.093013502260536,
+          "top_k_accuracy": {
+            "1": 0.16666666666666666,
+            "3": 0.375,
+            "5": 0.375
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.3333333333333333,
+          "mean_reciprocal_rank": 0.3009137497455809,
+          "mean_true_character_rank": 12.375,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.984603450613899,
+          "top_k_accuracy": {
+            "1": 0.16666666666666666,
+            "3": 0.3333333333333333,
+            "5": 0.375
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.3333333333333333,
+          "mean_reciprocal_rank": 0.2733894993046637,
+          "mean_true_character_rank": 12.541666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 5.0074355218060385,
+          "top_k_accuracy": {
+            "1": 0.125,
+            "3": 0.3333333333333333,
+            "5": 0.4166666666666667
+          }
+        }
+      },
+      {
+        "author": "Arthur_Conan_Doyle",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.625,
+          "mean_reciprocal_rank": 0.5784223743897946,
+          "mean_true_character_rank": 9.041666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.280178131511729,
+          "top_k_accuracy": {
+            "1": 0.4583333333333333,
+            "3": 0.625,
+            "5": 0.7083333333333334
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.625,
+          "mean_reciprocal_rank": 0.5735612632786834,
+          "mean_true_character_rank": 9.041666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.3173575245469684,
+          "top_k_accuracy": {
+            "1": 0.4583333333333333,
+            "3": 0.625,
+            "5": 0.7083333333333334
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.625,
+          "mean_reciprocal_rank": 0.5992557077231279,
+          "mean_true_character_rank": 9.0,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.2478334126175183,
+          "top_k_accuracy": {
+            "1": 0.5,
+            "3": 0.625,
+            "5": 0.7083333333333334
+          }
+        }
+      }
+    ],
+    "128": [
+      {
+        "author": "Jane_Austen",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.3619145097319252,
+          "mean_true_character_rank": 10.833333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.608124781446233,
+          "top_k_accuracy": {
+            "1": 0.25,
+            "3": 0.375,
+            "5": 0.4583333333333333
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.3821691393615549,
+          "mean_true_character_rank": 10.833333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.433886173837628,
+          "top_k_accuracy": {
+            "1": 0.2916666666666667,
+            "3": 0.375,
+            "5": 0.4583333333333333
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.2916666666666667,
+          "mean_reciprocal_rank": 0.3095335658084621,
+          "mean_true_character_rank": 12.125,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 5.033860203820735,
+          "top_k_accuracy": {
+            "1": 0.20833333333333334,
+            "3": 0.2916666666666667,
+            "5": 0.4166666666666667
+          }
+        }
+      },
+      {
+        "author": "Mary_Shelley",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.4583333333333333,
+          "mean_reciprocal_rank": 0.4303335836944327,
+          "mean_true_character_rank": 9.583333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.264064696645156,
+          "top_k_accuracy": {
+            "1": 0.2916666666666667,
+            "3": 0.4583333333333333,
+            "5": 0.5833333333333334
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.4166666666666667,
+          "mean_reciprocal_rank": 0.37378596464681374,
+          "mean_true_character_rank": 9.875,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.303714823815441,
+          "top_k_accuracy": {
+            "1": 0.20833333333333334,
+            "3": 0.4166666666666667,
+            "5": 0.5416666666666666
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.4166666666666667,
+          "mean_reciprocal_rank": 0.4486562332670824,
+          "mean_true_character_rank": 9.458333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.413419663763388,
+          "top_k_accuracy": {
+            "1": 0.3333333333333333,
+            "3": 0.4166666666666667,
+            "5": 0.5833333333333334
+          }
+        }
+      },
+      {
+        "author": "Herman_Melville",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.3013871554821445,
+          "mean_true_character_rank": 11.208333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.91232193718202,
+          "top_k_accuracy": {
+            "1": 0.125,
+            "3": 0.375,
+            "5": 0.4583333333333333
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.2944427110377001,
+          "mean_true_character_rank": 11.25,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.634145875921114,
+          "top_k_accuracy": {
+            "1": 0.125,
+            "3": 0.375,
+            "5": 0.4583333333333333
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.29410483434112766,
+          "mean_true_character_rank": 11.916666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 5.108788117148776,
+          "top_k_accuracy": {
+            "1": 0.125,
+            "3": 0.375,
+            "5": 0.4166666666666667
+          }
+        }
+      },
+      {
+        "author": "Arthur_Conan_Doyle",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.5416666666666666,
+          "mean_reciprocal_rank": 0.5423608664532866,
+          "mean_true_character_rank": 9.916666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.799625920614572,
+          "top_k_accuracy": {
+            "1": 0.4583333333333333,
+            "3": 0.5416666666666666,
+            "5": 0.5833333333333334
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.5416666666666666,
+          "mean_reciprocal_rank": 0.5153271362945565,
+          "mean_true_character_rank": 9.958333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.7712103861949693,
+          "top_k_accuracy": {
+            "1": 0.4166666666666667,
+            "3": 0.5416666666666666,
+            "5": 0.5833333333333334
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.5416666666666666,
+          "mean_reciprocal_rank": 0.5431049140723342,
+          "mean_true_character_rank": 9.875,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.7076995320750115,
+          "top_k_accuracy": {
+            "1": 0.4583333333333333,
+            "3": 0.5416666666666666,
+            "5": 0.5833333333333334
+          }
+        }
+      }
+    ],
+    "256": [
+      {
+        "author": "Jane_Austen",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.3675780899788388,
+          "mean_true_character_rank": 10.708333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.547480233641377,
+          "top_k_accuracy": {
+            "1": 0.25,
+            "3": 0.375,
+            "5": 0.5
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.4166666666666667,
+          "mean_reciprocal_rank": 0.3579054709312197,
+          "mean_true_character_rank": 10.625,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.3889915290157715,
+          "top_k_accuracy": {
+            "1": 0.20833333333333334,
+            "3": 0.4166666666666667,
+            "5": 0.5
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.2916666666666667,
+          "mean_reciprocal_rank": 0.34217448124189676,
+          "mean_true_character_rank": 12.041666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.917532158703761,
+          "top_k_accuracy": {
+            "1": 0.25,
+            "3": 0.2916666666666667,
+            "5": 0.4583333333333333
+          }
+        }
+      },
+      {
+        "author": "Mary_Shelley",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.3564248535357026,
+          "mean_true_character_rank": 10.0,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.466169321787177,
+          "top_k_accuracy": {
+            "1": 0.20833333333333334,
+            "3": 0.375,
+            "5": 0.5416666666666666
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.4166666666666667,
+          "mean_reciprocal_rank": 0.35086929798014704,
+          "mean_true_character_rank": 9.958333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.379920177344542,
+          "top_k_accuracy": {
+            "1": 0.16666666666666666,
+            "3": 0.4166666666666667,
+            "5": 0.5416666666666666
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.3643308364416855,
+          "mean_true_character_rank": 9.833333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.569377213037885,
+          "top_k_accuracy": {
+            "1": 0.20833333333333334,
+            "3": 0.375,
+            "5": 0.5416666666666666
+          }
+        }
+      },
+      {
+        "author": "Herman_Melville",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.273113345958335,
+          "mean_true_character_rank": 11.666666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.92736192108411,
+          "top_k_accuracy": {
+            "1": 0.08333333333333333,
+            "3": 0.375,
+            "5": 0.4166666666666667
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.3333333333333333,
+          "mean_reciprocal_rank": 0.2822583676033566,
+          "mean_true_character_rank": 11.625,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.740113810840082,
+          "top_k_accuracy": {
+            "1": 0.125,
+            "3": 0.3333333333333333,
+            "5": 0.4166666666666667
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.2710315157515048,
+          "mean_true_character_rank": 12.166666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 5.063614725657502,
+          "top_k_accuracy": {
+            "1": 0.08333333333333333,
+            "3": 0.375,
+            "5": 0.4166666666666667
+          }
+        }
+      },
+      {
+        "author": "Arthur_Conan_Doyle",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.5,
+          "mean_reciprocal_rank": 0.5352841468765671,
+          "mean_true_character_rank": 9.666666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.5794703642117995,
+          "top_k_accuracy": {
+            "1": 0.4583333333333333,
+            "3": 0.5,
+            "5": 0.5833333333333334
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.5416666666666666,
+          "mean_reciprocal_rank": 0.5397484325908528,
+          "mean_true_character_rank": 9.583333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.6136140261003633,
+          "top_k_accuracy": {
+            "1": 0.4583333333333333,
+            "3": 0.5416666666666666,
+            "5": 0.5833333333333334
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.5416666666666666,
+          "mean_reciprocal_rank": 0.5436753505802708,
+          "mean_true_character_rank": 9.875,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.6611971984473777,
+          "top_k_accuracy": {
+            "1": 0.4583333333333333,
+            "3": 0.5416666666666666,
+            "5": 0.5833333333333334
+          }
+        }
+      }
+    ],
+    "512": [
+      {
+        "author": "Jane_Austen",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.37297932454674004,
+          "mean_true_character_rank": 9.833333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.338454301321597,
+          "top_k_accuracy": {
+            "1": 0.25,
+            "3": 0.375,
+            "5": 0.5
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.3471030017954173,
+          "mean_true_character_rank": 10.041666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.275147019789508,
+          "top_k_accuracy": {
+            "1": 0.20833333333333334,
+            "3": 0.375,
+            "5": 0.4583333333333333
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.39172932454674,
+          "mean_true_character_rank": 10.416666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.418098438198296,
+          "top_k_accuracy": {
+            "1": 0.2916666666666667,
+            "3": 0.375,
+            "5": 0.5416666666666666
+          }
+        }
+      },
+      {
+        "author": "Mary_Shelley",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.4166666666666667,
+          "mean_reciprocal_rank": 0.32980702691787595,
+          "mean_true_character_rank": 10.125,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.511362583716988,
+          "top_k_accuracy": {
+            "1": 0.16666666666666666,
+            "3": 0.4166666666666667,
+            "5": 0.5416666666666666
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.3333333333333333,
+          "mean_reciprocal_rank": 0.32980702691787595,
+          "mean_true_character_rank": 10.166666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.4051799923515755,
+          "top_k_accuracy": {
+            "1": 0.16666666666666666,
+            "3": 0.3333333333333333,
+            "5": 0.5416666666666666
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.3286470757579248,
+          "mean_true_character_rank": 10.083333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.612040395493628,
+          "top_k_accuracy": {
+            "1": 0.16666666666666666,
+            "3": 0.375,
+            "5": 0.5416666666666666
+          }
+        }
+      },
+      {
+        "author": "Herman_Melville",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.3064466792916683,
+          "mean_true_character_rank": 11.666666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.974753547945508,
+          "top_k_accuracy": {
+            "1": 0.16666666666666666,
+            "3": 0.375,
+            "5": 0.375
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.27901762686261583,
+          "mean_true_character_rank": 11.666666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.786469703077544,
+          "top_k_accuracy": {
+            "1": 0.125,
+            "3": 0.375,
+            "5": 0.375
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.3333333333333333,
+          "mean_reciprocal_rank": 0.2736920496620387,
+          "mean_true_character_rank": 12.375,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 5.085185954159628,
+          "top_k_accuracy": {
+            "1": 0.125,
+            "3": 0.3333333333333333,
+            "5": 0.4166666666666667
+          }
+        }
+      },
+      {
+        "author": "Arthur_Conan_Doyle",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.5833333333333334,
+          "mean_reciprocal_rank": 0.5673608664532866,
+          "mean_true_character_rank": 9.125,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.316863216906599,
+          "top_k_accuracy": {
+            "1": 0.4583333333333333,
+            "3": 0.5833333333333334,
+            "5": 0.6666666666666666
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.5833333333333334,
+          "mean_reciprocal_rank": 0.5393159946584148,
+          "mean_true_character_rank": 9.541666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.41674390118828,
+          "top_k_accuracy": {
+            "1": 0.4166666666666667,
+            "3": 0.5833333333333334,
+            "5": 0.625
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.625,
+          "mean_reciprocal_rank": 0.5673608664532866,
+          "mean_true_character_rank": 9.041666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.268060094880943,
+          "top_k_accuracy": {
+            "1": 0.4583333333333333,
+            "3": 0.625,
+            "5": 0.7083333333333334
+          }
+        }
+      }
+    ],
+    "64": [
+      {
+        "author": "Jane_Austen",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.29832654676896225,
+          "mean_true_character_rank": 10.75,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.576112581558544,
+          "top_k_accuracy": {
+            "1": 0.125,
+            "3": 0.375,
+            "5": 0.5
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.36082654676896225,
+          "mean_true_character_rank": 10.625,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.443301514167307,
+          "top_k_accuracy": {
+            "1": 0.25,
+            "3": 0.375,
+            "5": 0.5
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.25,
+          "mean_reciprocal_rank": 0.23549548765854186,
+          "mean_true_character_rank": 12.833333333333334,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.988328343005844,
+          "top_k_accuracy": {
+            "1": 0.08333333333333333,
+            "3": 0.25,
+            "5": 0.375
+          }
+        }
+      },
+      {
+        "author": "Mary_Shelley",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.3649756777115268,
+          "mean_true_character_rank": 9.916666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 5.006092796009763,
+          "top_k_accuracy": {
+            "1": 0.20833333333333334,
+            "3": 0.375,
+            "5": 0.5833333333333334
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.4166666666666667,
+          "mean_reciprocal_rank": 0.3750451221559712,
+          "mean_true_character_rank": 9.791666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.414249876124438,
+          "top_k_accuracy": {
+            "1": 0.20833333333333334,
+            "3": 0.4166666666666667,
+            "5": 0.5416666666666666
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.4166666666666667,
+          "mean_reciprocal_rank": 0.36914234437819343,
+          "mean_true_character_rank": 9.791666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 5.018366838436933,
+          "top_k_accuracy": {
+            "1": 0.20833333333333334,
+            "3": 0.4166666666666667,
+            "5": 0.5833333333333334
+          }
+        }
+      },
+      {
+        "author": "Herman_Melville",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.33842419251918154,
+          "mean_true_character_rank": 11.25,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 5.0320630254210945,
+          "top_k_accuracy": {
+            "1": 0.20833333333333334,
+            "3": 0.375,
+            "5": 0.4166666666666667
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.375,
+          "mean_reciprocal_rank": 0.31759085918584823,
+          "mean_true_character_rank": 11.291666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 4.6351780546926955,
+          "top_k_accuracy": {
+            "1": 0.16666666666666666,
+            "3": 0.375,
+            "5": 0.4166666666666667
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.3333333333333333,
+          "mean_reciprocal_rank": 0.3209728938178828,
+          "mean_true_character_rank": 12.0,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 5.252396293720033,
+          "top_k_accuracy": {
+            "1": 0.20833333333333334,
+            "3": 0.3333333333333333,
+            "5": 0.375
+          }
+        }
+      },
+      {
+        "author": "Arthur_Conan_Doyle",
+        "gated_blend": {
+          "keystroke_savings_top3": 0.5,
+          "mean_reciprocal_rank": 0.5083330886755089,
+          "mean_true_character_rank": 10.041666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.7557518818728908,
+          "top_k_accuracy": {
+            "1": 0.4166666666666667,
+            "3": 0.5,
+            "5": 0.5416666666666666
+          }
+        },
+        "global_bank": {
+          "keystroke_savings_top3": 0.5,
+          "mean_reciprocal_rank": 0.5083330886755089,
+          "mean_true_character_rank": 10.041666666666666,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.817645963847444,
+          "top_k_accuracy": {
+            "1": 0.4166666666666667,
+            "3": 0.5,
+            "5": 0.5416666666666666
+          }
+        },
+        "subject_bank": {
+          "keystroke_savings_top3": 0.5,
+          "mean_reciprocal_rank": 0.513789437881858,
+          "mean_true_character_rank": 9.875,
+          "n_characters": 24,
+          "next_character_cross_entropy_nats": 3.5920120064170766,
+          "top_k_accuracy": {
+            "1": 0.4166666666666667,
+            "3": 0.5,
+            "5": 0.5833333333333334
+          }
+        }
+      }
+    ]
+  },
+  "max_scored_cases_per_author": 24,
+  "models": [
+    "LM",
+    "LM+global_bank",
+    "LM+subject_bank",
+    "gated_blend"
+  ],
+  "online_coldstart_personalization_curves": {
+    "Arthur_Conan_Doyle": {
+      "0-7": {
+        "characters": 8,
+        "top1_accuracy": 0.125
+      },
+      "16-23": {
+        "characters": 8,
+        "top1_accuracy": 0.375
+      },
+      "8-15": {
+        "characters": 8,
+        "top1_accuracy": 0.5
+      }
+    },
+    "Herman_Melville": {
+      "0-7": {
+        "characters": 8,
+        "top1_accuracy": 0.0
+      },
+      "16-23": {
+        "characters": 8,
+        "top1_accuracy": 0.25
+      },
+      "8-15": {
+        "characters": 8,
+        "top1_accuracy": 0.125
+      }
+    },
+    "Jane_Austen": {
+      "0-7": {
+        "characters": 8,
+        "top1_accuracy": 0.125
+      },
+      "16-23": {
+        "characters": 8,
+        "top1_accuracy": 0.125
+      },
+      "8-15": {
+        "characters": 8,
+        "top1_accuracy": 0.25
+      }
+    },
+    "Mary_Shelley": {
+      "0-7": {
+        "characters": 8,
+        "top1_accuracy": 0.25
+      },
+      "16-23": {
+        "characters": 8,
+        "top1_accuracy": 0.375
+      },
+      "8-15": {
+        "characters": 8,
+        "top1_accuracy": 0.0
+      }
+    }
+  },
+  "simulated_or_measured": "offline public-domain text benchmark; no participant data",
+  "split_sha256": "ba48f72b68c786ad26f8185e28df29ba3067a8eb515d91a29a38650f4c55f2da",
+  "status": "development_only_completed",
+  "topic_switch": {
+    "from": "Jane Austen training bank",
+    "label": "development-only cross-author topic switch; not participant evidence",
+    "metrics": {
+      "LM": {
+        "keystroke_savings_top3": 0.2916666666666667,
+        "mean_reciprocal_rank": 0.2643260684210574,
+        "mean_true_character_rank": 12.125,
+        "n_characters": 24,
+        "next_character_cross_entropy_nats": 4.7385874765323175,
+        "top_k_accuracy": {
+          "1": 0.125,
+          "3": 0.2916666666666667,
+          "5": 0.4166666666666667
+        }
+      },
+      "subject_bank": {
+        "keystroke_savings_top3": 0.375,
+        "mean_reciprocal_rank": 0.2984771025720916,
+        "mean_true_character_rank": 12.333333333333334,
+        "n_characters": 24,
+        "next_character_cross_entropy_nats": 5.217222969793891,
+        "top_k_accuracy": {
+          "1": 0.16666666666666666,
+          "3": 0.375,
+          "5": 0.4166666666666667
+        }
+      }
+    },
+    "to": "Herman Melville held-out text"
+  }
+}

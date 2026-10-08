@@ -1,0 +1,14 @@
+{
+  "status": "software_dry_run_only",
+  "text_source": "assistant-generated synthetic repeated prose",
+  "participant_data": false,
+  "counts": {
+    "total": 2030,
+    "bank_training": 1218,
+    "gate_tuning": 406,
+    "evaluation": 406
+  },
+  "scored_characters": 12,
+  "all_priors_finite_and_normalized": true,
+  "evaluation_tail_added_to_bank": false
+}

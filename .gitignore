@@ -33,3 +33,6 @@ results/tables/*.csv
 *.log
 
 data/evaluation/
+data/rag/development_banks/
+data/rag/study_q/
+data/rag/participant_local/

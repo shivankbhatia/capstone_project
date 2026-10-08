@@ -8,9 +8,11 @@ The one-shot Test result is **as-recorded depth only**: 1,296 characters had 4�
 
 The clean inner-OOF D+Q fusion effect is +5.46 percentage points under a descriptive DerSimonian–Laird random-effects summary (95% normal interval −0.48 to +11.41 points, only two studies). D and Q use different flash paradigms; this estimate is descriptive, not a precise cross-study generalization claim. See `results/tables/dq_inner_random_effects.json`.
 
-The RAG personalization gate is **no-go for performance claims**: Study Q provides repeated grid-key strings, not natural-language user history, and participant-authored corpora are not available. `splits/rag_lock.json` pre-registers the requirements for a later chronological corpus study. `RAGPredictor.update(decoded_text)` now supports session-local updates; no RAG language-level gain, learning curve, cold-start result, or topic-switch result is claimed.
+The RAG arm is implemented but **not cleared for a personalization claim or live-session use**. A capped, public-domain development smoke test (four authors, 24 held-out character cases each) produced macro next-character cross-entropy of 4.463 nats for LM-only and 3.763 for the gated blend; macro top-3 was 0.323 vs 0.479. Some author/model comparisons degraded, and the small development sample is not participant evidence. A synthetic self-generated dry run verified the local split/build/score path; no participant text was accessed. The 700-token chronological participant protocol and paired analysis are locked in `splits/rag_lock.json`. See `results/tables/rag_development_benchmark.json` and `docs/phase1-3_closeout.md`.
 
-The target-blind scheduler supports group masks and an idealized information-gain weighting variant. `splits/scheduler_lock.json` freezes the four modes, exploration-floor grid, target mix, and metrics before simulation. **The simulator and scheduler simulation have not run**, so G3 is unevaluated and no adaptive-flashing or Phase 4 go decision is authorized. Uniform flashing remains the live-data default; hardware and an ethics path exist, but participant access is pending.
+The target-blind scheduler supports group masks and an idealized information-gain variant, and its final target-spy test passes. The leave-subject-out simulator's depth curve passed for D and Q, but its D known-result accuracy missed the preregistered reference by 0.179 (allowed 0.05); Q passed. G3 is therefore **no-go / future work**, with no λ selection or four-scheduler simulation run. Uniform flashing remains the live-data policy. The simulator is explicitly limited by i.i.d. flash-logit sampling, which omits within-character dependence, adaptation, fatigue, and nonstationary artifacts. See `results/tables/eeg_simulator_loso_validation.json` and `splits/scheduler_lock.json`.
+
+**Phase 4 go/no-go:** EEG-only and fixed LM fusion remain in scope. RAG requires participant-text G2; adaptive scheduling requires a corrected simulator and a passing G3. With participant access pending and the simulator validation failed, the real-time plan retains uniform flashing and excludes RAG/scheduler from live-session time.
 
 > **Current Study D ablation status (October 2026):** the corrected, locked clean-M0 ladder is reported in [the final ablation section](#391-clean-m0-ablation-ladder-final-locked-replay). The earlier personalization table and its rung 3/4 claims are superseded; see `results/tables/personalization_ablation_studyd_status.json`. Older descriptions below are historical unless explicitly labeled current.
 
@@ -20,7 +22,7 @@ The main research question is:
 
 > Can a language model improve P300 spelling efficiency by guiding character selection when EEG evidence is uncertain, without overriding confident EEG decisions?
 
-The system answers this by preprocessing raw EDF recordings, training a memory-efficient P300 classifier, replaying character-level trials, and comparing EEG-only decoding against fixed, adaptive, and retrieval-augmented EEG+LLM fusion. The reported RAG condition uses a leakage-safe global pooled phrase bank while preserving the EEG classifier and Bayesian decoder.
+The system implements preprocessing, P300 classification, character-level replay, and EEG/LM/RAG decoding. Current evidence and gate decisions are summarized at the top of this README; historical Study D tables below remain explicitly labeled and should not be treated as current results.
 
 ### 1.2 Classifier-selection and held-out protocol correction (October 2026)
 
@@ -746,13 +748,13 @@ The decoding loop applies the selected LLM or RAG-LM prior as an initial log bia
 
 This design measures whether language context can reduce the number of flashes required while preserving or improving accuracy.
 
-### 6.1 Main five-arm results (held-out test split, real EEG + SWLDA)
+### 6.1 Historical main five-arm results (held-out test split, real EEG + SWLDA)
 
-> **Superseded pending clean rerun:** the following table and discussion are historical outputs. The classifier overlapped 19 manifest runs, and the stopping threshold was tuned on the held-out sessions; do not cite these values as valid held-out performance.
+> **Superseded historical output:** the following table and discussion used a classifier that overlapped 19 manifest runs, and its stopping threshold was tuned on held-out sessions. Do not cite these values as valid held-out performance. Current clean Study D results and the Phase 2/3 decisions are summarized at the top of this README and in `docs/phase1-3_closeout.md`.
 
 The RAG phrase bank is built exclusively from an 80% train split of Study D sessions (`scripts/build_phrase_bank_from_registry.py`); evaluation runs only on the remaining 20% held-out sessions (`data/processed/test_sessions.json`), so no target-vocabulary leaks between the phrase bank and the reported numbers. `rag_weight`/`retrieval_confidence_threshold` were selected via a 15-point grid sweep (`scripts/sweep_rag_params.py`, results in `results/tables/rag_sweep.json`) on that same train split.
 
-**Reported RAG condition.** The primary RAG result uses the global pooled
+**Historical RAG condition.** The old primary RAG result used the global pooled
 phrase bank (rung 2). This is the competitive, non-regressing condition for
 Study D; it is not a claim that the fixed Study-D corpus supports reliable
 subject-specific personalization.
@@ -785,7 +787,7 @@ and are never included in the held-out Study-D results.
 
 Full table: `results/tables/ablation_results.csv`. Figures: `results/figures/ablation_comparison.png` (per-metric bars), `results/figures/accuracy_vs_itr.png` (tradeoff scatter).
 
-**Takeaway:** any LLM prior roughly triples ITR over EEG-only decoding (2.62 → ~7). The reported global RAG condition is competitive with plain fixed fusion while using a leakage-safe, session-held-out pooled phrase bank rather than an oracle one. Per-subject retrieval is an architectural capability with an explicit data-sufficiency safeguard, not a performance claim for Study D's fixed-vocabulary corpus.
+**Historical takeaway only:** these old values are not valid current held-out evidence. Current RAG evidence is limited to the public-domain software smoke test at the top of this README; participant personalization remains unproven.
 
 ### 6.2 Subject-aware RAG diagnostic
 

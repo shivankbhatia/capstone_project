@@ -49,3 +49,34 @@ def test_update_without_personalized_subject_bank_is_noop(tmp_path):
     predictor = RAGPredictor(UniformPredictor(), phrase_bank_path=tmp_path / "empty.csv")
     assert predictor.update("decoded words") is False
     assert predictor.subject_phrases == []
+
+
+def test_token_mode_recognizes_multiword_and_special_key_aliases(tmp_path):
+    path = tmp_path / "bank.csv"
+    path.write_text("text\na b page down\na b backspace\n", encoding="utf-8")
+
+    class SpecialPredictor(UniformPredictor):
+        special_key_map = {"PgDn": "page down", "Bs": "backspace"}
+        char_list = ["A", "Sp", "Sleep", "PgUp", "PgDn", "Bs"]
+
+    predictor = RAGPredictor(SpecialPredictor(), phrase_bank_path=path, token_mode=True)
+    assert predictor._char_to_grid_index("page down") == 4
+    assert predictor._char_to_grid_index("backspace") == 5
+    assert predictor._matching_phrases("a b")[0].next_char in {"page down", "backspace"}
+
+
+def test_empty_oov_and_adversarial_banks_return_finite_normalized_priors(tmp_path):
+    empty = tmp_path / "empty.csv"
+    empty.write_text("text\n", encoding="utf-8")
+    predictor = RAGPredictor(UniformPredictor(), phrase_bank_path=empty, rag_weight=1.0)
+    prior = predictor.predict_next_char("unseen context")
+    assert np.isfinite(prior).all()
+    assert np.isclose(prior.sum(), 1.0)
+
+    adversarial = tmp_path / "adversarial.csv"
+    adversarial.write_text("text,weight\naaa,-1000000\naaa,1e300\n", encoding="utf-8")
+    robust = RAGPredictor(UniformPredictor(), phrase_bank_path=adversarial, rag_weight=1.0)
+    prior = robust.predict_next_char("aa")
+    assert np.isfinite(prior).all()
+    assert np.all(prior >= 0)
+    assert np.isclose(prior.sum(), 1.0)

@@ -8,8 +8,20 @@
     "q_test_gate": "results/tables/study_q_phase1_gate.json",
     "q_test_use": "only for the one-shot as-recorded validation; no scheduler tuning"
   },
-  "modes": ["uniform", "lm_guided", "lm_rag", "closed_loop"],
-  "exploration_floor_lambda_grid": [0.0, 0.05, 0.1, 0.2, 0.3, 0.5],
+  "modes": [
+    "uniform",
+    "lm_guided",
+    "lm_rag",
+    "closed_loop"
+  ],
+  "exploration_floor_lambda_grid": [
+    0.0,
+    0.05,
+    0.1,
+    0.2,
+    0.3,
+    0.5
+  ],
   "lambda_selection": "choose only from clean D/Q training-pool OOF simulation; do not select from Test or participant evaluation outcomes",
   "information_gain_variant": {
     "enabled_as_preregistered_ablation": true,
@@ -33,5 +45,36 @@
   "matched_accuracy_rule": "report comparisons only at operating points with absolute accuracy difference <= 0.01; otherwise report unmatched",
   "leakage_test": "scheduler state and call signatures must not accept target or true character; rerun spy test against final code",
   "decision": "Choose row/column adaptive repetition versus group-flash subsets only from the locked simulation. If G3 fails, keep uniform live flashing.",
-  "run_status": "not_run; simulator and RAG gate outcomes are prerequisites"
+  "run_status": "simulator_validation_failed_D_reference_scheduler_future_work",
+  "gate_decision": {
+    "g3": "no-go: D simulator known-result validation failed by 0.179 absolute accuracy against the preregistered 0.05 tolerance; no four-scheduler outcome simulation or lambda selection was run",
+    "live_policy": "uniform flashing",
+    "result_file": "results/tables/eeg_simulator_loso_validation.json"
+  },
+  "simulator_validation": {
+    "reference_values": {
+      "study_d_rung1_accuracy": 0.7581,
+      "study_q_inner_fused_accuracy": 0.6875
+    },
+    "reference_tolerance_absolute_accuracy": 0.05,
+    "leave_subject_out_curve": {
+      "fit_scope": "all subjects except each rotating validation subject; empirical target/non-target score distributions are study-pooled across training subjects only",
+      "curve_depths": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "pass_rule": "mean absolute error across depth points <= 0.10 and maximum pointwise absolute error <= 0.15 for each study-level curve",
+      "random_replicates": 20,
+      "seed": 20261008
+    },
+    "limitation": "i.i.d. flash-logit sampling ignores within-character temporal dependence, adaptation, fatigue, and nonstationary artifacts"
+  }
 }
