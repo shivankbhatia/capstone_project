@@ -1,0 +1,30 @@
+{
+  "audit_scope": "EDF paths and names only; no file contents opened",
+  "evaluation_session": "SE003",
+  "excluded_same_session_train_run_count": 180,
+  "excluded_training_runs": "splits/study_q_excluded_training_runs.json",
+  "excluded_training_runs_sha256": "f267f7751339dff9c1b214521c562ca98258846bfc2420a95d26f0b10817f3d1",
+  "manifest": "splits/study_q_manifest.json",
+  "manifest_run_count": 180,
+  "manifest_sha256": "39ed6801b2545f37f5f0b1019c01bec0e8fd6b7a6b4418c7014c00b9c689c973",
+  "official_test_run_count": 540,
+  "raw_edf_count": 1080,
+  "run_leakage_unit": "session (SE003 held out; same-session Train runs excluded)",
+  "session_counts_per_subject": {
+    "2": 1,
+    "3": 35
+  },
+  "split_condition_counts": {
+    "Test/ColorIntensification": 180,
+    "Test/Grey-to-Color": 180,
+    "Test/Grey-to-White": 180,
+    "Train/ColorIntensification": 180,
+    "Train/Grey-to-Color": 180,
+    "Train/Grey-to-White": 180
+  },
+  "study": "StudyQ",
+  "subject_count": 36,
+  "subjects_with_evaluation_session": 36,
+  "training_run_count": 540,
+  "warning": "This is a frozen path-derived split only; no Q EEG or labels have been evaluated."
+}

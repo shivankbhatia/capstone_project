@@ -43,6 +43,32 @@ def aggregate_flash_logits(logits, stimulus_codes, n_rows=9, n_cols=8):
     return SequenceEvidence(row, column, np.outer(row, column).ravel(), int(valid.sum()))
 
 
+def aggregate_membership_logits(logits, lit_masks, n_rows=9, n_cols=8):
+    """Aggregate group-flash logits into a grid posterior.
+
+    ``lit_masks`` contains one row-major binary membership vector per flash.
+    Each cell accumulates the target log-odds from every flash that included
+    it, matching the sufficient statistic used by the group-flash decoder.
+    """
+    values = np.asarray(logits, dtype=float).reshape(-1)
+    masks = np.asarray(lit_masks)
+    n_cells = int(n_rows) * int(n_cols)
+    if masks.ndim == 1:
+        # Accept the parser's compact strings as well as numeric matrices.
+        if len(masks) and isinstance(masks[0], (str, bytes)):
+            masks = np.asarray([[int(bit) for bit in mask] for mask in masks], dtype=float)
+        else:
+            raise ValueError("lit_masks must be a 2-D membership matrix or binary strings")
+    if masks.shape != (len(values), n_cells):
+        raise ValueError(f"lit_masks must have shape ({len(values)}, {n_cells})")
+    if not np.isfinite(values).all() or not np.isfinite(masks).all():
+        raise ValueError("logits and lit_masks must be finite")
+    if not np.isin(masks, (0, 1)).all():
+        raise ValueError("lit_masks must contain only zero and one")
+    scores = masks.T @ values
+    return softmax(scores)
+
+
 class SequentialDecoder:
     """Accumulate per-sequence grid posteriors under a single stopping rule."""
 

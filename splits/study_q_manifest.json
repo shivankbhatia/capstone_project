@@ -1,0 +1,254 @@
+{
+  "Q_01": [
+    "Q_01_SE003_ColorIntensification_Test06",
+    "Q_01_SE003_ColorIntensification_Test07",
+    "Q_01_SE003_ColorIntensification_Test08",
+    "Q_01_SE003_ColorIntensification_Test09",
+    "Q_01_SE003_ColorIntensification_Test10"
+  ],
+  "Q_02": [
+    "Q_02_SE003_Grey-to-Color_Test06",
+    "Q_02_SE003_Grey-to-Color_Test07",
+    "Q_02_SE003_Grey-to-Color_Test08",
+    "Q_02_SE003_Grey-to-Color_Test09",
+    "Q_02_SE003_Grey-to-Color_Test10"
+  ],
+  "Q_03": [
+    "Q_03_SE003_Grey-to-Color_Test06",
+    "Q_03_SE003_Grey-to-Color_Test07",
+    "Q_03_SE003_Grey-to-Color_Test08",
+    "Q_03_SE003_Grey-to-Color_Test09",
+    "Q_03_SE003_Grey-to-Color_Test10"
+  ],
+  "Q_04": [
+    "Q_04_SE003_ColorIntensification_Test06",
+    "Q_04_SE003_ColorIntensification_Test07",
+    "Q_04_SE003_ColorIntensification_Test08",
+    "Q_04_SE003_ColorIntensification_Test09",
+    "Q_04_SE003_ColorIntensification_Test10"
+  ],
+  "Q_05": [
+    "Q_05_SE003_Grey-to-White_Test06",
+    "Q_05_SE003_Grey-to-White_Test07",
+    "Q_05_SE003_Grey-to-White_Test08",
+    "Q_05_SE003_Grey-to-White_Test09",
+    "Q_05_SE003_Grey-to-White_Test10"
+  ],
+  "Q_06": [
+    "Q_06_SE003_Grey-to-White_Test06",
+    "Q_06_SE003_Grey-to-White_Test07",
+    "Q_06_SE003_Grey-to-White_Test08",
+    "Q_06_SE003_Grey-to-White_Test09",
+    "Q_06_SE003_Grey-to-White_Test10"
+  ],
+  "Q_07": [
+    "Q_07_SE003_Grey-to-White_Test06",
+    "Q_07_SE003_Grey-to-White_Test07",
+    "Q_07_SE003_Grey-to-White_Test08",
+    "Q_07_SE003_Grey-to-White_Test09",
+    "Q_07_SE003_Grey-to-White_Test10"
+  ],
+  "Q_08": [
+    "Q_08_SE003_ColorIntensification_Test06",
+    "Q_08_SE003_ColorIntensification_Test07",
+    "Q_08_SE003_ColorIntensification_Test08",
+    "Q_08_SE003_ColorIntensification_Test09",
+    "Q_08_SE003_ColorIntensification_Test10"
+  ],
+  "Q_09": [
+    "Q_09_SE003_Grey-to-Color_Test06",
+    "Q_09_SE003_Grey-to-Color_Test07",
+    "Q_09_SE003_Grey-to-Color_Test08",
+    "Q_09_SE003_Grey-to-Color_Test09",
+    "Q_09_SE003_Grey-to-Color_Test10"
+  ],
+  "Q_10": [
+    "Q_10_SE003_Grey-to-Color_Test06",
+    "Q_10_SE003_Grey-to-Color_Test07",
+    "Q_10_SE003_Grey-to-Color_Test08",
+    "Q_10_SE003_Grey-to-Color_Test09",
+    "Q_10_SE003_Grey-to-Color_Test10"
+  ],
+  "Q_11": [
+    "Q_11_SE003_Grey-to-White_Test06",
+    "Q_11_SE003_Grey-to-White_Test07",
+    "Q_11_SE003_Grey-to-White_Test08",
+    "Q_11_SE003_Grey-to-White_Test09",
+    "Q_11_SE003_Grey-to-White_Test10"
+  ],
+  "Q_12": [
+    "Q_12_SE003_ColorIntensification_Test06",
+    "Q_12_SE003_ColorIntensification_Test07",
+    "Q_12_SE003_ColorIntensification_Test08",
+    "Q_12_SE003_ColorIntensification_Test09",
+    "Q_12_SE003_ColorIntensification_Test10"
+  ],
+  "Q_13": [
+    "Q_13_SE003_ColorIntensification_Test06",
+    "Q_13_SE003_ColorIntensification_Test07",
+    "Q_13_SE003_ColorIntensification_Test08",
+    "Q_13_SE003_ColorIntensification_Test09",
+    "Q_13_SE003_ColorIntensification_Test10"
+  ],
+  "Q_14": [
+    "Q_14_SE003_ColorIntensification_Test06",
+    "Q_14_SE003_ColorIntensification_Test07",
+    "Q_14_SE003_ColorIntensification_Test08",
+    "Q_14_SE003_ColorIntensification_Test09",
+    "Q_14_SE003_ColorIntensification_Test10"
+  ],
+  "Q_15": [
+    "Q_15_SE003_Grey-to-White_Test06",
+    "Q_15_SE003_Grey-to-White_Test07",
+    "Q_15_SE003_Grey-to-White_Test08",
+    "Q_15_SE003_Grey-to-White_Test09",
+    "Q_15_SE003_Grey-to-White_Test10"
+  ],
+  "Q_16": [
+    "Q_16_SE003_Grey-to-White_Test06",
+    "Q_16_SE003_Grey-to-White_Test07",
+    "Q_16_SE003_Grey-to-White_Test08",
+    "Q_16_SE003_Grey-to-White_Test09",
+    "Q_16_SE003_Grey-to-White_Test10"
+  ],
+  "Q_17": [
+    "Q_17_SE003_ColorIntensification_Test06",
+    "Q_17_SE003_ColorIntensification_Test07",
+    "Q_17_SE003_ColorIntensification_Test08",
+    "Q_17_SE003_ColorIntensification_Test09",
+    "Q_17_SE003_ColorIntensification_Test10"
+  ],
+  "Q_18": [
+    "Q_18_SE003_Grey-to-White_Test07",
+    "Q_18_SE003_Grey-to-White_Test08",
+    "Q_18_SE003_Grey-to-White_Test09",
+    "Q_18_SE003_Grey-to-White_Test10",
+    "Q_18_SE003_Grey-to-White_Test11"
+  ],
+  "Q_19": [
+    "Q_19_SE003_Grey-to-Color_Test06",
+    "Q_19_SE003_Grey-to-Color_Test07",
+    "Q_19_SE003_Grey-to-Color_Test08",
+    "Q_19_SE003_Grey-to-Color_Test09",
+    "Q_19_SE003_Grey-to-Color_Test10"
+  ],
+  "Q_20": [
+    "Q_20_SE003_Grey-to-Color_Test06",
+    "Q_20_SE003_Grey-to-Color_Test07",
+    "Q_20_SE003_Grey-to-Color_Test08",
+    "Q_20_SE003_Grey-to-Color_Test09",
+    "Q_20_SE003_Grey-to-Color_Test10"
+  ],
+  "Q_21": [
+    "Q_21_SE003_Grey-to-White_Test06",
+    "Q_21_SE003_Grey-to-White_Test07",
+    "Q_21_SE003_Grey-to-White_Test08",
+    "Q_21_SE003_Grey-to-White_Test09",
+    "Q_21_SE003_Grey-to-White_Test10"
+  ],
+  "Q_22": [
+    "Q_22_SE003_Grey-to-Color_Test06",
+    "Q_22_SE003_Grey-to-Color_Test07",
+    "Q_22_SE003_Grey-to-Color_Test08",
+    "Q_22_SE003_Grey-to-Color_Test09",
+    "Q_22_SE003_Grey-to-Color_Test10"
+  ],
+  "Q_23": [
+    "Q_23_SE003_ColorIntensification_Test06",
+    "Q_23_SE003_ColorIntensification_Test07",
+    "Q_23_SE003_ColorIntensification_Test08",
+    "Q_23_SE003_ColorIntensification_Test09",
+    "Q_23_SE003_ColorIntensification_Test10"
+  ],
+  "Q_24": [
+    "Q_24_SE003_Grey-to-White_Test06",
+    "Q_24_SE003_Grey-to-White_Test07",
+    "Q_24_SE003_Grey-to-White_Test08",
+    "Q_24_SE003_Grey-to-White_Test09",
+    "Q_24_SE003_Grey-to-White_Test10"
+  ],
+  "Q_25": [
+    "Q_25_SE003_ColorIntensification_Test06",
+    "Q_25_SE003_ColorIntensification_Test07",
+    "Q_25_SE003_ColorIntensification_Test08",
+    "Q_25_SE003_ColorIntensification_Test09",
+    "Q_25_SE003_ColorIntensification_Test10"
+  ],
+  "Q_26": [
+    "Q_26_SE003_Grey-to-Color_Test06",
+    "Q_26_SE003_Grey-to-Color_Test07",
+    "Q_26_SE003_Grey-to-Color_Test08",
+    "Q_26_SE003_Grey-to-Color_Test09",
+    "Q_26_SE003_Grey-to-Color_Test10"
+  ],
+  "Q_27": [
+    "Q_27_SE003_Grey-to-White_Test06",
+    "Q_27_SE003_Grey-to-White_Test07",
+    "Q_27_SE003_Grey-to-White_Test08",
+    "Q_27_SE003_Grey-to-White_Test09",
+    "Q_27_SE003_Grey-to-White_Test10"
+  ],
+  "Q_28": [
+    "Q_28_SE003_Grey-to-Color_Test06",
+    "Q_28_SE003_Grey-to-Color_Test07",
+    "Q_28_SE003_Grey-to-Color_Test08",
+    "Q_28_SE003_Grey-to-Color_Test09",
+    "Q_28_SE003_Grey-to-Color_Test10"
+  ],
+  "Q_29": [
+    "Q_29_SE003_Grey-to-White_Test06",
+    "Q_29_SE003_Grey-to-White_Test07",
+    "Q_29_SE003_Grey-to-White_Test08",
+    "Q_29_SE003_Grey-to-White_Test09",
+    "Q_29_SE003_Grey-to-White_Test10"
+  ],
+  "Q_30": [
+    "Q_30_SE003_ColorIntensification_Test06",
+    "Q_30_SE003_ColorIntensification_Test07",
+    "Q_30_SE003_ColorIntensification_Test08",
+    "Q_30_SE003_ColorIntensification_Test09",
+    "Q_30_SE003_ColorIntensification_Test10"
+  ],
+  "Q_31": [
+    "Q_31_SE003_Grey-to-Color_Test06",
+    "Q_31_SE003_Grey-to-Color_Test07",
+    "Q_31_SE003_Grey-to-Color_Test08",
+    "Q_31_SE003_Grey-to-Color_Test09",
+    "Q_31_SE003_Grey-to-Color_Test10"
+  ],
+  "Q_32": [
+    "Q_32_SE003_Grey-to-Color_Test06",
+    "Q_32_SE003_Grey-to-Color_Test07",
+    "Q_32_SE003_Grey-to-Color_Test08",
+    "Q_32_SE003_Grey-to-Color_Test09",
+    "Q_32_SE003_Grey-to-Color_Test10"
+  ],
+  "Q_33": [
+    "Q_33_SE003_Grey-to-Color_Test06",
+    "Q_33_SE003_Grey-to-Color_Test07",
+    "Q_33_SE003_Grey-to-Color_Test08",
+    "Q_33_SE003_Grey-to-Color_Test09",
+    "Q_33_SE003_Grey-to-Color_Test11"
+  ],
+  "Q_34": [
+    "Q_34_SE003_Grey-to-White_Test06",
+    "Q_34_SE003_Grey-to-White_Test07",
+    "Q_34_SE003_Grey-to-White_Test08",
+    "Q_34_SE003_Grey-to-White_Test09",
+    "Q_34_SE003_Grey-to-White_Test10"
+  ],
+  "Q_35": [
+    "Q_35_SE003_Grey-to-White_Test06",
+    "Q_35_SE003_Grey-to-White_Test07",
+    "Q_35_SE003_Grey-to-White_Test08",
+    "Q_35_SE003_Grey-to-White_Test09",
+    "Q_35_SE003_Grey-to-White_Test10"
+  ],
+  "Q_36": [
+    "Q_36_SE003_ColorIntensification_Test06",
+    "Q_36_SE003_ColorIntensification_Test07",
+    "Q_36_SE003_ColorIntensification_Test08",
+    "Q_36_SE003_ColorIntensification_Test09",
+    "Q_36_SE003_ColorIntensification_Test10"
+  ]
+}

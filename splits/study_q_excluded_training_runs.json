@@ -1,0 +1,254 @@
+{
+  "Q_01": [
+    "Q_01_SE003_ColorIntensification_Train01",
+    "Q_01_SE003_ColorIntensification_Train02",
+    "Q_01_SE003_ColorIntensification_Train03",
+    "Q_01_SE003_ColorIntensification_Train04",
+    "Q_01_SE003_ColorIntensification_Train05"
+  ],
+  "Q_02": [
+    "Q_02_SE003_Grey-to-Color_Train01",
+    "Q_02_SE003_Grey-to-Color_Train02",
+    "Q_02_SE003_Grey-to-Color_Train03",
+    "Q_02_SE003_Grey-to-Color_Train04",
+    "Q_02_SE003_Grey-to-Color_Train05"
+  ],
+  "Q_03": [
+    "Q_03_SE003_Grey-to-Color_Train01",
+    "Q_03_SE003_Grey-to-Color_Train02",
+    "Q_03_SE003_Grey-to-Color_Train03",
+    "Q_03_SE003_Grey-to-Color_Train04",
+    "Q_03_SE003_Grey-to-Color_Train05"
+  ],
+  "Q_04": [
+    "Q_04_SE003_ColorIntensification_Train01",
+    "Q_04_SE003_ColorIntensification_Train02",
+    "Q_04_SE003_ColorIntensification_Train03",
+    "Q_04_SE003_ColorIntensification_Train04",
+    "Q_04_SE003_ColorIntensification_Train05"
+  ],
+  "Q_05": [
+    "Q_05_SE003_Grey-to-White_Train01",
+    "Q_05_SE003_Grey-to-White_Train02",
+    "Q_05_SE003_Grey-to-White_Train03",
+    "Q_05_SE003_Grey-to-White_Train04",
+    "Q_05_SE003_Grey-to-White_Train05"
+  ],
+  "Q_06": [
+    "Q_06_SE003_Grey-to-White_Train01",
+    "Q_06_SE003_Grey-to-White_Train02",
+    "Q_06_SE003_Grey-to-White_Train03",
+    "Q_06_SE003_Grey-to-White_Train04",
+    "Q_06_SE003_Grey-to-White_Train05"
+  ],
+  "Q_07": [
+    "Q_07_SE003_Grey-to-White_Train01",
+    "Q_07_SE003_Grey-to-White_Train02",
+    "Q_07_SE003_Grey-to-White_Train03",
+    "Q_07_SE003_Grey-to-White_Train04",
+    "Q_07_SE003_Grey-to-White_Train05"
+  ],
+  "Q_08": [
+    "Q_08_SE003_ColorIntensification_Train01",
+    "Q_08_SE003_ColorIntensification_Train02",
+    "Q_08_SE003_ColorIntensification_Train03",
+    "Q_08_SE003_ColorIntensification_Train04",
+    "Q_08_SE003_ColorIntensification_Train05"
+  ],
+  "Q_09": [
+    "Q_09_SE003_Grey-to-Color_Train01",
+    "Q_09_SE003_Grey-to-Color_Train02",
+    "Q_09_SE003_Grey-to-Color_Train03",
+    "Q_09_SE003_Grey-to-Color_Train04",
+    "Q_09_SE003_Grey-to-Color_Train05"
+  ],
+  "Q_10": [
+    "Q_10_SE003_Grey-to-Color_Train01",
+    "Q_10_SE003_Grey-to-Color_Train02",
+    "Q_10_SE003_Grey-to-Color_Train03",
+    "Q_10_SE003_Grey-to-Color_Train04",
+    "Q_10_SE003_Grey-to-Color_Train05"
+  ],
+  "Q_11": [
+    "Q_11_SE003_Grey-to-White_Train01",
+    "Q_11_SE003_Grey-to-White_Train02",
+    "Q_11_SE003_Grey-to-White_Train03",
+    "Q_11_SE003_Grey-to-White_Train04",
+    "Q_11_SE003_Grey-to-White_Train05"
+  ],
+  "Q_12": [
+    "Q_12_SE003_ColorIntensification_Train01",
+    "Q_12_SE003_ColorIntensification_Train02",
+    "Q_12_SE003_ColorIntensification_Train03",
+    "Q_12_SE003_ColorIntensification_Train04",
+    "Q_12_SE003_ColorIntensification_Train05"
+  ],
+  "Q_13": [
+    "Q_13_SE003_ColorIntensification_Train01",
+    "Q_13_SE003_ColorIntensification_Train02",
+    "Q_13_SE003_ColorIntensification_Train03",
+    "Q_13_SE003_ColorIntensification_Train04",
+    "Q_13_SE003_ColorIntensification_Train05"
+  ],
+  "Q_14": [
+    "Q_14_SE003_ColorIntensification_Train01",
+    "Q_14_SE003_ColorIntensification_Train02",
+    "Q_14_SE003_ColorIntensification_Train03",
+    "Q_14_SE003_ColorIntensification_Train04",
+    "Q_14_SE003_ColorIntensification_Train05"
+  ],
+  "Q_15": [
+    "Q_15_SE003_Grey-to-White_Train01",
+    "Q_15_SE003_Grey-to-White_Train02",
+    "Q_15_SE003_Grey-to-White_Train03",
+    "Q_15_SE003_Grey-to-White_Train04",
+    "Q_15_SE003_Grey-to-White_Train05"
+  ],
+  "Q_16": [
+    "Q_16_SE003_Grey-to-White_Train01",
+    "Q_16_SE003_Grey-to-White_Train02",
+    "Q_16_SE003_Grey-to-White_Train03",
+    "Q_16_SE003_Grey-to-White_Train04",
+    "Q_16_SE003_Grey-to-White_Train05"
+  ],
+  "Q_17": [
+    "Q_17_SE003_ColorIntensification_Train01",
+    "Q_17_SE003_ColorIntensification_Train02",
+    "Q_17_SE003_ColorIntensification_Train03",
+    "Q_17_SE003_ColorIntensification_Train04",
+    "Q_17_SE003_ColorIntensification_Train05"
+  ],
+  "Q_18": [
+    "Q_18_SE003_Grey-to-White_Train02",
+    "Q_18_SE003_Grey-to-White_Train03",
+    "Q_18_SE003_Grey-to-White_Train04",
+    "Q_18_SE003_Grey-to-White_Train05",
+    "Q_18_SE003_Grey-to-White_Train06"
+  ],
+  "Q_19": [
+    "Q_19_SE003_Grey-to-Color_Train01",
+    "Q_19_SE003_Grey-to-Color_Train02",
+    "Q_19_SE003_Grey-to-Color_Train03",
+    "Q_19_SE003_Grey-to-Color_Train04",
+    "Q_19_SE003_Grey-to-Color_Train05"
+  ],
+  "Q_20": [
+    "Q_20_SE003_Grey-to-Color_Train01",
+    "Q_20_SE003_Grey-to-Color_Train02",
+    "Q_20_SE003_Grey-to-Color_Train03",
+    "Q_20_SE003_Grey-to-Color_Train04",
+    "Q_20_SE003_Grey-to-Color_Train05"
+  ],
+  "Q_21": [
+    "Q_21_SE003_Grey-to-White_Train01",
+    "Q_21_SE003_Grey-to-White_Train02",
+    "Q_21_SE003_Grey-to-White_Train03",
+    "Q_21_SE003_Grey-to-White_Train04",
+    "Q_21_SE003_Grey-to-White_Train05"
+  ],
+  "Q_22": [
+    "Q_22_SE003_Grey-to-Color_Train01",
+    "Q_22_SE003_Grey-to-Color_Train02",
+    "Q_22_SE003_Grey-to-Color_Train03",
+    "Q_22_SE003_Grey-to-Color_Train04",
+    "Q_22_SE003_Grey-to-Color_Train05"
+  ],
+  "Q_23": [
+    "Q_23_SE003_ColorIntensification_Train01",
+    "Q_23_SE003_ColorIntensification_Train02",
+    "Q_23_SE003_ColorIntensification_Train03",
+    "Q_23_SE003_ColorIntensification_Train04",
+    "Q_23_SE003_ColorIntensification_Train05"
+  ],
+  "Q_24": [
+    "Q_24_SE003_Grey-to-White_Train01",
+    "Q_24_SE003_Grey-to-White_Train02",
+    "Q_24_SE003_Grey-to-White_Train03",
+    "Q_24_SE003_Grey-to-White_Train04",
+    "Q_24_SE003_Grey-to-White_Train05"
+  ],
+  "Q_25": [
+    "Q_25_SE003_ColorIntensification_Train01",
+    "Q_25_SE003_ColorIntensification_Train02",
+    "Q_25_SE003_ColorIntensification_Train03",
+    "Q_25_SE003_ColorIntensification_Train04",
+    "Q_25_SE003_ColorIntensification_Train05"
+  ],
+  "Q_26": [
+    "Q_26_SE003_Grey-to-Color_Train01",
+    "Q_26_SE003_Grey-to-Color_Train02",
+    "Q_26_SE003_Grey-to-Color_Train03",
+    "Q_26_SE003_Grey-to-Color_Train04",
+    "Q_26_SE003_Grey-to-Color_Train05"
+  ],
+  "Q_27": [
+    "Q_27_SE003_Grey-to-White_Train01",
+    "Q_27_SE003_Grey-to-White_Train02",
+    "Q_27_SE003_Grey-to-White_Train03",
+    "Q_27_SE003_Grey-to-White_Train04",
+    "Q_27_SE003_Grey-to-White_Train05"
+  ],
+  "Q_28": [
+    "Q_28_SE003_Grey-to-Color_Train01",
+    "Q_28_SE003_Grey-to-Color_Train02",
+    "Q_28_SE003_Grey-to-Color_Train03",
+    "Q_28_SE003_Grey-to-Color_Train04",
+    "Q_28_SE003_Grey-to-Color_Train05"
+  ],
+  "Q_29": [
+    "Q_29_SE003_Grey-to-White_Train01",
+    "Q_29_SE003_Grey-to-White_Train02",
+    "Q_29_SE003_Grey-to-White_Train03",
+    "Q_29_SE003_Grey-to-White_Train04",
+    "Q_29_SE003_Grey-to-White_Train05"
+  ],
+  "Q_30": [
+    "Q_30_SE003_ColorIntensification_Train01",
+    "Q_30_SE003_ColorIntensification_Train02",
+    "Q_30_SE003_ColorIntensification_Train03",
+    "Q_30_SE003_ColorIntensification_Train04",
+    "Q_30_SE003_ColorIntensification_Train05"
+  ],
+  "Q_31": [
+    "Q_31_SE003_Grey-to-Color_Train01",
+    "Q_31_SE003_Grey-to-Color_Train02",
+    "Q_31_SE003_Grey-to-Color_Train03",
+    "Q_31_SE003_Grey-to-Color_Train04",
+    "Q_31_SE003_Grey-to-Color_Train05"
+  ],
+  "Q_32": [
+    "Q_32_SE003_Grey-to-Color_Train01",
+    "Q_32_SE003_Grey-to-Color_Train02",
+    "Q_32_SE003_Grey-to-Color_Train03",
+    "Q_32_SE003_Grey-to-Color_Train04",
+    "Q_32_SE003_Grey-to-Color_Train05"
+  ],
+  "Q_33": [
+    "Q_33_SE003_Grey-to-Color_Train01",
+    "Q_33_SE003_Grey-to-Color_Train02",
+    "Q_33_SE003_Grey-to-Color_Train03",
+    "Q_33_SE003_Grey-to-Color_Train04",
+    "Q_33_SE003_Grey-to-Color_Train05"
+  ],
+  "Q_34": [
+    "Q_34_SE003_Grey-to-White_Train01",
+    "Q_34_SE003_Grey-to-White_Train02",
+    "Q_34_SE003_Grey-to-White_Train03",
+    "Q_34_SE003_Grey-to-White_Train04",
+    "Q_34_SE003_Grey-to-White_Train05"
+  ],
+  "Q_35": [
+    "Q_35_SE003_Grey-to-White_Train01",
+    "Q_35_SE003_Grey-to-White_Train02",
+    "Q_35_SE003_Grey-to-White_Train03",
+    "Q_35_SE003_Grey-to-White_Train04",
+    "Q_35_SE003_Grey-to-White_Train05"
+  ],
+  "Q_36": [
+    "Q_36_SE003_ColorIntensification_Train01",
+    "Q_36_SE003_ColorIntensification_Train02",
+    "Q_36_SE003_ColorIntensification_Train03",
+    "Q_36_SE003_ColorIntensification_Train04",
+    "Q_36_SE003_ColorIntensification_Train05"
+  ]
+}

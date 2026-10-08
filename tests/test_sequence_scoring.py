@@ -5,6 +5,7 @@ from scipy.special import softmax
 from src.evaluation.sequence_scoring import (
     SequentialDecoder,
     aggregate_flash_logits,
+    aggregate_membership_logits,
     variable_time_itr,
 )
 from src.models.decoder import calculate_itr
@@ -31,6 +32,29 @@ def test_flash_logits_require_both_axes_and_ignore_invalid_codes():
     result = aggregate_flash_logits([0.2, np.nan, 0.4], [1, 99, 10])
     assert result.valid_flash_count == 2
     assert result.grid.shape == (72,)
+
+
+def test_group_membership_logits_match_row_column_grid_posterior():
+    n_rows, n_cols = 3, 2
+    codes = np.array([1, 2, 3, 4, 5])
+    logits = np.array([0.2, -0.4, 0.7, 0.1, -0.2])
+    masks = []
+    for code in codes:
+        mask = np.zeros(n_rows * n_cols, dtype=int)
+        if code <= n_rows:
+            mask[(code - 1) * n_cols:code * n_cols] = 1
+        else:
+            mask[code - n_rows - 1::n_cols] = 1
+        masks.append(mask)
+    np.testing.assert_allclose(
+        aggregate_membership_logits(logits, masks, n_rows, n_cols),
+        aggregate_flash_logits(logits, codes, n_rows, n_cols).grid,
+    )
+
+
+def test_group_membership_accepts_parser_binary_strings():
+    actual = aggregate_membership_logits([1.0, -1.0], ["10", "01"], 1, 2)
+    assert actual[0] > actual[1]
 
 
 def test_shared_stopping_waits_for_minimum_and_uses_threshold():
