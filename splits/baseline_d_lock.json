@@ -1,0 +1,65 @@
+{
+  "lock_version": 1,
+  "phase": "baseline_d_final",
+  "created_from_git_hash": "494066ac2dde615c7852ac5ed5e5a83bd2aa92d4",
+  "frozen_git_tag": "baseline-d-final",
+  "study": "StudyD",
+  "heldout_policy": "Do not touch the 57-run manifest for OOF reconciliation; preserve existing held-out locks unchanged.",
+  "parents": {
+    "classifier_lock": "splits/finalist_lock.json",
+    "classifier_lock_sha256": "46e7c2008f89c772158e3f11aedb4af799e09b1fbc30a0c628df6c079731509a",
+    "ablation_lock": "splits/ablation_lock.json",
+    "ablation_lock_sha256": "840c12db474735757ece08ae70b489795870c09933dfd18819a34a32de895095",
+    "manifest": "splits/heldout_manifest.json",
+    "manifest_sha256": "de2fd72215e6f2766cc66c629ebd08fd9a1c55b6dab40c63a2e7890a0a8bac7b"
+  },
+  "shared_scoring": {
+    "module": "src/evaluation/sequence_scoring.py",
+    "sha256": "5c5f5e0618e0777519be5bbce4ef7c174ca9e47d3e2c98c9c8df7010be44a465",
+    "used_by": [
+      "scripts/evaluate_inner_fusion.py",
+      "scripts/evaluate_classifier_manifest.py",
+      "scripts/run_clean_m0_ablation_ladder.py",
+      "src/models/decoder.py"
+    ]
+  },
+  "oof_audit": {
+    "scores": "results/tables/classifier_nested_calibration_scores.npz",
+    "scores_sha256": "d99a52854c4f267d9fee9de6641ac30fb417d9a38d32969d7195c6d51f6daf42",
+    "cache": "data/cache/classifier_epochs.h5",
+    "cache_sha256": "8811ec22ee33a0053e29e02aa9aa862855a1f6514e5d1b22fd5b5332dd2ffa81",
+    "parity_result": "results/tables/phase0_oof_evaluator_parity.json",
+    "oof_characters": 498,
+    "oof_runs": 83,
+    "subjects": 17,
+    "alphas": [
+      0.0,
+      0.1,
+      0.85
+    ],
+    "stopping": {
+      "tau": 0.8,
+      "min_sequences": 2,
+      "max_sequences": 10
+    },
+    "decision_mismatches": 0,
+    "stopping_depth_mismatches": 0
+  },
+  "fusion_effect": {
+    "alpha_0p1_vs_eeg_only_percentage_points": 2.409638554216864,
+    "alpha_0p85_vs_eeg_only_percentage_points": 4.81927710843374
+  },
+  "previous_oof_result": {
+    "status": "quarantined_unverifiable_input_provenance",
+    "reason": "Prior result did not record the ignored cache SHA; current cache cannot be verified byte-identical.",
+    "prior_fused_accuracy_alpha_0p1": 0.8714859437751004,
+    "recomputed_fused_accuracy_alpha_0p1": 0.8192771084337349,
+    "eeg_only_accuracy_both": 0.7951807228915663
+  },
+  "readiness": {
+    "hardware": "available; details pending documentation",
+    "ethics": "approval path available; approval not confirmed",
+    "participants": "pending",
+    "decision": "self-test/demo only until all prerequisites are confirmed"
+  }
+}

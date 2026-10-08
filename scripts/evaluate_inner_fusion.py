@@ -10,35 +10,31 @@ import sys
 
 import h5py
 import numpy as np
-from scipy.special import softmax
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from run_pipeline import load_spelling_matrix  # noqa: E402
-from src.models.decoder import calculate_itr  # noqa: E402
+from src.evaluation.sequence_scoring import (  # noqa: E402
+    SequentialDecoder, aggregate_flash_logits, variable_time_itr,
+)
 from src.models.fusion import BayesianFusionEngine  # noqa: E402
 from src.models.llm_predictor import LLMPredictor  # noqa: E402
 from scripts.screen_shrinkage_lda import _load_metadata, _decode_strings  # noqa: E402
 
 
 def _grid_sequence(logits, labels, codes):
-    rows, cols = np.zeros(9), np.zeros(8)
     target_codes = codes[labels == 1]
     true_row = target_codes[(target_codes >= 1) & (target_codes <= 9)]
     true_col = target_codes[(target_codes >= 10) & (target_codes <= 17)]
     if not len(true_row) or not len(true_col):
         return None
-    for logit, code in zip(logits, codes):
-        if 1 <= code <= 9:
-            rows[code - 1] += logit
-        elif 10 <= code <= 17:
-            cols[code - 10] += logit
-    cell = np.zeros((9, 8))
-    cell[:] = rows[:, None] + cols[None, :]
+    evidence = aggregate_flash_logits(logits, codes, n_rows=9, n_cols=8)
+    if evidence is None:
+        return None
     true_r = int(np.bincount(true_row - 1).argmax())
     true_c = int(np.bincount(true_col - 10).argmax())
-    return softmax(cell.ravel()), softmax(rows), softmax(cols), true_r, true_c
+    return evidence.grid, evidence.row, evidence.column, true_r, true_c
 
 
 def _ece(confidences, accuracies, bins=15):
@@ -94,23 +90,17 @@ def _decode_model(logits, meta, char_list, llm_priors, tau=0.80, min_seq=2, max_
             initial = engine.get_initial_log_bias(prior)
         else:
             initial = np.zeros(len(char_list), dtype=float)
-        accumulated = initial.copy()
+        decoder = SequentialDecoder(len(char_list), initial, tau, min_seq, max_seq)
         stopped_prediction, stopped_at = None, None
         for step, (_, p, _, _, _) in enumerate(seqs[:max_seq], start=1):
-            accumulated += np.log(np.clip(p, 1e-9, 1.0))
-            post = softmax(accumulated)
-            prediction = int(post.argmax())
-            if step >= min_seq and post.max() >= tau:
-                stopped_prediction, stopped_at = prediction, step
+            post, stopped = decoder.add(p)
+            if stopped:
+                stopped_prediction, stopped_at = int(post.argmax()), step
                 break
         if stopped_prediction is None:
             # Match the locked policy's max-sequence fallback.
-            stopped_at = min(len(seqs), max_seq)
-            used = seqs[:stopped_at]
-            accumulated = initial.copy()
-            for _, p, _, _, _ in used:
-                accumulated += np.log(np.clip(p, 1e-9, 1.0))
-            stopped_prediction = int(softmax(accumulated).argmax())
+            stopped_at = decoder.sequences_used
+            stopped_prediction = int(decoder.posterior.argmax())
         full_acc = initial.copy()
         for _, p, _, _, _ in seqs[:max_seq]:
             full_acc += np.log(np.clip(p, 1e-9, 1.0))
@@ -158,7 +148,7 @@ def _summarize(char_results, sequence_nll, sequence_calibration):
     mean_sequences = (
         float(np.mean([x["sequences_used"] for x in char_results])) if n else None
     )
-    itr = calculate_itr(72, stopped_accuracy * 100, mean_sequences * 2.0) if n else None
+    itr = variable_time_itr(72, stopped_accuracy, mean_sequences * 2.0) if n else None
     return {
         "characters": n,
         "stopped_accuracy": stopped_accuracy,

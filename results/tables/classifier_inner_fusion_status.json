@@ -1,0 +1,11 @@
+{
+  "status": "recomputed_phase0_shared_scoring",
+  "canonical_result": "results/tables/classifier_inner_fusion.json",
+  "previous_version_commit": "494066a",
+  "prior_m0_alpha_0p1_fused_accuracy": 0.8714859437751004,
+  "recomputed_m0_alpha_0p1_fused_accuracy": 0.8192771084337349,
+  "prior_eeg_only_accuracy": 0.7951807228915663,
+  "recomputed_eeg_only_accuracy": 0.7951807228915663,
+  "note": "The prior run did not record the ignored HDF5 cache content hash. The currently available cache cannot be proven byte-identical to the one used then, so the prior fused accuracy is quarantined rather than treated as a regression of the shared implementation. Current canonical result records score and cache hashes in phase0_oof_evaluator_parity.json.",
+  "root_cause_classification": "unverifiable_input_provenance_cache_hash_missing"
+}

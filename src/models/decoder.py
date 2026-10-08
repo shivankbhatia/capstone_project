@@ -5,6 +5,7 @@ No-LM baseline accuracy/ITR computed here. Fill in during Day 4.
 """
 
 import numpy as np
+from src.evaluation.sequence_scoring import variable_time_itr
 
 class P300Decoder:
     def __init__(self, spelling_matrix):
@@ -58,18 +59,4 @@ def calculate_itr(num_classes, accuracy_pct, time_per_selection):
     if time_per_selection <= 0:
         raise ValueError("Time per selection must be > 0")
 
-    P = accuracy_pct / 100.0
-    N = num_classes
-
-    if P == 1.0:
-        bits_per_selection = np.log2(N)
-    elif P <= 0.0:
-        bits_per_selection = 0.0
-    else:
-        bits_per_selection = np.log2(N) + P * np.log2(P) + (1 - P) * np.log2((1 - P) / (N - 1))
-
-    # Ensure bits per selection doesn't go negative due to noise
-    bits_per_selection = max(0.0, bits_per_selection)
-
-    itr = bits_per_selection * (60.0 / time_per_selection)
-    return itr
+    return variable_time_itr(num_classes, accuracy_pct / 100.0, time_per_selection)

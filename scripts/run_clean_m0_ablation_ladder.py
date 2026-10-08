@@ -12,7 +12,6 @@ import sys
 
 import joblib
 import numpy as np
-from scipy.special import softmax
 from scipy.stats import wilcoxon
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,7 +20,9 @@ sys.path.insert(0, str(ROOT))
 from run_pipeline import load_spelling_matrix  # noqa: E402
 from scripts.evaluate_classifier_manifest import _channel_order  # noqa: E402
 from src.data.batch_preprocess import parse_bigp3bci_edf  # noqa: E402
-from src.models.decoder import calculate_itr  # noqa: E402
+from src.evaluation.sequence_scoring import (  # noqa: E402
+    SequentialDecoder, aggregate_flash_logits, variable_time_itr,
+)
 from src.models.fusion import BayesianFusionEngine  # noqa: E402
 from src.models.llm_predictor import LLMPredictor  # noqa: E402
 from src.models.rag_predictor import RAGPredictor  # noqa: E402
@@ -111,26 +112,14 @@ def _make_predictors(base, subject, lock):
 
 
 def _sequence_evidence(logits, codes):
-    rows, cols = np.zeros(9), np.zeros(8)
-    valid = []
-    for logit, code in zip(logits, codes):
-        if not np.isfinite(logit):
-            continue
-        code = int(code)
-        if 1 <= code <= 9:
-            rows[code - 1] += float(logit)
-            valid.append(code)
-        elif 10 <= code <= 17:
-            cols[code - 10] += float(logit)
-            valid.append(code)
-    if not any(1 <= code <= 9 for code in valid) or not any(10 <= code <= 17 for code in valid):
+    evidence = aggregate_flash_logits(logits, codes, n_rows=9, n_cols=8)
+    if evidence is None:
         return None
-    row_probs, col_probs = softmax(rows), softmax(cols)
     return {
-        "grid": np.outer(row_probs, col_probs).ravel(),
-        "row": row_probs,
-        "column": col_probs,
-        "valid_flash_count": len(valid),
+        "grid": evidence.grid,
+        "row": evidence.row,
+        "column": evidence.column,
+        "valid_flash_count": evidence.valid_flash_count,
     }
 
 
@@ -190,7 +179,9 @@ def _evaluate_run(run_id, edf_path, target_text, lock, scorer, spelling, char_li
         for rung in range(5):
             initial = _softmax_log_prior(priors.get(rung, base_prior), rung, lock)
             states[rung] = {
-                "accumulated": initial.copy(), "decision_idx": None,
+                "decoder": SequentialDecoder(len(char_list), initial, tau,
+                                              min_sequences, max_sequences),
+                "decision_idx": None,
                 "confidence": None, "target_posterior": None,
                 "sequences_used": 0, "flashes_used": 0,
                 "sequence_nll_values": [],
@@ -210,7 +201,7 @@ def _evaluate_run(run_id, edf_path, target_text, lock, scorer, spelling, char_li
             for rung, state in states.items():
                 if state["decision_idx"] is not None:
                     continue
-                state["accumulated"] += np.log(np.clip(evidence["grid"], 1e-12, 1.0))
+                posterior, stopped = state["decoder"].add(evidence["grid"])
                 state["sequences_used"] = valid_count
                 state["flashes_used"] += evidence["valid_flash_count"]
                 target_row, target_col = divmod(target_idx, 8)
@@ -218,8 +209,7 @@ def _evaluate_run(run_id, edf_path, target_text, lock, scorer, spelling, char_li
                     -np.log(max(evidence["row"][target_row], 1e-15))
                     -np.log(max(evidence["column"][target_col], 1e-15))
                 ))
-                posterior = softmax(state["accumulated"])
-                if valid_count >= min_sequences and posterior.max() >= tau:
+                if stopped:
                     state["decision_idx"] = int(posterior.argmax())
                     state["confidence"] = float(posterior.max())
                     state["target_posterior"] = float(posterior[target_idx])
@@ -239,7 +229,7 @@ def _evaluate_run(run_id, edf_path, target_text, lock, scorer, spelling, char_li
                     "sequence_nll": None,
                 })
                 continue
-            posterior = softmax(state["accumulated"])
+            posterior = state["decoder"].posterior
             decision_idx = state["decision_idx"]
             if decision_idx is None:
                 decision_idx = int(posterior.argmax())
@@ -288,7 +278,7 @@ def _aggregate(records, rung, condition=None):
         return {"characters": 0, "zero_coverage_terminal_characters": len(rows)}
     accuracy = float(np.mean([row["correct"] for row in usable]))
     mean_seconds = float(np.mean([row["time_seconds"] for row in usable]))
-    itr = calculate_itr(72, accuracy * 100.0, mean_seconds)
+    itr = variable_time_itr(72, accuracy, mean_seconds)
     return {
         "characters": len(usable),
         "zero_coverage_terminal_characters": len(rows) - len(usable),

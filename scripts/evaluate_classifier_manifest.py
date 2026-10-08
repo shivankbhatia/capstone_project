@@ -17,7 +17,7 @@ from collections import defaultdict
 import h5py
 import joblib
 import numpy as np
-from scipy.special import softmax, logsumexp
+from scipy.special import logsumexp
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
@@ -33,7 +33,9 @@ from scripts.run_riemann_cv import _load_tensor  # noqa: E402
 from scripts.screen_shrinkage_lda import _decode_strings  # noqa: E402
 from scripts.screen_shrinkage_lda import _balanced_fit_indices  # noqa: E402
 from src.data.batch_preprocess import parse_bigp3bci_edf  # noqa: E402
-from src.models.decoder import calculate_itr  # noqa: E402
+from src.evaluation.sequence_scoring import (  # noqa: E402
+    SequentialDecoder, aggregate_flash_logits, variable_time_itr,
+)
 from src.models.fusion import BayesianFusionEngine  # noqa: E402
 from src.models.llm_predictor import LLMPredictor  # noqa: E402
 from src.evaluation.classifier_protocol import load_heldout_run_ids  # noqa: E402
@@ -123,36 +125,79 @@ def _score_epochs(models, X, channels, cfg, sfreq, tmin):
     return scores
 
 
-def _sequence_rows(logits, y, codes, chars, seqs, char_list):
+def _sequence_rows(logits, y, codes, chars, seqs, char_list, run_ids=None):
     by_char = defaultdict(list)
     seq_nll = defaultdict(list)
-    for char_idx, seq_idx in sorted(set(zip(chars.tolist(), seqs.tolist()))):
-        if char_idx < 0 or seq_idx < 1:
+    run_ids = None if run_ids is None else np.asarray(run_ids).astype(str)
+    group_values = (
+        zip(run_ids.tolist(), chars.tolist(), seqs.tolist())
+        if run_ids is not None else zip(chars.tolist(), seqs.tolist())
+    )
+    for group in sorted(set(group_values)):
+        if run_ids is None:
+            char_idx, seq_idx = group
+            run_id = None
+        else:
+            run_id, char_idx, seq_idx = group
+        # OOF cache uses zero-based sequence indices; parsed EDF metadata uses
+        # one-based sequence_in_char. Both are valid as long as the index is nonnegative.
+        if char_idx < 0 or seq_idx < 0:
             continue
-        ix = np.flatnonzero((chars == char_idx) & (seqs == seq_idx))
+        group_mask = (chars == char_idx) & (seqs == seq_idx)
+        if run_ids is not None:
+            group_mask &= run_ids == run_id
+        ix = np.flatnonzero(group_mask)
         ix = ix[np.isfinite(logits[ix])]
         if not len(ix):
             continue
-        rows, cols = np.zeros(9), np.zeros(8)
-        for idx in ix:
-            code = int(codes[idx])
-            if 1 <= code <= 9:
-                rows[code - 1] += logits[idx]
-            elif 10 <= code <= 17:
-                cols[code - 10] += logits[idx]
         target_codes = codes[ix][y[ix] == 1]
         tr = target_codes[(target_codes >= 1) & (target_codes <= 9)]
         tc = target_codes[(target_codes >= 10) & (target_codes <= 17)]
-        if not len(tr) or not len(tc):
+        evidence = aggregate_flash_logits(logits[ix], codes[ix], n_rows=9, n_cols=8)
+        if evidence is None or not len(tr) or not len(tc):
             continue
         true_r, true_c = int(np.bincount(tr - 1).argmax()), int(np.bincount(tc - 10).argmax())
-        rp, cp = softmax(rows), softmax(cols)
+        rp, cp = evidence.row, evidence.column
         seq_nll[int(char_idx)].extend([
             -np.log(max(rp[true_r], 1e-15)),
             -np.log(max(cp[true_c], 1e-15)),
         ])
-        by_char[int(char_idx)].append((int(seq_idx), rp, cp))
+        key = (run_id, int(char_idx)) if run_ids is not None else int(char_idx)
+        by_char[key].append((int(seq_idx), rp, cp, evidence.grid))
     return by_char, dict(seq_nll)
+
+
+def _decode_oof_sequences(by_char, target_by_char, llm_priors, char_list,
+                          alpha=0.0, tau=0.80, min_seq=2, max_seq=10):
+    """Decode precomputed OOF row/column evidence without reading a manifest."""
+    engine = BayesianFusionEngine(len(char_list), mode="fixed", base_alpha=alpha)
+    decoded = []
+    for (run_id, char_idx), sequences in sorted(by_char.items()):
+        if (run_id, char_idx) not in target_by_char:
+            continue
+        target_idx = int(target_by_char[(run_id, char_idx)])
+        initial = engine.get_initial_log_bias(llm_priors[(run_id, char_idx)]) if alpha else np.zeros(len(char_list))
+        decoder = SequentialDecoder(len(char_list), initial, tau, min_seq, max_seq)
+        ordered = sorted(sequences, key=lambda item: item[0])[:max_seq]
+        full_log = initial.copy()
+        for _, _, _, grid in ordered:
+            full_log += np.log(np.clip(grid, 1e-9, 1.0))
+        for _, _, _, grid in ordered:
+            post, stopped = decoder.add(grid)
+            if stopped:
+                break
+        result = decoder.result()
+        if result["decision_idx"] is None:
+            continue
+        decoded.append({
+            "subject": run_id.split("_SE", 1)[0], "run_id": run_id,
+            "char_idx": int(char_idx), "target_idx": target_idx,
+            "predicted_idx": result["decision_idx"],
+            "stopped_correct": int(result["decision_idx"] == target_idx),
+            "full_correct": int(int(full_log.argmax()) == target_idx),
+            "sequences_used": result["sequences_used"],
+        })
+    return decoded
 
 
 def _evaluate_run(run_id, raw_path, condition, lock, models, channels, cfg,
@@ -211,9 +256,19 @@ def _evaluate_run(run_id, raw_path, condition, lock, models, channels, cfg,
         model_state = {}
         for name in models:
             policy_name = "M0" if name == "OldSWLDA_contaminated" else name
+            policy = lock["stopping_policy"][policy_name]
             model_state[name] = {
-                "eeg": np.zeros(len(char_list)),
-                "fused": initial.copy(), "fused_stopped": False,
+                "eeg_decoder": SequentialDecoder(
+                    len(char_list), tau=policy["tau"],
+                    min_sequences=policy["min_sequences"],
+                    max_sequences=policy["max_sequences"],
+                ),
+                "fused_decoder": SequentialDecoder(
+                    len(char_list), initial, tau=policy["tau"],
+                    min_sequences=policy["min_sequences"],
+                    max_sequences=policy["max_sequences"],
+                ),
+                "fused_stopped": False,
                 "eeg_stopped": False,
             }
         sequences = sorted(set(
@@ -227,59 +282,51 @@ def _evaluate_run(run_id, raw_path, condition, lock, models, channels, cfg,
             ix = np.flatnonzero((chars == char_idx) & (seqs == sequence))
             if not len(ix):
                 continue
+            usable_sequence = False
             for name in models:
                 policy = lock["stopping_policy"]["M0" if name == "OldSWLDA_contaminated" else name]
                 state = model_state[name]
-                if valid_count > policy["max_sequences"]:
-                    continue
                 if state["fused_stopped"] and state["eeg_stopped"]:
                     continue
                 logits = model_scores[name][ix]
-                codes_seq = codes[ix]
-                rows, cols = np.zeros(9), np.zeros(8)
-                for value, code in zip(logits, codes_seq):
-                    if not np.isfinite(value):
-                        continue
-                    if 1 <= code <= 9:
-                        rows[code - 1] += value
-                    elif 10 <= code <= 17:
-                        cols[code - 10] += value
-                p = np.outer(softmax(rows), softmax(cols)).ravel()
-                log_p = np.log(np.clip(p, 1e-9, 1.0))
-                if not state["eeg_stopped"]:
-                    state["eeg"] += log_p
-                if not state["fused_stopped"]:
-                    state["fused"] += log_p
-            valid_count += 1
-            for name in models:
-                policy = lock["stopping_policy"]["M0" if name == "OldSWLDA_contaminated" else name]
-                state = model_state[name]
-                if valid_count < policy["min_sequences"]:
+                evidence = aggregate_flash_logits(logits, codes[ix], n_rows=9, n_cols=8)
+                if evidence is None:
                     continue
-                eeg_post = softmax(state["eeg"])
-                if not state["eeg_stopped"] and eeg_post.max() >= policy["tau"]:
-                    state["eeg_stopped"] = True
-                    state["decision_eeg"] = int(eeg_post.argmax())
-                    state["eeg_posterior_at_stop"] = float(eeg_post.max())
-                    state["eeg_sequences_used"] = valid_count
-                fused_post = softmax(state["fused"])
-                if not state["fused_stopped"] and fused_post.max() >= policy["tau"]:
-                    state["fused_stopped"] = True
-                    state["decision_fused"] = int(fused_post.argmax())
-                    state["posterior_at_stop"] = float(fused_post.max())
-                    state["sequences_used"] = valid_count
+                usable_sequence = True
+                if not state["eeg_stopped"]:
+                    eeg_post, eeg_stopped = state["eeg_decoder"].add(evidence.grid)
+                    if eeg_stopped:
+                        state["eeg_stopped"] = True
+                        state["decision_eeg"] = int(eeg_post.argmax())
+                        state["eeg_posterior_at_stop"] = float(eeg_post.max())
+                if not state["fused_stopped"]:
+                    fused_post, fused_stopped = state["fused_decoder"].add(evidence.grid)
+                    if fused_stopped:
+                        state["fused_stopped"] = True
+                        state["decision_fused"] = int(fused_post.argmax())
+                        state["posterior_at_stop"] = float(fused_post.max())
+            if not usable_sequence:
+                continue
+            valid_count += 1
+            for state in model_state.values():
+                if state["eeg_stopped"]:
+                    state["eeg_sequences_used"] = state["eeg_decoder"].sequences_used
+                if state["fused_stopped"]:
+                    state["sequences_used"] = state["fused_decoder"].sequences_used
             if all(s["fused_stopped"] and s["eeg_stopped"] for s in model_state.values()):
                 break
         for name, state in model_state.items():
             policy_name = "M0" if name == "OldSWLDA_contaminated" else name
-            used = state.get("sequences_used", min(valid_count, lock["stopping_policy"][policy_name]["max_sequences"]))
-            eeg_used = state.get("eeg_sequences_used", min(valid_count, lock["stopping_policy"][policy_name]["max_sequences"]))
+            fused_result = state["fused_decoder"].result()
+            eeg_result = state["eeg_decoder"].result()
+            used = fused_result["sequences_used"]
+            eeg_used = eeg_result["sequences_used"]
             if not state["fused_stopped"]:
-                state["decision_fused"] = int(state["fused"].argmax())
-                state["posterior_at_stop"] = float(softmax(state["fused"]).max())
+                state["decision_fused"] = fused_result["decision_idx"]
+                state["posterior_at_stop"] = fused_result["confidence"]
             if not state["eeg_stopped"]:
-                state["decision_eeg"] = int(state["eeg"].argmax())
-                state["eeg_posterior_at_stop"] = float(softmax(state["eeg"]).max())
+                state["decision_eeg"] = eeg_result["decision_idx"]
+                state["eeg_posterior_at_stop"] = eeg_result["confidence"]
             character_records.append({
                 "run_id": run_id, "subject": run_id.split("_SE", 1)[0],
                 "condition": condition, "model": name, "char_idx": char_idx,
@@ -311,7 +358,8 @@ def _aggregate(records, model, condition=None):
     eeg_acc = float(np.mean([r["correct_eeg"] for r in usable]))
     fused_acc = float(np.mean([r["correct_fused"] for r in usable]))
     seqs = float(np.mean([r["sequences_used"] for r in usable]))
-    itr = calculate_itr(72, fused_acc * 100, seqs * 2.0)
+    mean_seconds = float(np.mean([r["flashes_used"] * 2.0 / 17.0 for r in usable]))
+    itr = variable_time_itr(72, fused_acc, mean_seconds)
     by_subject = {}
     for subject in sorted({r["subject"] for r in usable}):
         sr = [r for r in usable if r["subject"] == subject]

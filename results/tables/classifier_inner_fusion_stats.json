@@ -188,12 +188,12 @@
       "mode": "fusion",
       "metric": "stopped_accuracy",
       "subjects": 17,
-      "mean_paired_delta": -0.0013071895424836685,
-      "wilcoxon_statistic": 26.5,
-      "p_uncorrected": 0.9182821610274703,
+      "mean_paired_delta": -0.015196078431372544,
+      "wilcoxon_statistic": 22.5,
+      "p_uncorrected": 0.10732755776161187,
       "bootstrap_95_ci_subject_resampling": [
-        -0.023856209150326817,
-        0.021895424836601302
+        -0.047549019607843114,
+        0.024999999999999988
       ],
       "p_holm": 1.0,
       "significant_holm_0p05": false
@@ -218,12 +218,12 @@
       "mode": "fusion",
       "metric": "stopped_accuracy",
       "subjects": 17,
-      "mean_paired_delta": -0.0009803921568627481,
-      "wilcoxon_statistic": 26.5,
-      "p_uncorrected": 0.9186546126918693,
+      "mean_paired_delta": 0.004411764705882367,
+      "wilcoxon_statistic": 51.5,
+      "p_uncorrected": 0.9498704530360561,
       "bootstrap_95_ci_subject_resampling": [
-        -0.028431372549019618,
-        0.025490196078431362
+        -0.031209150326797365,
+        0.042156862745098056
       ],
       "p_holm": 1.0,
       "significant_holm_0p05": false
@@ -248,12 +248,12 @@
       "mode": "fusion",
       "metric": "stopped_accuracy",
       "subjects": 17,
-      "mean_paired_delta": -0.010457516339869289,
-      "wilcoxon_statistic": 16.5,
-      "p_uncorrected": 0.2612615255398738,
+      "mean_paired_delta": -0.02614379084967319,
+      "wilcoxon_statistic": 32.5,
+      "p_uncorrected": 0.208612728310704,
       "bootstrap_95_ci_subject_resampling": [
-        -0.03333333333333335,
-        0.010947712418300655
+        -0.059313725490196076,
+        0.005065359477124191
       ],
       "p_holm": 1.0,
       "significant_holm_0p05": false
@@ -278,12 +278,12 @@
       "mode": "fusion",
       "metric": "stopped_accuracy",
       "subjects": 17,
-      "mean_paired_delta": -0.002777777777777781,
-      "wilcoxon_statistic": 22.5,
-      "p_uncorrected": 0.6098340436734595,
+      "mean_paired_delta": -0.0024509803921568705,
+      "wilcoxon_statistic": 42.0,
+      "p_uncorrected": 0.8063021141580218,
       "bootstrap_95_ci_subject_resampling": [
-        -0.03169934640522878,
-        0.0300653594771242
+        -0.03643790849673203,
+        0.033496732026143776
       ],
       "p_holm": 1.0,
       "significant_holm_0p05": false
