@@ -1,0 +1,59 @@
+{
+  "analysis": "paired within-subject differences with study-stratified fixed effect; subject intercept removed by differencing",
+  "bootstrap": {
+    "samples": 30000,
+    "seed": 271828
+  },
+  "caveats": [
+    "Inner OOF only; no manifest labels or predictions used.",
+    "Q uses a group-flash decoder while D uses row/column flashes; interpret pooled effect as cross-study support, not exact measurement equivalence.",
+    "The Q language prior is evaluated with teacher-forced previous target keys; this is not a prospective natural-language RAG result."
+  ],
+  "endpoint": "subject-level difference in fixed-policy character accuracy (fusion minus EEG-only)",
+  "model": "clean M0; fixed fusion alpha 0.1 and tau 0.8/min 2/max 10",
+  "pooled_subject_weighted": {
+    "bootstrap_95_ci_mean_delta_stratified": [
+      0.055660377358490574,
+      0.07562893081761006
+    ],
+    "improved_tied_worse": [
+      44,
+      9,
+      0
+    ],
+    "mean_delta": 0.06540880503144654,
+    "median_delta": 0.06944444444444442,
+    "n_subjects": 53,
+    "one_sample_t_p_unadjusted": 9.515001588216578e-14
+  },
+  "studies": {
+    "D": {
+      "improved_tied_worse": [
+        8,
+        9,
+        0
+      ],
+      "mean_delta": 0.024183006535947706,
+      "median_delta": 0.0,
+      "n_subjects": 17,
+      "wilcoxon_p_holm_two_studies": 0.011616044899262476,
+      "wilcoxon_p_unadjusted": 0.011616044899262476
+    },
+    "Q": {
+      "improved_tied_worse": [
+        36,
+        0,
+        0
+      ],
+      "mean_delta": 0.08487654320987653,
+      "median_delta": 0.08333333333333329,
+      "n_subjects": 36,
+      "wilcoxon_p_holm_two_studies": 5.820766091346741e-11,
+      "wilcoxon_p_unadjusted": 2.9103830456733704e-11
+    }
+  },
+  "study_interaction": {
+    "mean_effect_difference_Q_minus_D": 0.06069353667392882,
+    "welch_t_p_unadjusted": 6.8951704044491e-07
+  }
+}

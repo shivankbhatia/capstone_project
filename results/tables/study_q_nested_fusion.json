@@ -1,0 +1,1614 @@
+{
+  "calibration": "nested inner OOF scalar temperature; sequence-level membership-grid NLL",
+  "folds": [
+    {
+      "calibration_sessions": [
+        "Q_01_SE001",
+        "Q_01_SE002",
+        "Q_02_SE001",
+        "Q_03_SE001",
+        "Q_03_SE002",
+        "Q_05_SE001",
+        "Q_06_SE001",
+        "Q_06_SE002",
+        "Q_07_SE002",
+        "Q_08_SE001",
+        "Q_08_SE002",
+        "Q_09_SE001",
+        "Q_09_SE002",
+        "Q_10_SE002",
+        "Q_11_SE001",
+        "Q_12_SE001",
+        "Q_12_SE002",
+        "Q_13_SE002",
+        "Q_14_SE001",
+        "Q_15_SE001",
+        "Q_15_SE002",
+        "Q_16_SE002",
+        "Q_17_SE001",
+        "Q_18_SE001",
+        "Q_18_SE002",
+        "Q_19_SE001",
+        "Q_19_SE002",
+        "Q_20_SE002",
+        "Q_21_SE001",
+        "Q_22_SE001",
+        "Q_22_SE002",
+        "Q_23_SE002",
+        "Q_24_SE001",
+        "Q_25_SE001",
+        "Q_25_SE002",
+        "Q_26_SE002",
+        "Q_27_SE001",
+        "Q_28_SE001",
+        "Q_28_SE002",
+        "Q_29_SE002",
+        "Q_31_SE001",
+        "Q_32_SE002",
+        "Q_33_SE002",
+        "Q_34_SE001",
+        "Q_35_SE001",
+        "Q_35_SE002",
+        "Q_36_SE001",
+        "Q_36_SE002"
+      ],
+      "outer_fold": 1,
+      "overlap": false,
+      "validation_sessions": [
+        "Q_02_SE002",
+        "Q_04_SE001",
+        "Q_04_SE002",
+        "Q_05_SE002",
+        "Q_07_SE001",
+        "Q_10_SE001",
+        "Q_11_SE002",
+        "Q_13_SE001",
+        "Q_14_SE002",
+        "Q_16_SE001",
+        "Q_17_SE002",
+        "Q_20_SE001",
+        "Q_21_SE002",
+        "Q_23_SE001",
+        "Q_24_SE002",
+        "Q_26_SE001",
+        "Q_27_SE002",
+        "Q_29_SE001",
+        "Q_30_SE001",
+        "Q_31_SE002",
+        "Q_32_SE001",
+        "Q_33_SE001",
+        "Q_34_SE002"
+      ]
+    },
+    {
+      "calibration_sessions": [
+        "Q_01_SE001",
+        "Q_02_SE001",
+        "Q_02_SE002",
+        "Q_03_SE002",
+        "Q_04_SE001",
+        "Q_04_SE002",
+        "Q_05_SE002",
+        "Q_06_SE002",
+        "Q_07_SE001",
+        "Q_08_SE001",
+        "Q_08_SE002",
+        "Q_09_SE002",
+        "Q_10_SE001",
+        "Q_11_SE001",
+        "Q_11_SE002",
+        "Q_12_SE002",
+        "Q_13_SE001",
+        "Q_14_SE001",
+        "Q_14_SE002",
+        "Q_15_SE002",
+        "Q_16_SE001",
+        "Q_17_SE001",
+        "Q_17_SE002",
+        "Q_18_SE001",
+        "Q_19_SE001",
+        "Q_20_SE001",
+        "Q_20_SE002",
+        "Q_21_SE002",
+        "Q_22_SE001",
+        "Q_23_SE001",
+        "Q_23_SE002",
+        "Q_24_SE002",
+        "Q_25_SE001",
+        "Q_26_SE001",
+        "Q_26_SE002",
+        "Q_27_SE002",
+        "Q_28_SE002",
+        "Q_29_SE001",
+        "Q_30_SE001",
+        "Q_31_SE001",
+        "Q_31_SE002",
+        "Q_32_SE001",
+        "Q_33_SE001",
+        "Q_34_SE001",
+        "Q_34_SE002",
+        "Q_35_SE002",
+        "Q_36_SE001"
+      ],
+      "outer_fold": 2,
+      "overlap": false,
+      "validation_sessions": [
+        "Q_01_SE002",
+        "Q_03_SE001",
+        "Q_05_SE001",
+        "Q_06_SE001",
+        "Q_07_SE002",
+        "Q_09_SE001",
+        "Q_10_SE002",
+        "Q_12_SE001",
+        "Q_13_SE002",
+        "Q_15_SE001",
+        "Q_16_SE002",
+        "Q_18_SE002",
+        "Q_19_SE002",
+        "Q_21_SE001",
+        "Q_22_SE002",
+        "Q_24_SE001",
+        "Q_25_SE002",
+        "Q_27_SE001",
+        "Q_28_SE001",
+        "Q_29_SE002",
+        "Q_32_SE002",
+        "Q_33_SE002",
+        "Q_35_SE001",
+        "Q_36_SE002"
+      ]
+    },
+    {
+      "calibration_sessions": [
+        "Q_01_SE002",
+        "Q_02_SE002",
+        "Q_03_SE001",
+        "Q_04_SE001",
+        "Q_04_SE002",
+        "Q_05_SE001",
+        "Q_05_SE002",
+        "Q_06_SE001",
+        "Q_07_SE001",
+        "Q_07_SE002",
+        "Q_09_SE001",
+        "Q_10_SE001",
+        "Q_10_SE002",
+        "Q_11_SE002",
+        "Q_12_SE001",
+        "Q_13_SE001",
+        "Q_13_SE002",
+        "Q_14_SE002",
+        "Q_15_SE001",
+        "Q_16_SE001",
+        "Q_16_SE002",
+        "Q_17_SE002",
+        "Q_18_SE002",
+        "Q_19_SE002",
+        "Q_20_SE001",
+        "Q_21_SE001",
+        "Q_21_SE002",
+        "Q_22_SE002",
+        "Q_23_SE001",
+        "Q_24_SE001",
+        "Q_24_SE002",
+        "Q_25_SE002",
+        "Q_26_SE001",
+        "Q_27_SE001",
+        "Q_27_SE002",
+        "Q_28_SE001",
+        "Q_29_SE001",
+        "Q_29_SE002",
+        "Q_30_SE001",
+        "Q_31_SE002",
+        "Q_32_SE001",
+        "Q_32_SE002",
+        "Q_33_SE001",
+        "Q_33_SE002",
+        "Q_34_SE002",
+        "Q_35_SE001",
+        "Q_36_SE002"
+      ],
+      "outer_fold": 3,
+      "overlap": false,
+      "validation_sessions": [
+        "Q_01_SE001",
+        "Q_02_SE001",
+        "Q_03_SE002",
+        "Q_06_SE002",
+        "Q_08_SE001",
+        "Q_08_SE002",
+        "Q_09_SE002",
+        "Q_11_SE001",
+        "Q_12_SE002",
+        "Q_14_SE001",
+        "Q_15_SE002",
+        "Q_17_SE001",
+        "Q_18_SE001",
+        "Q_19_SE001",
+        "Q_20_SE002",
+        "Q_22_SE001",
+        "Q_23_SE002",
+        "Q_25_SE001",
+        "Q_26_SE002",
+        "Q_28_SE002",
+        "Q_31_SE001",
+        "Q_34_SE001",
+        "Q_35_SE002",
+        "Q_36_SE001"
+      ]
+    }
+  ],
+  "fusion": {
+    "alpha": 0.1,
+    "applied_once_before_sequence_accumulation": true,
+    "kind": "local DistilGPT2 prior"
+  },
+  "git_dirty_at_fit": true,
+  "git_hash_at_fit": "449c26684fd5c90970698fe11afe12e482dade26",
+  "heldout_session": "SE003",
+  "heldout_test_data_read": false,
+  "inner_calibration_grouping": "subject-session",
+  "inner_folds": 2,
+  "manifest_sha256": "39ed6801b2545f37f5f0b1019c01bec0e8fd6b7a6b4418c7014c00b9c689c973",
+  "metrics": {
+    "eeg_only": {
+      "accuracy": 0.6026234567901234,
+      "correct": 1562,
+      "depth_histogram": {
+        "10": 2305,
+        "3": 3,
+        "4": 8,
+        "5": 14,
+        "6": 36,
+        "7": 46,
+        "8": 79,
+        "9": 101
+      },
+      "mean_sequences": 9.737654320987655,
+      "n": 2592
+    },
+    "lm_fusion": {
+      "accuracy": 0.6875,
+      "correct": 1782,
+      "depth_histogram": {
+        "10": 2171,
+        "2": 1,
+        "3": 5,
+        "4": 11,
+        "5": 29,
+        "6": 61,
+        "7": 73,
+        "8": 122,
+        "9": 119
+      },
+      "mean_sequences": 9.583333333333334,
+      "n": 2592
+    }
+  },
+  "model": "M0_clean_SGD",
+  "outer_folds": 3,
+  "outer_grouping": "subject-session",
+  "per_subject": {
+    "Q_01": {
+      "eeg_only": {
+        "correct": 69,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 72,
+        "n": 72
+      }
+    },
+    "Q_02": {
+      "eeg_only": {
+        "correct": 55,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 63,
+        "n": 72
+      }
+    },
+    "Q_03": {
+      "eeg_only": {
+        "correct": 41,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 50,
+        "n": 72
+      }
+    },
+    "Q_04": {
+      "eeg_only": {
+        "correct": 24,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 33,
+        "n": 72
+      }
+    },
+    "Q_05": {
+      "eeg_only": {
+        "correct": 66,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 69,
+        "n": 72
+      }
+    },
+    "Q_06": {
+      "eeg_only": {
+        "correct": 46,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 51,
+        "n": 72
+      }
+    },
+    "Q_07": {
+      "eeg_only": {
+        "correct": 42,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 52,
+        "n": 72
+      }
+    },
+    "Q_08": {
+      "eeg_only": {
+        "correct": 32,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 37,
+        "n": 72
+      }
+    },
+    "Q_09": {
+      "eeg_only": {
+        "correct": 63,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 68,
+        "n": 72
+      }
+    },
+    "Q_10": {
+      "eeg_only": {
+        "correct": 52,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 57,
+        "n": 72
+      }
+    },
+    "Q_11": {
+      "eeg_only": {
+        "correct": 51,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 57,
+        "n": 72
+      }
+    },
+    "Q_12": {
+      "eeg_only": {
+        "correct": 20,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 24,
+        "n": 72
+      }
+    },
+    "Q_13": {
+      "eeg_only": {
+        "correct": 69,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 70,
+        "n": 72
+      }
+    },
+    "Q_14": {
+      "eeg_only": {
+        "correct": 46,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 59,
+        "n": 72
+      }
+    },
+    "Q_15": {
+      "eeg_only": {
+        "correct": 50,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 56,
+        "n": 72
+      }
+    },
+    "Q_16": {
+      "eeg_only": {
+        "correct": 47,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 58,
+        "n": 72
+      }
+    },
+    "Q_17": {
+      "eeg_only": {
+        "correct": 38,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 43,
+        "n": 72
+      }
+    },
+    "Q_18": {
+      "eeg_only": {
+        "correct": 51,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 58,
+        "n": 72
+      }
+    },
+    "Q_19": {
+      "eeg_only": {
+        "correct": 60,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 66,
+        "n": 72
+      }
+    },
+    "Q_20": {
+      "eeg_only": {
+        "correct": 40,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 48,
+        "n": 72
+      }
+    },
+    "Q_21": {
+      "eeg_only": {
+        "correct": 16,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 18,
+        "n": 72
+      }
+    },
+    "Q_22": {
+      "eeg_only": {
+        "correct": 42,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 51,
+        "n": 72
+      }
+    },
+    "Q_23": {
+      "eeg_only": {
+        "correct": 50,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 57,
+        "n": 72
+      }
+    },
+    "Q_24": {
+      "eeg_only": {
+        "correct": 31,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 39,
+        "n": 72
+      }
+    },
+    "Q_25": {
+      "eeg_only": {
+        "correct": 23,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 31,
+        "n": 72
+      }
+    },
+    "Q_26": {
+      "eeg_only": {
+        "correct": 35,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 39,
+        "n": 72
+      }
+    },
+    "Q_27": {
+      "eeg_only": {
+        "correct": 67,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 69,
+        "n": 72
+      }
+    },
+    "Q_28": {
+      "eeg_only": {
+        "correct": 22,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 33,
+        "n": 72
+      }
+    },
+    "Q_29": {
+      "eeg_only": {
+        "correct": 19,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 26,
+        "n": 72
+      }
+    },
+    "Q_30": {
+      "eeg_only": {
+        "correct": 24,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 31,
+        "n": 72
+      }
+    },
+    "Q_31": {
+      "eeg_only": {
+        "correct": 21,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 25,
+        "n": 72
+      }
+    },
+    "Q_32": {
+      "eeg_only": {
+        "correct": 29,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 38,
+        "n": 72
+      }
+    },
+    "Q_33": {
+      "eeg_only": {
+        "correct": 28,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 34,
+        "n": 72
+      }
+    },
+    "Q_34": {
+      "eeg_only": {
+        "correct": 66,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 69,
+        "n": 72
+      }
+    },
+    "Q_35": {
+      "eeg_only": {
+        "correct": 59,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 61,
+        "n": 72
+      }
+    },
+    "Q_36": {
+      "eeg_only": {
+        "correct": 68,
+        "n": 72
+      },
+      "lm_fusion": {
+        "correct": 70,
+        "n": 72
+      }
+    }
+  },
+  "policy_tuning": {
+    "data": "nested outer OOF predictions from clean Q training sessions only",
+    "default_reference": {
+      "fusion_accuracy": 0.6875,
+      "max_sequences": 10,
+      "mean_sequences": 9.583333333333334,
+      "min_sequences": 2,
+      "tau": 0.8
+    },
+    "heldout_test_data_read": false,
+    "selected": {
+      "max_sequences": 10,
+      "metrics": {
+        "eeg_only": {
+          "accuracy": 0.6026234567901234,
+          "correct": 1562,
+          "depth_histogram": {
+            "10": 2051,
+            "2": 1,
+            "3": 10,
+            "4": 18,
+            "5": 48,
+            "6": 85,
+            "7": 101,
+            "8": 153,
+            "9": 125
+          },
+          "mean_sequences": 9.421296296296296,
+          "n": 2592
+        },
+        "lm_fusion": {
+          "accuracy": 0.6875,
+          "correct": 1782,
+          "depth_histogram": {
+            "10": 1813,
+            "2": 3,
+            "3": 16,
+            "4": 44,
+            "5": 97,
+            "6": 121,
+            "7": 157,
+            "8": 171,
+            "9": 170
+          },
+          "mean_sequences": 9.092592592592593,
+          "n": 2592
+        }
+      },
+      "min_sequences": 2,
+      "tau": 0.6
+    },
+    "selection": "fewest mean sequences at no pooled fusion accuracy loss vs tau=.8/min=2/max=10; ties prefer higher accuracy",
+    "sweep": [
+      {
+        "max_sequences": 5,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.41203703703703703,
+            "correct": 1068,
+            "depth_histogram": {
+              "2": 1,
+              "3": 10,
+              "4": 18,
+              "5": 2563
+            },
+            "mean_sequences": 4.984182098765432,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.5420524691358025,
+            "correct": 1405,
+            "depth_histogram": {
+              "2": 3,
+              "3": 16,
+              "4": 44,
+              "5": 2529
+            },
+            "mean_sequences": 4.9672067901234565,
+            "n": 2592
+          }
+        },
+        "min_sequences": 2,
+        "tau": 0.6
+      },
+      {
+        "max_sequences": 5,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.41203703703703703,
+            "correct": 1068,
+            "depth_histogram": {
+              "2": 1,
+              "3": 5,
+              "4": 12,
+              "5": 2574
+            },
+            "mean_sequences": 4.990354938271605,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.5420524691358025,
+            "correct": 1405,
+            "depth_histogram": {
+              "2": 2,
+              "3": 7,
+              "4": 23,
+              "5": 2560
+            },
+            "mean_sequences": 4.983410493827161,
+            "n": 2592
+          }
+        },
+        "min_sequences": 2,
+        "tau": 0.7
+      },
+      {
+        "max_sequences": 5,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.41203703703703703,
+            "correct": 1068,
+            "depth_histogram": {
+              "3": 3,
+              "4": 8,
+              "5": 2581
+            },
+            "mean_sequences": 4.994598765432099,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.5420524691358025,
+            "correct": 1405,
+            "depth_histogram": {
+              "2": 1,
+              "3": 5,
+              "4": 11,
+              "5": 2575
+            },
+            "mean_sequences": 4.9907407407407405,
+            "n": 2592
+          }
+        },
+        "min_sequences": 2,
+        "tau": 0.8
+      },
+      {
+        "max_sequences": 5,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.41203703703703703,
+            "correct": 1068,
+            "depth_histogram": {
+              "3": 2,
+              "4": 6,
+              "5": 2584
+            },
+            "mean_sequences": 4.996141975308642,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.5420524691358025,
+            "correct": 1405,
+            "depth_histogram": {
+              "3": 3,
+              "4": 7,
+              "5": 2582
+            },
+            "mean_sequences": 4.994984567901234,
+            "n": 2592
+          }
+        },
+        "min_sequences": 2,
+        "tau": 0.9
+      },
+      {
+        "max_sequences": 8,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.533179012345679,
+            "correct": 1382,
+            "depth_histogram": {
+              "2": 1,
+              "3": 10,
+              "4": 18,
+              "5": 48,
+              "6": 85,
+              "7": 101,
+              "8": 2329
+            },
+            "mean_sequences": 7.7905092592592595,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.6423611111111112,
+            "correct": 1665,
+            "depth_histogram": {
+              "2": 3,
+              "3": 16,
+              "4": 44,
+              "5": 97,
+              "6": 121,
+              "7": 157,
+              "8": 2154
+            },
+            "mean_sequences": 7.628086419753086,
+            "n": 2592
+          }
+        },
+        "min_sequences": 2,
+        "tau": 0.6
+      },
+      {
+        "max_sequences": 8,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.5339506172839507,
+            "correct": 1384,
+            "depth_histogram": {
+              "2": 1,
+              "3": 5,
+              "4": 12,
+              "5": 30,
+              "6": 54,
+              "7": 78,
+              "8": 2412
+            },
+            "mean_sequences": 7.86304012345679,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.6435185185185185,
+            "correct": 1668,
+            "depth_histogram": {
+              "2": 2,
+              "3": 7,
+              "4": 23,
+              "5": 56,
+              "6": 98,
+              "7": 120,
+              "8": 2286
+            },
+            "mean_sequences": 7.759645061728395,
+            "n": 2592
+          }
+        },
+        "min_sequences": 2,
+        "tau": 0.7
+      },
+      {
+        "max_sequences": 8,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.5335648148148148,
+            "correct": 1383,
+            "depth_histogram": {
+              "3": 3,
+              "4": 8,
+              "5": 14,
+              "6": 36,
+              "7": 46,
+              "8": 2485
+            },
+            "mean_sequences": 7.920138888888889,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.6431327160493827,
+            "correct": 1667,
+            "depth_histogram": {
+              "2": 1,
+              "3": 5,
+              "4": 11,
+              "5": 29,
+              "6": 61,
+              "7": 73,
+              "8": 2412
+            },
+            "mean_sequences": 7.862268518518518,
+            "n": 2592
+          }
+        },
+        "min_sequences": 2,
+        "tau": 0.8
+      },
+      {
+        "max_sequences": 8,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.5335648148148148,
+            "correct": 1383,
+            "depth_histogram": {
+              "3": 2,
+              "4": 6,
+              "5": 4,
+              "6": 18,
+              "7": 25,
+              "8": 2537
+            },
+            "mean_sequences": 7.958719135802469,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.6431327160493827,
+            "correct": 1667,
+            "depth_histogram": {
+              "3": 3,
+              "4": 7,
+              "5": 6,
+              "6": 33,
+              "7": 39,
+              "8": 2504
+            },
+            "mean_sequences": 7.9359567901234565,
+            "n": 2592
+          }
+        },
+        "min_sequences": 2,
+        "tau": 0.9
+      },
+      {
+        "max_sequences": 10,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.6026234567901234,
+            "correct": 1562,
+            "depth_histogram": {
+              "10": 2051,
+              "2": 1,
+              "3": 10,
+              "4": 18,
+              "5": 48,
+              "6": 85,
+              "7": 101,
+              "8": 153,
+              "9": 125
+            },
+            "mean_sequences": 9.421296296296296,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.6875,
+            "correct": 1782,
+            "depth_histogram": {
+              "10": 1813,
+              "2": 3,
+              "3": 16,
+              "4": 44,
+              "5": 97,
+              "6": 121,
+              "7": 157,
+              "8": 171,
+              "9": 170
+            },
+            "mean_sequences": 9.092592592592593,
+            "n": 2592
+          }
+        },
+        "min_sequences": 2,
+        "tau": 0.6
+      },
+      {
+        "max_sequences": 10,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.6026234567901234,
+            "correct": 1562,
+            "depth_histogram": {
+              "10": 2182,
+              "2": 1,
+              "3": 5,
+              "4": 12,
+              "5": 30,
+              "6": 54,
+              "7": 78,
+              "8": 114,
+              "9": 116
+            },
+            "mean_sequences": 9.591435185185185,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.6875,
+            "correct": 1782,
+            "depth_histogram": {
+              "10": 2015,
+              "2": 2,
+              "3": 7,
+              "4": 23,
+              "5": 56,
+              "6": 98,
+              "7": 120,
+              "8": 144,
+              "9": 127
+            },
+            "mean_sequences": 9.363425925925926,
+            "n": 2592
+          }
+        },
+        "min_sequences": 2,
+        "tau": 0.7
+      },
+      {
+        "max_sequences": 10,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.6026234567901234,
+            "correct": 1562,
+            "depth_histogram": {
+              "10": 2305,
+              "3": 3,
+              "4": 8,
+              "5": 14,
+              "6": 36,
+              "7": 46,
+              "8": 79,
+              "9": 101
+            },
+            "mean_sequences": 9.737654320987655,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.6875,
+            "correct": 1782,
+            "depth_histogram": {
+              "10": 2171,
+              "2": 1,
+              "3": 5,
+              "4": 11,
+              "5": 29,
+              "6": 61,
+              "7": 73,
+              "8": 122,
+              "9": 119
+            },
+            "mean_sequences": 9.583333333333334,
+            "n": 2592
+          }
+        },
+        "min_sequences": 2,
+        "tau": 0.8
+      },
+      {
+        "max_sequences": 10,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.6026234567901234,
+            "correct": 1562,
+            "depth_histogram": {
+              "10": 2446,
+              "3": 2,
+              "4": 6,
+              "5": 4,
+              "6": 18,
+              "7": 25,
+              "8": 37,
+              "9": 54
+            },
+            "mean_sequences": 9.866898148148149,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.6871141975308642,
+            "correct": 1781,
+            "depth_histogram": {
+              "10": 2356,
+              "3": 3,
+              "4": 7,
+              "5": 6,
+              "6": 33,
+              "7": 39,
+              "8": 62,
+              "9": 86
+            },
+            "mean_sequences": 9.787037037037036,
+            "n": 2592
+          }
+        },
+        "min_sequences": 2,
+        "tau": 0.9
+      },
+      {
+        "max_sequences": 5,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.41203703703703703,
+            "correct": 1068,
+            "depth_histogram": {
+              "3": 10,
+              "4": 18,
+              "5": 2564
+            },
+            "mean_sequences": 4.985339506172839,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.5420524691358025,
+            "correct": 1405,
+            "depth_histogram": {
+              "3": 17,
+              "4": 45,
+              "5": 2530
+            },
+            "mean_sequences": 4.969521604938271,
+            "n": 2592
+          }
+        },
+        "min_sequences": 3,
+        "tau": 0.6
+      },
+      {
+        "max_sequences": 5,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.41203703703703703,
+            "correct": 1068,
+            "depth_histogram": {
+              "3": 5,
+              "4": 12,
+              "5": 2575
+            },
+            "mean_sequences": 4.991512345679013,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.5420524691358025,
+            "correct": 1405,
+            "depth_histogram": {
+              "3": 8,
+              "4": 23,
+              "5": 2561
+            },
+            "mean_sequences": 4.984953703703703,
+            "n": 2592
+          }
+        },
+        "min_sequences": 3,
+        "tau": 0.7
+      },
+      {
+        "max_sequences": 5,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.41203703703703703,
+            "correct": 1068,
+            "depth_histogram": {
+              "3": 3,
+              "4": 8,
+              "5": 2581
+            },
+            "mean_sequences": 4.994598765432099,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.5420524691358025,
+            "correct": 1405,
+            "depth_histogram": {
+              "3": 5,
+              "4": 11,
+              "5": 2576
+            },
+            "mean_sequences": 4.991898148148148,
+            "n": 2592
+          }
+        },
+        "min_sequences": 3,
+        "tau": 0.8
+      },
+      {
+        "max_sequences": 5,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.41203703703703703,
+            "correct": 1068,
+            "depth_histogram": {
+              "3": 2,
+              "4": 6,
+              "5": 2584
+            },
+            "mean_sequences": 4.996141975308642,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.5420524691358025,
+            "correct": 1405,
+            "depth_histogram": {
+              "3": 3,
+              "4": 7,
+              "5": 2582
+            },
+            "mean_sequences": 4.994984567901234,
+            "n": 2592
+          }
+        },
+        "min_sequences": 3,
+        "tau": 0.9
+      },
+      {
+        "max_sequences": 8,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.533179012345679,
+            "correct": 1382,
+            "depth_histogram": {
+              "3": 10,
+              "4": 18,
+              "5": 49,
+              "6": 85,
+              "7": 101,
+              "8": 2329
+            },
+            "mean_sequences": 7.791666666666667,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.6423611111111112,
+            "correct": 1665,
+            "depth_histogram": {
+              "3": 17,
+              "4": 45,
+              "5": 98,
+              "6": 121,
+              "7": 157,
+              "8": 2154
+            },
+            "mean_sequences": 7.630401234567901,
+            "n": 2592
+          }
+        },
+        "min_sequences": 3,
+        "tau": 0.6
+      },
+      {
+        "max_sequences": 8,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.5339506172839507,
+            "correct": 1384,
+            "depth_histogram": {
+              "3": 5,
+              "4": 12,
+              "5": 31,
+              "6": 54,
+              "7": 78,
+              "8": 2412
+            },
+            "mean_sequences": 7.864197530864198,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.6435185185185185,
+            "correct": 1668,
+            "depth_histogram": {
+              "3": 8,
+              "4": 23,
+              "5": 57,
+              "6": 98,
+              "7": 120,
+              "8": 2286
+            },
+            "mean_sequences": 7.761188271604938,
+            "n": 2592
+          }
+        },
+        "min_sequences": 3,
+        "tau": 0.7
+      },
+      {
+        "max_sequences": 8,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.5335648148148148,
+            "correct": 1383,
+            "depth_histogram": {
+              "3": 3,
+              "4": 8,
+              "5": 14,
+              "6": 36,
+              "7": 46,
+              "8": 2485
+            },
+            "mean_sequences": 7.920138888888889,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.6431327160493827,
+            "correct": 1667,
+            "depth_histogram": {
+              "3": 5,
+              "4": 11,
+              "5": 30,
+              "6": 61,
+              "7": 73,
+              "8": 2412
+            },
+            "mean_sequences": 7.863425925925926,
+            "n": 2592
+          }
+        },
+        "min_sequences": 3,
+        "tau": 0.8
+      },
+      {
+        "max_sequences": 8,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.5335648148148148,
+            "correct": 1383,
+            "depth_histogram": {
+              "3": 2,
+              "4": 6,
+              "5": 4,
+              "6": 18,
+              "7": 25,
+              "8": 2537
+            },
+            "mean_sequences": 7.958719135802469,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.6431327160493827,
+            "correct": 1667,
+            "depth_histogram": {
+              "3": 3,
+              "4": 7,
+              "5": 6,
+              "6": 33,
+              "7": 39,
+              "8": 2504
+            },
+            "mean_sequences": 7.9359567901234565,
+            "n": 2592
+          }
+        },
+        "min_sequences": 3,
+        "tau": 0.9
+      },
+      {
+        "max_sequences": 10,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.6026234567901234,
+            "correct": 1562,
+            "depth_histogram": {
+              "10": 2051,
+              "3": 10,
+              "4": 18,
+              "5": 49,
+              "6": 85,
+              "7": 101,
+              "8": 153,
+              "9": 125
+            },
+            "mean_sequences": 9.422453703703704,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.6875,
+            "correct": 1782,
+            "depth_histogram": {
+              "10": 1813,
+              "3": 17,
+              "4": 45,
+              "5": 98,
+              "6": 121,
+              "7": 157,
+              "8": 171,
+              "9": 170
+            },
+            "mean_sequences": 9.094907407407407,
+            "n": 2592
+          }
+        },
+        "min_sequences": 3,
+        "tau": 0.6
+      },
+      {
+        "max_sequences": 10,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.6026234567901234,
+            "correct": 1562,
+            "depth_histogram": {
+              "10": 2182,
+              "3": 5,
+              "4": 12,
+              "5": 31,
+              "6": 54,
+              "7": 78,
+              "8": 114,
+              "9": 116
+            },
+            "mean_sequences": 9.592592592592593,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.6875,
+            "correct": 1782,
+            "depth_histogram": {
+              "10": 2015,
+              "3": 8,
+              "4": 23,
+              "5": 57,
+              "6": 98,
+              "7": 120,
+              "8": 144,
+              "9": 127
+            },
+            "mean_sequences": 9.364969135802468,
+            "n": 2592
+          }
+        },
+        "min_sequences": 3,
+        "tau": 0.7
+      },
+      {
+        "max_sequences": 10,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.6026234567901234,
+            "correct": 1562,
+            "depth_histogram": {
+              "10": 2305,
+              "3": 3,
+              "4": 8,
+              "5": 14,
+              "6": 36,
+              "7": 46,
+              "8": 79,
+              "9": 101
+            },
+            "mean_sequences": 9.737654320987655,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.6875,
+            "correct": 1782,
+            "depth_histogram": {
+              "10": 2171,
+              "3": 5,
+              "4": 11,
+              "5": 30,
+              "6": 61,
+              "7": 73,
+              "8": 122,
+              "9": 119
+            },
+            "mean_sequences": 9.58449074074074,
+            "n": 2592
+          }
+        },
+        "min_sequences": 3,
+        "tau": 0.8
+      },
+      {
+        "max_sequences": 10,
+        "metrics": {
+          "eeg_only": {
+            "accuracy": 0.6026234567901234,
+            "correct": 1562,
+            "depth_histogram": {
+              "10": 2446,
+              "3": 2,
+              "4": 6,
+              "5": 4,
+              "6": 18,
+              "7": 25,
+              "8": 37,
+              "9": 54
+            },
+            "mean_sequences": 9.866898148148149,
+            "n": 2592
+          },
+          "lm_fusion": {
+            "accuracy": 0.6871141975308642,
+            "correct": 1781,
+            "depth_histogram": {
+              "10": 2356,
+              "3": 3,
+              "4": 7,
+              "5": 6,
+              "6": 33,
+              "7": 39,
+              "8": 62,
+              "9": 86
+            },
+            "mean_sequences": 9.787037037037036,
+            "n": 2592
+          }
+        },
+        "min_sequences": 3,
+        "tau": 0.9
+      }
+    ]
+  },
+  "postfit_enrichment_git_dirty": true,
+  "stopping": {
+    "max_sequences": 10,
+    "min_sequences": 2,
+    "tau": 0.8
+  },
+  "study": "StudyQ",
+  "temperatures": [
+    {
+      "inner_sequence_nll": 3.9552031830768777,
+      "outer_calibrated_sequence_metrics": {
+        "multiclass_brier": 0.9758147055546753,
+        "n_sequences": 8640,
+        "nll": 3.991839551698911,
+        "top_label_ece": 0.08308787686712599
+      },
+      "outer_calibrated_sequence_nll": 3.991839551698911,
+      "outer_fold": 1,
+      "outer_raw_sequence_metrics": {
+        "multiclass_brier": 0.9752424163466369,
+        "n_sequences": 8640,
+        "nll": 4.037907914347065,
+        "top_label_ece": 0.05070986338431655
+      },
+      "outer_raw_sequence_nll": 4.037907914347065,
+      "temperature": 2.3902743927768593
+    },
+    {
+      "inner_sequence_nll": 3.9870513047119385,
+      "outer_calibrated_sequence_metrics": {
+        "multiclass_brier": 0.975290444231094,
+        "n_sequences": 8640,
+        "nll": 3.971773929732681,
+        "top_label_ece": 0.09975398723355033
+      },
+      "outer_calibrated_sequence_nll": 3.971773929732681,
+      "outer_fold": 2,
+      "outer_raw_sequence_metrics": {
+        "multiclass_brier": 0.9717887399258296,
+        "n_sequences": 8640,
+        "nll": 3.9758141792797597,
+        "top_label_ece": 0.0603704813086261
+      },
+      "outer_raw_sequence_nll": 3.9758141792797597,
+      "temperature": 2.955083054325184
+    },
+    {
+      "inner_sequence_nll": 3.982467619976825,
+      "outer_calibrated_sequence_metrics": {
+        "multiclass_brier": 0.9749549695876868,
+        "n_sequences": 8640,
+        "nll": 3.9741500823797855,
+        "top_label_ece": 0.09809706285309225
+      },
+      "outer_calibrated_sequence_nll": 3.9741500823797855,
+      "outer_fold": 3,
+      "outer_raw_sequence_metrics": {
+        "multiclass_brier": 0.9715358748004784,
+        "n_sequences": 8640,
+        "nll": 4.019869739435983,
+        "top_label_ece": 0.057082671428321005
+      },
+      "outer_raw_sequence_nll": 4.019869739435983,
+      "temperature": 3.0611408785640553
+    }
+  ]
+}

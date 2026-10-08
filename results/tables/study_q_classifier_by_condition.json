@@ -1,0 +1,344 @@
+{
+  "per_condition": {
+    "ColorIntensification": {
+      "balanced_accuracy_at_zero": 0.6858181818181819,
+      "character_metrics": {
+        "available_sequence_depth_histogram": {
+          "10": 900
+        },
+        "characters": 900,
+        "full_available_sequence_accuracy": 0.5722222222222222,
+        "full_sequence_grid_nll_uncalibrated": 2.5961812675651545,
+        "invalid_target_intersections": 0,
+        "per_subject": {
+          "Q_02": {
+            "accuracy": 0.6388888888888888,
+            "characters": 36
+          },
+          "Q_03": {
+            "accuracy": 0.6388888888888888,
+            "characters": 36
+          },
+          "Q_05": {
+            "accuracy": 0.9166666666666666,
+            "characters": 36
+          },
+          "Q_06": {
+            "accuracy": 0.6944444444444444,
+            "characters": 36
+          },
+          "Q_07": {
+            "accuracy": 0.5,
+            "characters": 36
+          },
+          "Q_09": {
+            "accuracy": 0.9166666666666666,
+            "characters": 36
+          },
+          "Q_10": {
+            "accuracy": 0.5277777777777778,
+            "characters": 36
+          },
+          "Q_11": {
+            "accuracy": 0.6111111111111112,
+            "characters": 36
+          },
+          "Q_15": {
+            "accuracy": 0.5277777777777778,
+            "characters": 36
+          },
+          "Q_16": {
+            "accuracy": 0.6388888888888888,
+            "characters": 36
+          },
+          "Q_18": {
+            "accuracy": 0.5555555555555556,
+            "characters": 36
+          },
+          "Q_19": {
+            "accuracy": 0.75,
+            "characters": 36
+          },
+          "Q_20": {
+            "accuracy": 0.4722222222222222,
+            "characters": 36
+          },
+          "Q_21": {
+            "accuracy": 0.1111111111111111,
+            "characters": 36
+          },
+          "Q_22": {
+            "accuracy": 0.3888888888888889,
+            "characters": 36
+          },
+          "Q_24": {
+            "accuracy": 0.2777777777777778,
+            "characters": 36
+          },
+          "Q_26": {
+            "accuracy": 0.4444444444444444,
+            "characters": 36
+          },
+          "Q_27": {
+            "accuracy": 0.8611111111111112,
+            "characters": 36
+          },
+          "Q_28": {
+            "accuracy": 0.3055555555555556,
+            "characters": 36
+          },
+          "Q_29": {
+            "accuracy": 0.2777777777777778,
+            "characters": 36
+          },
+          "Q_31": {
+            "accuracy": 0.3333333333333333,
+            "characters": 36
+          },
+          "Q_32": {
+            "accuracy": 0.5,
+            "characters": 36
+          },
+          "Q_33": {
+            "accuracy": 0.4722222222222222,
+            "characters": 36
+          },
+          "Q_34": {
+            "accuracy": 0.9444444444444444,
+            "characters": 36
+          },
+          "Q_35": {
+            "accuracy": 1.0,
+            "characters": 36
+          }
+        }
+      },
+      "epoch_auc": 0.7482945000000001,
+      "epochs": 108000
+    },
+    "Grey-to-Color": {
+      "balanced_accuracy_at_zero": 0.6892098063973064,
+      "character_metrics": {
+        "available_sequence_depth_histogram": {
+          "10": 864
+        },
+        "characters": 864,
+        "full_available_sequence_accuracy": 0.6030092592592593,
+        "full_sequence_grid_nll_uncalibrated": 2.4496718488898863,
+        "invalid_target_intersections": 0,
+        "per_subject": {
+          "Q_01": {
+            "accuracy": 1.0,
+            "characters": 36
+          },
+          "Q_04": {
+            "accuracy": 0.3888888888888889,
+            "characters": 36
+          },
+          "Q_05": {
+            "accuracy": 0.75,
+            "characters": 36
+          },
+          "Q_06": {
+            "accuracy": 0.6666666666666666,
+            "characters": 36
+          },
+          "Q_07": {
+            "accuracy": 0.5555555555555556,
+            "characters": 36
+          },
+          "Q_08": {
+            "accuracy": 0.4444444444444444,
+            "characters": 36
+          },
+          "Q_11": {
+            "accuracy": 0.8333333333333334,
+            "characters": 36
+          },
+          "Q_12": {
+            "accuracy": 0.08333333333333333,
+            "characters": 36
+          },
+          "Q_13": {
+            "accuracy": 1.0,
+            "characters": 36
+          },
+          "Q_14": {
+            "accuracy": 0.6666666666666666,
+            "characters": 36
+          },
+          "Q_15": {
+            "accuracy": 0.6944444444444444,
+            "characters": 36
+          },
+          "Q_16": {
+            "accuracy": 0.6111111111111112,
+            "characters": 36
+          },
+          "Q_17": {
+            "accuracy": 0.5833333333333334,
+            "characters": 36
+          },
+          "Q_18": {
+            "accuracy": 0.5833333333333334,
+            "characters": 36
+          },
+          "Q_21": {
+            "accuracy": 0.16666666666666666,
+            "characters": 36
+          },
+          "Q_23": {
+            "accuracy": 0.6944444444444444,
+            "characters": 36
+          },
+          "Q_24": {
+            "accuracy": 0.4722222222222222,
+            "characters": 36
+          },
+          "Q_25": {
+            "accuracy": 0.3055555555555556,
+            "characters": 36
+          },
+          "Q_27": {
+            "accuracy": 0.9722222222222222,
+            "characters": 36
+          },
+          "Q_29": {
+            "accuracy": 0.2777777777777778,
+            "characters": 36
+          },
+          "Q_30": {
+            "accuracy": 0.2777777777777778,
+            "characters": 36
+          },
+          "Q_34": {
+            "accuracy": 0.8611111111111112,
+            "characters": 36
+          },
+          "Q_35": {
+            "accuracy": 0.5833333333333334,
+            "characters": 36
+          },
+          "Q_36": {
+            "accuracy": 1.0,
+            "characters": 36
+          }
+        }
+      },
+      "epoch_auc": 0.7530972716653417,
+      "epochs": 103680
+    },
+    "Grey-to-White": {
+      "balanced_accuracy_at_zero": 0.6764931927975406,
+      "character_metrics": {
+        "available_sequence_depth_histogram": {
+          "10": 828
+        },
+        "characters": 828,
+        "full_available_sequence_accuracy": 0.5446859903381642,
+        "full_sequence_grid_nll_uncalibrated": 2.786722499202174,
+        "invalid_target_intersections": 0,
+        "per_subject": {
+          "Q_01": {
+            "accuracy": 0.9722222222222222,
+            "characters": 36
+          },
+          "Q_02": {
+            "accuracy": 0.8888888888888888,
+            "characters": 36
+          },
+          "Q_03": {
+            "accuracy": 0.5277777777777778,
+            "characters": 36
+          },
+          "Q_04": {
+            "accuracy": 0.25,
+            "characters": 36
+          },
+          "Q_08": {
+            "accuracy": 0.3888888888888889,
+            "characters": 36
+          },
+          "Q_09": {
+            "accuracy": 0.8888888888888888,
+            "characters": 36
+          },
+          "Q_10": {
+            "accuracy": 0.75,
+            "characters": 36
+          },
+          "Q_12": {
+            "accuracy": 0.4444444444444444,
+            "characters": 36
+          },
+          "Q_13": {
+            "accuracy": 0.9166666666666666,
+            "characters": 36
+          },
+          "Q_14": {
+            "accuracy": 0.4444444444444444,
+            "characters": 36
+          },
+          "Q_17": {
+            "accuracy": 0.4166666666666667,
+            "characters": 36
+          },
+          "Q_19": {
+            "accuracy": 0.8333333333333334,
+            "characters": 36
+          },
+          "Q_20": {
+            "accuracy": 0.4444444444444444,
+            "characters": 36
+          },
+          "Q_22": {
+            "accuracy": 0.6666666666666666,
+            "characters": 36
+          },
+          "Q_23": {
+            "accuracy": 0.7222222222222222,
+            "characters": 36
+          },
+          "Q_25": {
+            "accuracy": 0.2222222222222222,
+            "characters": 36
+          },
+          "Q_26": {
+            "accuracy": 0.5277777777777778,
+            "characters": 36
+          },
+          "Q_28": {
+            "accuracy": 0.3333333333333333,
+            "characters": 36
+          },
+          "Q_30": {
+            "accuracy": 0.2777777777777778,
+            "characters": 36
+          },
+          "Q_31": {
+            "accuracy": 0.3333333333333333,
+            "characters": 36
+          },
+          "Q_32": {
+            "accuracy": 0.25,
+            "characters": 36
+          },
+          "Q_33": {
+            "accuracy": 0.1388888888888889,
+            "characters": 36
+          },
+          "Q_36": {
+            "accuracy": 0.8888888888888888,
+            "characters": 36
+          }
+        }
+      },
+      "epoch_auc": 0.7374301411775814,
+      "epochs": 99360
+    }
+  },
+  "selection_scope": "clean Train runs only; session-grouped OOF; held-out session SE003 untouched",
+  "source_cache": "/Users/shivank/Projects/P300_EEG_Speller/p300-llm-speller/data/cache/study_q_classifier_epochs.h5",
+  "source_scores": "/Users/shivank/Projects/P300_EEG_Speller/p300-llm-speller/results/tables/study_q_classifier_inner_scores.npz",
+  "study": "StudyQ"
+}

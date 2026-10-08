@@ -1,0 +1,32 @@
+{
+  "audit_scope": "repository-visible filenames only; no model or EEG files loaded",
+  "calibration_scope": null,
+  "candidate_paths": [
+    "results/tables/study_q_audit.json",
+    "results/tables/study_q_path_audit.json",
+    "samples/StudyQ.edf",
+    "scripts/audit_study_q.py",
+    "scripts/audit_study_q_classifier.py",
+    "scripts/audit_study_q_data.py",
+    "splits/study_q_excluded_training_runs.json",
+    "splits/study_q_manifest.json",
+    "splits/study_q_manifest.sha256",
+    "studyQ_support.patch"
+  ],
+  "classifier_artifacts_found": [],
+  "interpretation": "Any earlier Q classifier numbers remain exploratory; training overlap, preprocessing, calibration, and tuning cannot be certified from the available artifact inventory.",
+  "earlier_q_numbers": {
+    "status": "exploratory",
+    "scope": "Every Study Q classifier or decoder number reported before the clean q-inner-final tag, including numbers whose source is no longer present in the repository.",
+    "training_run_membership": "unknown",
+    "preprocessing": "unknown",
+    "calibration_scope": "unknown",
+    "q_specific_tuning": "unknown",
+    "reason": "No persisted Q classifier artifact or provenance record was found."
+  },
+  "parity_status": "unavailable_no_persisted_q_classifier_artifact",
+  "preprocessing_provenance": null,
+  "q_specific_tuning_provenance": null,
+  "study": "StudyQ",
+  "training_run_manifest": null
+}

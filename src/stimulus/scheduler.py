@@ -25,6 +25,7 @@ class SchedulerState:
     rag_prior: Optional[Tuple[float, ...]] = None
     n_rows: int = 9
     n_cols: int = 8
+    stimulus_masks: Tuple[Tuple[int, ...], ...] = ()
 
 
 class LanguageGuidedScheduler:
@@ -65,6 +66,24 @@ class LanguageGuidedScheduler:
 
     def _weights(self, state):
         n_classes = state.n_rows * state.n_cols
+        if state.stimulus_masks:
+            masks = np.asarray(state.stimulus_masks, dtype=float)
+            if masks.ndim != 2 or masks.shape[1] != n_classes or not np.isin(masks, (0, 1)).all():
+                raise ValueError("stimulus_masks must be a binary (n_stimuli, n_classes) matrix")
+            if np.any(masks.sum(axis=1) == 0):
+                raise ValueError("stimulus_masks cannot contain empty groups")
+            group_masses = lambda distribution: masks @ distribution
+            if self.mode == "uniform":
+                return np.ones(len(masks), dtype=float)
+            lm = self._distribution(state.lm_prior, n_classes)
+            if self.mode == "lm_guided":
+                return group_masses(lm)
+            rag = self._distribution(state.rag_prior, n_classes)
+            if self.mode == "lm_rag":
+                return 0.5 * (group_masses(lm) + group_masses(rag))
+            posterior = self._distribution(state.posterior, n_classes)
+            closed = self._distribution(posterior * lm * rag, n_classes)
+            return group_masses(closed)
         if self.mode == "uniform":
             return np.ones(state.n_rows + state.n_cols, dtype=float)
         lm = self._distribution(state.lm_prior, n_classes)
@@ -86,7 +105,8 @@ class LanguageGuidedScheduler:
         posterior = self._distribution(state.posterior, state.n_rows * state.n_cols)
         if len(state.flashed_codes) >= self.min_flashes and posterior.max() >= self.confidence_stop:
             return None
-        all_codes = np.arange(1, state.n_rows + state.n_cols + 1)
+        n_stimuli = len(state.stimulus_masks) if state.stimulus_masks else state.n_rows + state.n_cols
+        all_codes = np.arange(1, n_stimuli + 1)
         already = set(int(code) for code in state.flashed_codes)
         if any(code < 1 or code > len(all_codes) for code in already):
             raise ValueError("flashed_codes contains an invalid row/column code")

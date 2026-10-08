@@ -1,0 +1,587 @@
+{
+  "balanced_accuracy_at_zero": 0.6839699074074074,
+  "character_metrics": {
+    "available_sequence_depth_histogram": {
+      "10": 2592
+    },
+    "characters": 2592,
+    "full_available_sequence_accuracy": 0.5736882716049383,
+    "full_sequence_grid_nll_uncalibrated": 2.6082121325574463,
+    "invalid_target_intersections": 0,
+    "per_subject": {
+      "Q_01": {
+        "accuracy": 0.9861111111111112,
+        "characters": 72
+      },
+      "Q_02": {
+        "accuracy": 0.7638888888888888,
+        "characters": 72
+      },
+      "Q_03": {
+        "accuracy": 0.5833333333333334,
+        "characters": 72
+      },
+      "Q_04": {
+        "accuracy": 0.3194444444444444,
+        "characters": 72
+      },
+      "Q_05": {
+        "accuracy": 0.8333333333333334,
+        "characters": 72
+      },
+      "Q_06": {
+        "accuracy": 0.6805555555555556,
+        "characters": 72
+      },
+      "Q_07": {
+        "accuracy": 0.5277777777777778,
+        "characters": 72
+      },
+      "Q_08": {
+        "accuracy": 0.4166666666666667,
+        "characters": 72
+      },
+      "Q_09": {
+        "accuracy": 0.9027777777777778,
+        "characters": 72
+      },
+      "Q_10": {
+        "accuracy": 0.6388888888888888,
+        "characters": 72
+      },
+      "Q_11": {
+        "accuracy": 0.7222222222222222,
+        "characters": 72
+      },
+      "Q_12": {
+        "accuracy": 0.2638888888888889,
+        "characters": 72
+      },
+      "Q_13": {
+        "accuracy": 0.9583333333333334,
+        "characters": 72
+      },
+      "Q_14": {
+        "accuracy": 0.5555555555555556,
+        "characters": 72
+      },
+      "Q_15": {
+        "accuracy": 0.6111111111111112,
+        "characters": 72
+      },
+      "Q_16": {
+        "accuracy": 0.625,
+        "characters": 72
+      },
+      "Q_17": {
+        "accuracy": 0.5,
+        "characters": 72
+      },
+      "Q_18": {
+        "accuracy": 0.5694444444444444,
+        "characters": 72
+      },
+      "Q_19": {
+        "accuracy": 0.7916666666666666,
+        "characters": 72
+      },
+      "Q_20": {
+        "accuracy": 0.4583333333333333,
+        "characters": 72
+      },
+      "Q_21": {
+        "accuracy": 0.1388888888888889,
+        "characters": 72
+      },
+      "Q_22": {
+        "accuracy": 0.5277777777777778,
+        "characters": 72
+      },
+      "Q_23": {
+        "accuracy": 0.7083333333333334,
+        "characters": 72
+      },
+      "Q_24": {
+        "accuracy": 0.375,
+        "characters": 72
+      },
+      "Q_25": {
+        "accuracy": 0.2638888888888889,
+        "characters": 72
+      },
+      "Q_26": {
+        "accuracy": 0.4861111111111111,
+        "characters": 72
+      },
+      "Q_27": {
+        "accuracy": 0.9166666666666666,
+        "characters": 72
+      },
+      "Q_28": {
+        "accuracy": 0.3194444444444444,
+        "characters": 72
+      },
+      "Q_29": {
+        "accuracy": 0.2777777777777778,
+        "characters": 72
+      },
+      "Q_30": {
+        "accuracy": 0.2777777777777778,
+        "characters": 72
+      },
+      "Q_31": {
+        "accuracy": 0.3333333333333333,
+        "characters": 72
+      },
+      "Q_32": {
+        "accuracy": 0.375,
+        "characters": 72
+      },
+      "Q_33": {
+        "accuracy": 0.3055555555555556,
+        "characters": 72
+      },
+      "Q_34": {
+        "accuracy": 0.9027777777777778,
+        "characters": 72
+      },
+      "Q_35": {
+        "accuracy": 0.7916666666666666,
+        "characters": 72
+      },
+      "Q_36": {
+        "accuracy": 0.9444444444444444,
+        "characters": 72
+      }
+    }
+  },
+  "epoch_auc": 0.7464507517843906,
+  "excluded_train_sha256": "f267f7751339dff9c1b214521c562ca98258846bfc2420a95d26f0b10817f3d1",
+  "folds": 3,
+  "folds_detail": [
+    {
+      "fold": 1,
+      "training_epochs_after_preprocessing": 207360,
+      "training_sessions": [
+        "Q_01_SE001",
+        "Q_01_SE002",
+        "Q_02_SE001",
+        "Q_03_SE001",
+        "Q_03_SE002",
+        "Q_05_SE001",
+        "Q_06_SE001",
+        "Q_06_SE002",
+        "Q_07_SE002",
+        "Q_08_SE001",
+        "Q_08_SE002",
+        "Q_09_SE001",
+        "Q_09_SE002",
+        "Q_10_SE002",
+        "Q_11_SE001",
+        "Q_12_SE001",
+        "Q_12_SE002",
+        "Q_13_SE002",
+        "Q_14_SE001",
+        "Q_15_SE001",
+        "Q_15_SE002",
+        "Q_16_SE002",
+        "Q_17_SE001",
+        "Q_18_SE001",
+        "Q_18_SE002",
+        "Q_19_SE001",
+        "Q_19_SE002",
+        "Q_20_SE002",
+        "Q_21_SE001",
+        "Q_22_SE001",
+        "Q_22_SE002",
+        "Q_23_SE002",
+        "Q_24_SE001",
+        "Q_25_SE001",
+        "Q_25_SE002",
+        "Q_26_SE002",
+        "Q_27_SE001",
+        "Q_28_SE001",
+        "Q_28_SE002",
+        "Q_29_SE002",
+        "Q_31_SE001",
+        "Q_32_SE002",
+        "Q_33_SE002",
+        "Q_34_SE001",
+        "Q_35_SE001",
+        "Q_35_SE002",
+        "Q_36_SE001",
+        "Q_36_SE002"
+      ],
+      "training_subjects": 34,
+      "validation_heldout_subjects": [],
+      "validation_sessions": [
+        "Q_02_SE002",
+        "Q_04_SE001",
+        "Q_04_SE002",
+        "Q_05_SE002",
+        "Q_07_SE001",
+        "Q_10_SE001",
+        "Q_11_SE002",
+        "Q_13_SE001",
+        "Q_14_SE002",
+        "Q_16_SE001",
+        "Q_17_SE002",
+        "Q_20_SE001",
+        "Q_21_SE002",
+        "Q_23_SE001",
+        "Q_24_SE002",
+        "Q_26_SE001",
+        "Q_27_SE002",
+        "Q_29_SE001",
+        "Q_30_SE001",
+        "Q_31_SE002",
+        "Q_32_SE001",
+        "Q_33_SE001",
+        "Q_34_SE002"
+      ],
+      "validation_subjects": 22
+    },
+    {
+      "fold": 2,
+      "training_epochs_after_preprocessing": 207360,
+      "training_sessions": [
+        "Q_01_SE001",
+        "Q_02_SE001",
+        "Q_02_SE002",
+        "Q_03_SE002",
+        "Q_04_SE001",
+        "Q_04_SE002",
+        "Q_05_SE002",
+        "Q_06_SE002",
+        "Q_07_SE001",
+        "Q_08_SE001",
+        "Q_08_SE002",
+        "Q_09_SE002",
+        "Q_10_SE001",
+        "Q_11_SE001",
+        "Q_11_SE002",
+        "Q_12_SE002",
+        "Q_13_SE001",
+        "Q_14_SE001",
+        "Q_14_SE002",
+        "Q_15_SE002",
+        "Q_16_SE001",
+        "Q_17_SE001",
+        "Q_17_SE002",
+        "Q_18_SE001",
+        "Q_19_SE001",
+        "Q_20_SE001",
+        "Q_20_SE002",
+        "Q_21_SE002",
+        "Q_22_SE001",
+        "Q_23_SE001",
+        "Q_23_SE002",
+        "Q_24_SE002",
+        "Q_25_SE001",
+        "Q_26_SE001",
+        "Q_26_SE002",
+        "Q_27_SE002",
+        "Q_28_SE002",
+        "Q_29_SE001",
+        "Q_30_SE001",
+        "Q_31_SE001",
+        "Q_31_SE002",
+        "Q_32_SE001",
+        "Q_33_SE001",
+        "Q_34_SE001",
+        "Q_34_SE002",
+        "Q_35_SE002",
+        "Q_36_SE001"
+      ],
+      "training_subjects": 36,
+      "validation_heldout_subjects": [],
+      "validation_sessions": [
+        "Q_01_SE002",
+        "Q_03_SE001",
+        "Q_05_SE001",
+        "Q_06_SE001",
+        "Q_07_SE002",
+        "Q_09_SE001",
+        "Q_10_SE002",
+        "Q_12_SE001",
+        "Q_13_SE002",
+        "Q_15_SE001",
+        "Q_16_SE002",
+        "Q_18_SE002",
+        "Q_19_SE002",
+        "Q_21_SE001",
+        "Q_22_SE002",
+        "Q_24_SE001",
+        "Q_25_SE002",
+        "Q_27_SE001",
+        "Q_28_SE001",
+        "Q_29_SE002",
+        "Q_32_SE002",
+        "Q_33_SE002",
+        "Q_35_SE001",
+        "Q_36_SE002"
+      ],
+      "validation_subjects": 24
+    },
+    {
+      "fold": 3,
+      "training_epochs_after_preprocessing": 207360,
+      "training_sessions": [
+        "Q_01_SE002",
+        "Q_02_SE002",
+        "Q_03_SE001",
+        "Q_04_SE001",
+        "Q_04_SE002",
+        "Q_05_SE001",
+        "Q_05_SE002",
+        "Q_06_SE001",
+        "Q_07_SE001",
+        "Q_07_SE002",
+        "Q_09_SE001",
+        "Q_10_SE001",
+        "Q_10_SE002",
+        "Q_11_SE002",
+        "Q_12_SE001",
+        "Q_13_SE001",
+        "Q_13_SE002",
+        "Q_14_SE002",
+        "Q_15_SE001",
+        "Q_16_SE001",
+        "Q_16_SE002",
+        "Q_17_SE002",
+        "Q_18_SE002",
+        "Q_19_SE002",
+        "Q_20_SE001",
+        "Q_21_SE001",
+        "Q_21_SE002",
+        "Q_22_SE002",
+        "Q_23_SE001",
+        "Q_24_SE001",
+        "Q_24_SE002",
+        "Q_25_SE002",
+        "Q_26_SE001",
+        "Q_27_SE001",
+        "Q_27_SE002",
+        "Q_28_SE001",
+        "Q_29_SE001",
+        "Q_29_SE002",
+        "Q_30_SE001",
+        "Q_31_SE002",
+        "Q_32_SE001",
+        "Q_32_SE002",
+        "Q_33_SE001",
+        "Q_33_SE002",
+        "Q_34_SE002",
+        "Q_35_SE001",
+        "Q_36_SE002"
+      ],
+      "training_subjects": 35,
+      "validation_heldout_subjects": [],
+      "validation_sessions": [
+        "Q_01_SE001",
+        "Q_02_SE001",
+        "Q_03_SE002",
+        "Q_06_SE002",
+        "Q_08_SE001",
+        "Q_08_SE002",
+        "Q_09_SE002",
+        "Q_11_SE001",
+        "Q_12_SE002",
+        "Q_14_SE001",
+        "Q_15_SE002",
+        "Q_17_SE001",
+        "Q_18_SE001",
+        "Q_19_SE001",
+        "Q_20_SE002",
+        "Q_22_SE001",
+        "Q_23_SE002",
+        "Q_25_SE001",
+        "Q_26_SE002",
+        "Q_28_SE002",
+        "Q_31_SE001",
+        "Q_34_SE001",
+        "Q_35_SE002",
+        "Q_36_SE001"
+      ],
+      "validation_subjects": 23
+    }
+  ],
+  "git_dirty": true,
+  "git_hash": "449c26684fd5c90970698fe11afe12e482dade26",
+  "grouping": "subject-session",
+  "heldout_session": "SE003",
+  "heldout_test_data_read": false,
+  "manifest_sha256": "39ed6801b2545f37f5f0b1019c01bec0e8fd6b7a6b4418c7014c00b9c689c973",
+  "model": "M0_clean_SGD",
+  "per_subject_epoch_metrics": {
+    "Q_01": {
+      "balanced_accuracy_at_zero": 0.764709595959596,
+      "epoch_auc": 0.8629436728395063
+    },
+    "Q_02": {
+      "balanced_accuracy_at_zero": 0.7208333333333333,
+      "epoch_auc": 0.8006472713243546
+    },
+    "Q_03": {
+      "balanced_accuracy_at_zero": 0.6724116161616162,
+      "epoch_auc": 0.7388082210998876
+    },
+    "Q_04": {
+      "balanced_accuracy_at_zero": 0.6280934343434343,
+      "epoch_auc": 0.6735616582491581
+    },
+    "Q_05": {
+      "balanced_accuracy_at_zero": 0.7586489898989899,
+      "epoch_auc": 0.8404570005611671
+    },
+    "Q_06": {
+      "balanced_accuracy_at_zero": 0.6952651515151516,
+      "epoch_auc": 0.7643415053310887
+    },
+    "Q_07": {
+      "balanced_accuracy_at_zero": 0.6825757575757576,
+      "epoch_auc": 0.7422551907968575
+    },
+    "Q_08": {
+      "balanced_accuracy_at_zero": 0.6500631313131313,
+      "epoch_auc": 0.7050854903198653
+    },
+    "Q_09": {
+      "balanced_accuracy_at_zero": 0.7412878787878788,
+      "epoch_auc": 0.8253879068462402
+    },
+    "Q_10": {
+      "balanced_accuracy_at_zero": 0.7066919191919192,
+      "epoch_auc": 0.7685506102693602
+    },
+    "Q_11": {
+      "balanced_accuracy_at_zero": 0.7087121212121212,
+      "epoch_auc": 0.7992117354096521
+    },
+    "Q_12": {
+      "balanced_accuracy_at_zero": 0.6025252525252525,
+      "epoch_auc": 0.6427648884680135
+    },
+    "Q_13": {
+      "balanced_accuracy_at_zero": 0.7643939393939394,
+      "epoch_auc": 0.8605390712682379
+    },
+    "Q_14": {
+      "balanced_accuracy_at_zero": 0.6837752525252525,
+      "epoch_auc": 0.7407460016835016
+    },
+    "Q_15": {
+      "balanced_accuracy_at_zero": 0.696969696969697,
+      "epoch_auc": 0.7599525638327722
+    },
+    "Q_16": {
+      "balanced_accuracy_at_zero": 0.6781565656565657,
+      "epoch_auc": 0.7476983375420876
+    },
+    "Q_17": {
+      "balanced_accuracy_at_zero": 0.655239898989899,
+      "epoch_auc": 0.7125622544893377
+    },
+    "Q_18": {
+      "balanced_accuracy_at_zero": 0.6779671717171718,
+      "epoch_auc": 0.7539960367564534
+    },
+    "Q_19": {
+      "balanced_accuracy_at_zero": 0.7101641414141414,
+      "epoch_auc": 0.7934592452300785
+    },
+    "Q_20": {
+      "balanced_accuracy_at_zero": 0.6632575757575757,
+      "epoch_auc": 0.7163050645342313
+    },
+    "Q_21": {
+      "balanced_accuracy_at_zero": 0.6043560606060606,
+      "epoch_auc": 0.630910143097643
+    },
+    "Q_22": {
+      "balanced_accuracy_at_zero": 0.6698863636363637,
+      "epoch_auc": 0.739325722502806
+    },
+    "Q_23": {
+      "balanced_accuracy_at_zero": 0.7014520202020202,
+      "epoch_auc": 0.7829173681257016
+    },
+    "Q_24": {
+      "balanced_accuracy_at_zero": 0.6639520202020202,
+      "epoch_auc": 0.7165416315937149
+    },
+    "Q_25": {
+      "balanced_accuracy_at_zero": 0.6182449494949496,
+      "epoch_auc": 0.6718053801907968
+    },
+    "Q_26": {
+      "balanced_accuracy_at_zero": 0.6881944444444444,
+      "epoch_auc": 0.741382400392817
+    },
+    "Q_27": {
+      "balanced_accuracy_at_zero": 0.7565025252525253,
+      "epoch_auc": 0.8555748456790123
+    },
+    "Q_28": {
+      "balanced_accuracy_at_zero": 0.639330808080808,
+      "epoch_auc": 0.6826880787037037
+    },
+    "Q_29": {
+      "balanced_accuracy_at_zero": 0.6261994949494949,
+      "epoch_auc": 0.6830075056116723
+    },
+    "Q_30": {
+      "balanced_accuracy_at_zero": 0.6184343434343433,
+      "epoch_auc": 0.6580757225028058
+    },
+    "Q_31": {
+      "balanced_accuracy_at_zero": 0.6212752525252525,
+      "epoch_auc": 0.6636539001122334
+    },
+    "Q_32": {
+      "balanced_accuracy_at_zero": 0.6432449494949495,
+      "epoch_auc": 0.6869120019640853
+    },
+    "Q_33": {
+      "balanced_accuracy_at_zero": 0.624810606060606,
+      "epoch_auc": 0.6641335227272728
+    },
+    "Q_34": {
+      "balanced_accuracy_at_zero": 0.7755050505050505,
+      "epoch_auc": 0.86209455667789
+    },
+    "Q_35": {
+      "balanced_accuracy_at_zero": 0.7400252525252525,
+      "epoch_auc": 0.8393778058361392
+    },
+    "Q_36": {
+      "balanced_accuracy_at_zero": 0.769760101010101,
+      "epoch_auc": 0.867918771043771
+    }
+  },
+  "preprocessing": {
+    "artifact_rejection": false,
+    "bandpass_hz": [
+      1.0,
+      12.0
+    ],
+    "baseline_correction": false,
+    "channels": "all",
+    "decimation": 2,
+    "window_s": [
+      0.0,
+      0.8
+    ]
+  },
+  "recipe": {
+    "class_weight": {
+      "0": 1.0,
+      "1": 5.0
+    },
+    "classifier": "SGDClassifier(loss=log_loss, penalty=l2, alpha=.01, average=True)",
+    "passes": 5
+  },
+  "scheme": "session",
+  "study": "StudyQ",
+  "training_runs": 360
+}

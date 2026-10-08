@@ -41,3 +41,20 @@ def test_scheduler_stops_on_observed_confidence_after_minimum_flashes():
     state = SchedulerState(posterior=tuple(posterior), flashed_codes=(1, 10))
     scheduler = LanguageGuidedScheduler(confidence_stop=0.8, min_flashes=2)
     assert scheduler.next_flash(state) is None
+
+
+def test_scheduler_accepts_target_blind_group_masks_for_study_q():
+    masks = np.zeros((3, 72), dtype=int)
+    masks[0, :6] = 1
+    masks[1, 6:12] = 1
+    masks[2, 12:18] = 1
+    prior = np.zeros(72)
+    prior[0] = 1.0
+    state = SchedulerState(
+        posterior=tuple(np.full(72, 1 / 72)),
+        lm_prior=tuple(prior), rag_prior=tuple(prior),
+        stimulus_masks=tuple(tuple(int(v) for v in row) for row in masks),
+    )
+    scheduler = LanguageGuidedScheduler(mode="lm_guided", exploration_floor=0.0, seed=4)
+    assert scheduler.next_flash(state) == 1
+    assert "target" not in {field.name for field in fields(SchedulerState)}

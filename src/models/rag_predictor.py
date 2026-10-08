@@ -116,6 +116,7 @@ class RAGPredictor:
         bigram_min_count: int = 2,
         bigram_max_normalized_entropy: float = 0.65,
         debug_trace_calls: int = 0,
+        token_mode: bool = False,
     ):
         if not 0.0 <= rag_weight <= 1.0:
             raise ValueError("rag_weight must be between 0 and 1")
@@ -144,6 +145,10 @@ class RAGPredictor:
 
         self.base_predictor = base_predictor
         self.char_list = list(base_predictor.char_list)
+        # Token mode is for grids whose selectable keys have multi-character
+        # labels (for example Study Q's Sleep/PgUp/Sp). Banks serialize one
+        # selectable key per whitespace-delimited token.
+        self.token_mode = bool(token_mode)
         self.phrase_bank_path = Path(phrase_bank_path)
         self.rag_weight = rag_weight
         self.retrieval_confidence_threshold = retrieval_confidence_threshold
@@ -323,7 +328,11 @@ class RAGPredictor:
 
     def _char_to_grid_index(self, next_char: str) -> Optional[int]:
         for idx, label in enumerate(self.char_list):
-            semantic = " " if label == "Sp" else str(label).lower()
+            semantic = (
+                str(label).lower()
+                if self.token_mode
+                else (" " if label == "Sp" else str(label).lower())
+            )
 
             if semantic == next_char:
                 return idx
@@ -356,7 +365,12 @@ class RAGPredictor:
                         if end >= len(phrase.text):
                             continue
 
-                        next_char = phrase.text[end]
+                        if self.token_mode:
+                            while end < len(phrase.text) and phrase.text[end].isspace():
+                                end += 1
+                            next_char = phrase.text[end:].split(None, 1)[0] if end < len(phrase.text) else ""
+                        else:
+                            next_char = phrase.text[end]
 
                         if self._char_to_grid_index(next_char) is None:
                             continue
@@ -496,6 +510,10 @@ class RAGPredictor:
 
     def _char_ngram_prior(self, context_so_far):
         """Return a gated empirical bigram prior, or ``None`` to use base LM."""
+        if self.token_mode:
+            # Character bigrams do not preserve the grid's multi-character
+            # key boundaries. Token-mode retrieval uses complete key tokens.
+            return None, 0.0
         context = self._normalize_context(context_so_far)
         last = context[-1] if context else " "
         supported = []
@@ -628,13 +646,13 @@ class RAGPredictor:
 
         return probs / total
 
-    def predict_next_char(self, context_so_far: str, target_char: Optional[str] = None):
+    def predict_next_char(self, context_so_far: str, target_char: Optional[str] = None,
+                          base_prior=None):
         """Return a RAG-enhanced grid prior for the next character."""
 
         base_prior = self._normalize_probs(
-            self.base_predictor.predict_next_char(
-                context_so_far
-            )
+            self.base_predictor.predict_next_char(context_so_far)
+            if base_prior is None else base_prior
         )
 
         retrieval_prior, diagnostics = self.retrieval_prior(

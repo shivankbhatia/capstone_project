@@ -1,0 +1,76 @@
+{
+  "study": "StudyQ",
+  "phase": "1_clean_classifier",
+  "manifest": {
+    "path": "splits/study_q_manifest.json",
+    "sha256": "39ed6801b2545f37f5f0b1019c01bec0e8fd6b7a6b4418c7014c00b9c689c973",
+    "heldout_session": "SE003",
+    "heldout_test_runs": 180,
+    "excluded_same_session_train_runs": 180,
+    "clean_training_runs": 360,
+    "heldout_labels_separated": true
+  },
+  "classifier_gate": {
+    "model": "clean M0, locked D recipe",
+    "primary_cv": "3-fold session-grouped OOF on SE001/SE002",
+    "epoch_auc": 0.7464507518,
+    "primary_cv_subject_auc_mean": 0.75,
+    "primary_cv_subject_auc_median": 0.742,
+    "subjects_with_auc_above_0_60": 36,
+    "loso_folds": 36,
+    "loso_epoch_auc": 0.7524019527,
+    "loso_subject_auc_mean": 0.7563679474,
+    "loso_full_10_sequence_character_accuracy": 0.60686728395,
+    "gate": "passed; EEG signal is above chance under session-grouped and leave-subject-out CV"
+  },
+  "nested_calibration_and_fusion": {
+    "folds": 3,
+    "fusion": "local DistilGPT2 prior; alpha=0.1; teacher-forced previous key context",
+    "fixed_policy_reference": {"tau": 0.8, "min_sequences": 2, "max_sequences": 10},
+    "eeg_only_accuracy": 0.60262345679,
+    "fusion_accuracy": 0.6875,
+    "mean_sequences_eeg_only": 9.73765432099,
+    "mean_sequences_fusion": 9.58333333333,
+    "paired_subjects_improved_tied_worse": [36, 0, 0],
+    "mean_subject_accuracy_difference": 0.08487654321,
+    "bootstrap_95_ci": [0.07214506173, 0.09799382716],
+    "wilcoxon_p": 2.91038304567337e-11,
+    "calibration_transfer": {
+      "sequence_nll_raw_by_outer_fold": [4.03790791435, 3.97581417928, 4.01986973944],
+      "sequence_nll_calibrated_by_outer_fold": [3.99183955170, 3.97177392973, 3.97415008238],
+      "top_label_ece_raw_by_outer_fold": [0.05070986338, 0.06037048131, 0.05708267143],
+      "top_label_ece_calibrated_by_outer_fold": [0.08308787687, 0.09975398723, 0.09809706285],
+      "interpretation": "Temperature scaling reduced sequence NLL in all folds but worsened top-label ECE and Brier; calibration benefit is mixed."
+    },
+    "policy_tuning": {
+      "selection_rule": "preserve default fusion accuracy, then minimize mean sequences",
+      "selected": {"tau": 0.6, "min_sequences": 2, "max_sequences": 10},
+      "fusion_accuracy": 0.6875,
+      "mean_sequences": 9.09259259259,
+      "heldout_test_data_read": false
+    }
+  },
+  "pooled_d_q_inner_fusion": {
+    "subjects": 53,
+    "mean_subject_accuracy_difference": 0.06540880503,
+    "bootstrap_95_ci": [0.05566037736, 0.07562893082],
+    "improved_tied_worse": [44, 9, 0],
+    "study_effect_difference_q_minus_d": 0.06069353667,
+    "study_effect_heterogeneity_p_unadjusted": 6.89517040445e-7,
+    "caveat": "Q uses group-flash scores and D uses row/column scores; the pooled summary is cross-study support, not exact measurement equivalence."
+  },
+  "heldout_evaluation_gate": {
+    "test_characters": 1296,
+    "characters_with_10_recorded_sequences": 396,
+    "characters_with_fewer_than_10_recorded_sequences": 900,
+    "by_condition": {
+      "ColorIntensification": {"characters": 396, "depth_histogram": {"5": 72, "6": 108, "7": 36, "9": 36, "10": 144}},
+      "Grey-to-Color": {"characters": 432, "depth_histogram": {"6": 72, "7": 72, "8": 36, "9": 108, "10": 144}},
+      "Grey-to-White": {"characters": 468, "depth_histogram": {"4": 36, "5": 36, "6": 36, "7": 108, "8": 72, "9": 72, "10": 108}}
+    },
+    "test_classifier_evaluation_performed": false,
+    "decision": "stop before Phase 8: the frozen recordings are right-censored for the selected max-10 stopping policy; do not infer unrecorded flashes or report stopping metrics as observed."
+  },
+  "language_data_caveat": "Q provides a small number of repeated typed-key sequences per subject; whitespace-separated tokens are key labels, not conventional language words. The positive teacher-forced LM effect does not establish prospective RAG benefit.",
+  "next_action": "Agree a prespecified estimand limited to available recorded prefixes or collect complete fixed-depth data before any one-shot Q Test replay."
+}

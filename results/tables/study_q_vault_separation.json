@@ -1,0 +1,15 @@
+{
+  "applied": true,
+  "clean_train_run_count": 360,
+  "clean_train_same_session_exclusion_overlap": 0,
+  "clean_train_test_overlap": 0,
+  "frozen_test_labels_remaining_in_vault": 180,
+  "global_registry_contains_q_labels": false,
+  "manifest_sha256": "39ed6801b2545f37f5f0b1019c01bec0e8fd6b7a6b4418c7014c00b9c689c973",
+  "study": "StudyQ",
+  "training_registry": "data/processed/study_q_train_registry.json",
+  "training_registry_sha256": "b5771b98a4dcd283fdfbf3440fc9aa5fa30d22bee9e6df19bdbb60e019e6a918",
+  "vault_q_labels_after": 720,
+  "vault_q_labels_before": 1080,
+  "vault_sha256_after": "65618add1522838a221cc7fd75fae7ad39f791dddc4c541c06c9b65fda65b071"
+}

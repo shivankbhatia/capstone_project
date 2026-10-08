@@ -1,0 +1,204 @@
+{
+  "bootstrap_subject_resampling": {
+    "mean_difference_ci_95": [
+      0.07214506172839504,
+      0.09799382716049382
+    ],
+    "samples": 20000,
+    "seed": 104729
+  },
+  "caveat": "Training-only nested OOF; not held-out manifest evaluation.",
+  "mean_subject_accuracy_difference_fusion_minus_eeg": 0.08487654320987653,
+  "median_subject_accuracy_difference": 0.08333333333333329,
+  "n_subjects": 36,
+  "p_value": 2.9103830456733704e-11,
+  "paired_test": "two-sided Wilcoxon signed-rank",
+  "per_subject": {
+    "Q_01": {
+      "difference": 0.04166666666666663,
+      "eeg_only_accuracy": 0.9583333333333334,
+      "fusion_accuracy": 1.0
+    },
+    "Q_02": {
+      "difference": 0.11111111111111116,
+      "eeg_only_accuracy": 0.7638888888888888,
+      "fusion_accuracy": 0.875
+    },
+    "Q_03": {
+      "difference": 0.125,
+      "eeg_only_accuracy": 0.5694444444444444,
+      "fusion_accuracy": 0.6944444444444444
+    },
+    "Q_04": {
+      "difference": 0.125,
+      "eeg_only_accuracy": 0.3333333333333333,
+      "fusion_accuracy": 0.4583333333333333
+    },
+    "Q_05": {
+      "difference": 0.04166666666666674,
+      "eeg_only_accuracy": 0.9166666666666666,
+      "fusion_accuracy": 0.9583333333333334
+    },
+    "Q_06": {
+      "difference": 0.06944444444444453,
+      "eeg_only_accuracy": 0.6388888888888888,
+      "fusion_accuracy": 0.7083333333333334
+    },
+    "Q_07": {
+      "difference": 0.13888888888888884,
+      "eeg_only_accuracy": 0.5833333333333334,
+      "fusion_accuracy": 0.7222222222222222
+    },
+    "Q_08": {
+      "difference": 0.06944444444444442,
+      "eeg_only_accuracy": 0.4444444444444444,
+      "fusion_accuracy": 0.5138888888888888
+    },
+    "Q_09": {
+      "difference": 0.06944444444444442,
+      "eeg_only_accuracy": 0.875,
+      "fusion_accuracy": 0.9444444444444444
+    },
+    "Q_10": {
+      "difference": 0.06944444444444442,
+      "eeg_only_accuracy": 0.7222222222222222,
+      "fusion_accuracy": 0.7916666666666666
+    },
+    "Q_11": {
+      "difference": 0.08333333333333326,
+      "eeg_only_accuracy": 0.7083333333333334,
+      "fusion_accuracy": 0.7916666666666666
+    },
+    "Q_12": {
+      "difference": 0.055555555555555525,
+      "eeg_only_accuracy": 0.2777777777777778,
+      "fusion_accuracy": 0.3333333333333333
+    },
+    "Q_13": {
+      "difference": 0.01388888888888884,
+      "eeg_only_accuracy": 0.9583333333333334,
+      "fusion_accuracy": 0.9722222222222222
+    },
+    "Q_14": {
+      "difference": 0.18055555555555558,
+      "eeg_only_accuracy": 0.6388888888888888,
+      "fusion_accuracy": 0.8194444444444444
+    },
+    "Q_15": {
+      "difference": 0.08333333333333337,
+      "eeg_only_accuracy": 0.6944444444444444,
+      "fusion_accuracy": 0.7777777777777778
+    },
+    "Q_16": {
+      "difference": 0.1527777777777778,
+      "eeg_only_accuracy": 0.6527777777777778,
+      "fusion_accuracy": 0.8055555555555556
+    },
+    "Q_17": {
+      "difference": 0.06944444444444442,
+      "eeg_only_accuracy": 0.5277777777777778,
+      "fusion_accuracy": 0.5972222222222222
+    },
+    "Q_18": {
+      "difference": 0.09722222222222221,
+      "eeg_only_accuracy": 0.7083333333333334,
+      "fusion_accuracy": 0.8055555555555556
+    },
+    "Q_19": {
+      "difference": 0.08333333333333326,
+      "eeg_only_accuracy": 0.8333333333333334,
+      "fusion_accuracy": 0.9166666666666666
+    },
+    "Q_20": {
+      "difference": 0.11111111111111105,
+      "eeg_only_accuracy": 0.5555555555555556,
+      "fusion_accuracy": 0.6666666666666666
+    },
+    "Q_21": {
+      "difference": 0.02777777777777779,
+      "eeg_only_accuracy": 0.2222222222222222,
+      "fusion_accuracy": 0.25
+    },
+    "Q_22": {
+      "difference": 0.125,
+      "eeg_only_accuracy": 0.5833333333333334,
+      "fusion_accuracy": 0.7083333333333334
+    },
+    "Q_23": {
+      "difference": 0.09722222222222221,
+      "eeg_only_accuracy": 0.6944444444444444,
+      "fusion_accuracy": 0.7916666666666666
+    },
+    "Q_24": {
+      "difference": 0.11111111111111105,
+      "eeg_only_accuracy": 0.4305555555555556,
+      "fusion_accuracy": 0.5416666666666666
+    },
+    "Q_25": {
+      "difference": 0.11111111111111116,
+      "eeg_only_accuracy": 0.3194444444444444,
+      "fusion_accuracy": 0.4305555555555556
+    },
+    "Q_26": {
+      "difference": 0.055555555555555525,
+      "eeg_only_accuracy": 0.4861111111111111,
+      "fusion_accuracy": 0.5416666666666666
+    },
+    "Q_27": {
+      "difference": 0.02777777777777779,
+      "eeg_only_accuracy": 0.9305555555555556,
+      "fusion_accuracy": 0.9583333333333334
+    },
+    "Q_28": {
+      "difference": 0.15277777777777773,
+      "eeg_only_accuracy": 0.3055555555555556,
+      "fusion_accuracy": 0.4583333333333333
+    },
+    "Q_29": {
+      "difference": 0.09722222222222221,
+      "eeg_only_accuracy": 0.2638888888888889,
+      "fusion_accuracy": 0.3611111111111111
+    },
+    "Q_30": {
+      "difference": 0.09722222222222227,
+      "eeg_only_accuracy": 0.3333333333333333,
+      "fusion_accuracy": 0.4305555555555556
+    },
+    "Q_31": {
+      "difference": 0.055555555555555525,
+      "eeg_only_accuracy": 0.2916666666666667,
+      "fusion_accuracy": 0.3472222222222222
+    },
+    "Q_32": {
+      "difference": 0.125,
+      "eeg_only_accuracy": 0.4027777777777778,
+      "fusion_accuracy": 0.5277777777777778
+    },
+    "Q_33": {
+      "difference": 0.08333333333333331,
+      "eeg_only_accuracy": 0.3888888888888889,
+      "fusion_accuracy": 0.4722222222222222
+    },
+    "Q_34": {
+      "difference": 0.04166666666666674,
+      "eeg_only_accuracy": 0.9166666666666666,
+      "fusion_accuracy": 0.9583333333333334
+    },
+    "Q_35": {
+      "difference": 0.02777777777777779,
+      "eeg_only_accuracy": 0.8194444444444444,
+      "fusion_accuracy": 0.8472222222222222
+    },
+    "Q_36": {
+      "difference": 0.02777777777777779,
+      "eeg_only_accuracy": 0.9444444444444444,
+      "fusion_accuracy": 0.9722222222222222
+    }
+  },
+  "source": "results/tables/study_q_nested_fusion.json",
+  "study": "StudyQ",
+  "subjects_improved": 36,
+  "subjects_tied": 0,
+  "subjects_worse": 0,
+  "wilcoxon_statistic": 0.0
+}

@@ -1,0 +1,105 @@
+{
+  "lock_version": 1,
+  "study": "StudyQ",
+  "status": "preregistered_before_SE003_test_evaluation",
+  "created_from_git_hash": "449c26684fd5c90970698fe11afe12e482dade26",
+  "manifest_path": "splits/study_q_manifest.json",
+  "manifest_sha256": "39ed6801b2545f37f5f0b1019c01bec0e8fd6b7a6b4418c7014c00b9c689c973",
+  "evaluation_population": {
+    "heldout_session": "SE003",
+    "heldout_run_count": 180,
+    "subjects": 36,
+    "conditions": ["ColorIntensification", "Grey-to-Color", "Grey-to-White"],
+    "heldout_test_data_read_during_tuning": false
+  },
+  "training_pool": {
+    "cache_path": "data/cache/study_q_classifier_epochs.h5",
+    "cache_sha256": "5af91b4a616410433ecfc83532b7561ca5fd6515be6f2119a733c6f78754b247",
+    "runs": 360,
+    "sessions": ["SE001", "SE002"],
+    "same_session_train_runs_excluded": 180,
+    "training_registry_isolated_from_evaluation_vault": true
+  },
+  "earlier_q_results": {
+    "status": "exploratory",
+    "all_prior_q_classifier_and_decoder_numbers_are_exploratory": true,
+    "parity_audit": "results/tables/study_q_classifier_parity.json",
+    "old_classifier_training_runs_preprocessing_calibration_and_tuning": "unavailable; no persisted classifier artifact or provenance found"
+  },
+  "models": {
+    "rung_0": "clean M0 EEG-only SGDClassifier(loss=log_loss, penalty=l2, alpha=0.01, average=True), five streaming passes, class weights {0:1,1:5}",
+    "rung_1": "same M0 with fixed alpha=0.1 local DistilGPT2 prior",
+    "other_rungs": "dropped; Q strings are typed key sequences, not natural-language text"
+  },
+  "preprocessing": {
+    "bandpass_hz": [1.0, 12.0],
+    "epoch_window_s": [-0.1, 0.8],
+    "feature_window_s": [0.0, 0.8],
+    "decimation": 2,
+    "channels": "all 32 Study Q EEG channels, locked training-cache order",
+    "baseline_correction": false,
+    "artifact_rejection": false,
+    "group_flash_scoring": "membership-mask aggregation on the 9x8 grid"
+  },
+  "calibration": {
+    "method": "scalar temperature scaling fitted to clean training-only OOF sequence membership-grid NLL",
+    "temperature": 1.692164566195408,
+    "fit_oof_scores": "results/tables/study_q_classifier_inner_scores.npz",
+    "fit_scores_sha256": "4d035d86d87fff7c9f8a0164b0a686a552a1c06f817ff0a4ecc804360e1bffe8",
+    "no_heldout_labels_or_logits_used": true
+  },
+  "fusion": {
+    "rung_0": "disabled",
+    "rung_1": {
+      "prior": "local DistilGPT2",
+      "alpha": 0.1,
+      "context": "teacher-forced previously typed target keys, mapped with the frozen special-key map; same convention as inner OOF",
+      "prior_applied_once_before_sequence_accumulation": true
+    }
+  },
+  "primary_estimand": {
+    "name": "as-recorded-depth character accuracy",
+    "rungs": [0, 1],
+    "depth": "use all valid sequences recorded for each character, with no extrapolation beyond the recorded depth",
+    "report": ["EEG-only accuracy", "fused accuracy", "depth distribution"],
+    "by_condition": true,
+    "stopping_policy_evaluation": false,
+    "flashes_per_character": false,
+    "itr": false
+  },
+  "gate_g1": {
+    "inner_fused_accuracy_reference": 0.6871141975308642,
+    "inner_estimand": "clean nested OOF fused accuracy using every available sequence (10/character); differs from Test only through Test's naturally variable recorded depths",
+    "far_below_inner_threshold_absolute_accuracy_drop": 0.10,
+    "interpretation": "A held-out fused accuracy more than 10 percentage points below inner OOF is flagged as a session-shift signal; this threshold is fixed before Test access."
+  },
+  "secondary_estimands": {
+    "accuracy_vs_depth_curves": {
+      "depths": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      "include_only_characters_with_recorded_prefix_at_each_depth": true,
+      "bias_label": "biased by early stopping and unequal recorded depth; descriptive only"
+    },
+    "depth_bucket_sensitivity": {
+      "buckets": {"4-6": [4, 5, 6], "7-8": [7, 8], "9-10": [9, 10]},
+      "compare": "fused minus EEG-only subject-level accuracy difference within each recorded-depth bucket",
+      "purpose": "check whether the sign of the primary gain changes across depth strata"
+    }
+  },
+  "statistics": {
+    "unit": "subject",
+    "paired_test": "two-sided Wilcoxon signed-rank, fused versus EEG-only",
+    "holm_family": ["overall", "ColorIntensification", "Grey-to-Color", "Grey-to-White"],
+    "confidence_intervals": "95% bootstrap over subjects, resampling subjects with replacement",
+    "depth_bucket_sensitivity": "report per-subject paired differences and subject-bootstrap 95% intervals"
+  },
+  "one_shot": {
+    "evaluator": "scripts/evaluate_study_q_test_once.py",
+    "output": "results/tables/study_q_test_once.json",
+    "run_count": 180,
+    "run_once_guard": true,
+    "rerun_or_tuning_on_SE003": false,
+    "test_targets_read_only_after_explicit_evaluator_invocation": true
+  },
+  "expected_depth_reference": "results/tables/study_q_audit.json",
+  "inner_oof_reference": "results/tables/study_q_nested_fusion.json"
+}

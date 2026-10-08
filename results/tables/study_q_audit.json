@@ -1,0 +1,5243 @@
+{
+  "condition_totals_selected_for_evaluation": {
+    "ColorIntensification": 55,
+    "Grey-to-Color": 60,
+    "Grey-to-White": 65
+  },
+  "ground_truth_extraction": {
+    "errors": [],
+    "exact_matches": 180,
+    "mismatches": [],
+    "runs_compared_with_vault": 180
+  },
+  "manifest_run_count": 180,
+  "manifest_sha256": "39ed6801b2545f37f5f0b1019c01bec0e8fd6b7a6b4418c7014c00b9c689c973",
+  "recording_geometry": [
+    {
+      "channel_count": 32,
+      "channel_names": [
+        "F3",
+        "Fz",
+        "F4",
+        "T7",
+        "C3",
+        "Cz",
+        "C4",
+        "T8",
+        "CP3",
+        "CP4",
+        "P3",
+        "Pz",
+        "P4",
+        "PO7",
+        "PO8",
+        "Oz",
+        "FP1",
+        "FP2",
+        "F7",
+        "F8",
+        "FC5",
+        "FC1",
+        "FC2",
+        "FC6",
+        "CPz",
+        "P7",
+        "P5",
+        "PO3",
+        "POz",
+        "PO4",
+        "O1",
+        "O2"
+      ],
+      "flashes_per_sequence": 12,
+      "grid": [
+        9,
+        8
+      ],
+      "group_flash": true,
+      "runs": 180,
+      "sfreq_hz": 256.0
+    }
+  ],
+  "run_records": [
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_01_SE003_ColorIntensification_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 5,
+      "sequence_count_min": 5,
+      "sequence_counts_per_character": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "session": "SE003",
+      "subject": "Q_01",
+      "target_symbols_in_vault": 10
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_01_SE003_ColorIntensification_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 5,
+      "sequence_count_min": 5,
+      "sequence_counts_per_character": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "session": "SE003",
+      "subject": "Q_01",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_01_SE003_ColorIntensification_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 5,
+      "sequence_count_min": 5,
+      "sequence_counts_per_character": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "session": "SE003",
+      "subject": "Q_01",
+      "target_symbols_in_vault": 9
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_01_SE003_ColorIntensification_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 5,
+      "sequence_count_min": 5,
+      "sequence_counts_per_character": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "session": "SE003",
+      "subject": "Q_01",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_01_SE003_ColorIntensification_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 5,
+      "sequence_count_min": 5,
+      "sequence_counts_per_character": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "session": "SE003",
+      "subject": "Q_01",
+      "target_symbols_in_vault": 10
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_02_SE003_Grey-to-Color_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_02",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_02_SE003_Grey-to-Color_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_02",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_02_SE003_Grey-to-Color_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_02",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_02_SE003_Grey-to-Color_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_02",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_02_SE003_Grey-to-Color_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_02",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_03_SE003_Grey-to-Color_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_03",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_03_SE003_Grey-to-Color_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_03",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_03_SE003_Grey-to-Color_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_03",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_03_SE003_Grey-to-Color_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_03",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_03_SE003_Grey-to-Color_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_03",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_04_SE003_ColorIntensification_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 5,
+      "sequence_count_min": 5,
+      "sequence_counts_per_character": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "session": "SE003",
+      "subject": "Q_04",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_04_SE003_ColorIntensification_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 5,
+      "sequence_count_min": 5,
+      "sequence_counts_per_character": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "session": "SE003",
+      "subject": "Q_04",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_04_SE003_ColorIntensification_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 5,
+      "sequence_count_min": 5,
+      "sequence_counts_per_character": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "session": "SE003",
+      "subject": "Q_04",
+      "target_symbols_in_vault": 10
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_04_SE003_ColorIntensification_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 5,
+      "sequence_count_min": 5,
+      "sequence_counts_per_character": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "session": "SE003",
+      "subject": "Q_04",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_04_SE003_ColorIntensification_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 5,
+      "sequence_count_min": 5,
+      "sequence_counts_per_character": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "session": "SE003",
+      "subject": "Q_04",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_05_SE003_Grey-to-White_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 4,
+      "sequence_count_min": 4,
+      "sequence_counts_per_character": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "session": "SE003",
+      "subject": "Q_05",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_05_SE003_Grey-to-White_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 4,
+      "sequence_count_min": 4,
+      "sequence_counts_per_character": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "session": "SE003",
+      "subject": "Q_05",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_05_SE003_Grey-to-White_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 4,
+      "sequence_count_min": 4,
+      "sequence_counts_per_character": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "session": "SE003",
+      "subject": "Q_05",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_05_SE003_Grey-to-White_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 4,
+      "sequence_count_min": 4,
+      "sequence_counts_per_character": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "session": "SE003",
+      "subject": "Q_05",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_05_SE003_Grey-to-White_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 4,
+      "sequence_count_min": 4,
+      "sequence_counts_per_character": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "session": "SE003",
+      "subject": "Q_05",
+      "target_symbols_in_vault": 9
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_06_SE003_Grey-to-White_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_06",
+      "target_symbols_in_vault": 9
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_06_SE003_Grey-to-White_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_06",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_06_SE003_Grey-to-White_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_06",
+      "target_symbols_in_vault": 10
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_06_SE003_Grey-to-White_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_06",
+      "target_symbols_in_vault": 11
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_06_SE003_Grey-to-White_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_06",
+      "target_symbols_in_vault": 9
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_07_SE003_Grey-to-White_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_07",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_07_SE003_Grey-to-White_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_07",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_07_SE003_Grey-to-White_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_07",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_07_SE003_Grey-to-White_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_07",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_07_SE003_Grey-to-White_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_07",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_08_SE003_ColorIntensification_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_08",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_08_SE003_ColorIntensification_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_08",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_08_SE003_ColorIntensification_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_08",
+      "target_symbols_in_vault": 14
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_08_SE003_ColorIntensification_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_08",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_08_SE003_ColorIntensification_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_08",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_09_SE003_Grey-to-Color_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_09",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_09_SE003_Grey-to-Color_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_09",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_09_SE003_Grey-to-Color_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_09",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_09_SE003_Grey-to-Color_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_09",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_09_SE003_Grey-to-Color_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_09",
+      "target_symbols_in_vault": 10
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_10_SE003_Grey-to-Color_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 8,
+      "sequence_count_min": 8,
+      "sequence_counts_per_character": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "session": "SE003",
+      "subject": "Q_10",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_10_SE003_Grey-to-Color_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 8,
+      "sequence_count_min": 8,
+      "sequence_counts_per_character": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "session": "SE003",
+      "subject": "Q_10",
+      "target_symbols_in_vault": 13
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_10_SE003_Grey-to-Color_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 8,
+      "sequence_count_min": 8,
+      "sequence_counts_per_character": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "session": "SE003",
+      "subject": "Q_10",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_10_SE003_Grey-to-Color_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 8,
+      "sequence_count_min": 8,
+      "sequence_counts_per_character": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "session": "SE003",
+      "subject": "Q_10",
+      "target_symbols_in_vault": 11
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_10_SE003_Grey-to-Color_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 8,
+      "sequence_count_min": 8,
+      "sequence_counts_per_character": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "session": "SE003",
+      "subject": "Q_10",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_11_SE003_Grey-to-White_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 8,
+      "sequence_count_min": 8,
+      "sequence_counts_per_character": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "session": "SE003",
+      "subject": "Q_11",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_11_SE003_Grey-to-White_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 8,
+      "sequence_count_min": 8,
+      "sequence_counts_per_character": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "session": "SE003",
+      "subject": "Q_11",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_11_SE003_Grey-to-White_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 8,
+      "sequence_count_min": 8,
+      "sequence_counts_per_character": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "session": "SE003",
+      "subject": "Q_11",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_11_SE003_Grey-to-White_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 8,
+      "sequence_count_min": 8,
+      "sequence_counts_per_character": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "session": "SE003",
+      "subject": "Q_11",
+      "target_symbols_in_vault": 10
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_11_SE003_Grey-to-White_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 8,
+      "sequence_count_min": 8,
+      "sequence_counts_per_character": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "session": "SE003",
+      "subject": "Q_11",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_12_SE003_ColorIntensification_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_12",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_12_SE003_ColorIntensification_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_12",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_12_SE003_ColorIntensification_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_12",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_12_SE003_ColorIntensification_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_12",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_12_SE003_ColorIntensification_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_12",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_13_SE003_ColorIntensification_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_13",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_13_SE003_ColorIntensification_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_13",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_13_SE003_ColorIntensification_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_13",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_13_SE003_ColorIntensification_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_13",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_13_SE003_ColorIntensification_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_13",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_14_SE003_ColorIntensification_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_14",
+      "target_symbols_in_vault": 11
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_14_SE003_ColorIntensification_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_14",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_14_SE003_ColorIntensification_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_14",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_14_SE003_ColorIntensification_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_14",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_14_SE003_ColorIntensification_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_14",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_15_SE003_Grey-to-White_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_15",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_15_SE003_Grey-to-White_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_15",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_15_SE003_Grey-to-White_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_15",
+      "target_symbols_in_vault": 9
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_15_SE003_Grey-to-White_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_15",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_15_SE003_Grey-to-White_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_15",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_16_SE003_Grey-to-White_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_16",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_16_SE003_Grey-to-White_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_16",
+      "target_symbols_in_vault": 11
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_16_SE003_Grey-to-White_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_16",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_16_SE003_Grey-to-White_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_16",
+      "target_symbols_in_vault": 15
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_16_SE003_Grey-to-White_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_16",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_17_SE003_ColorIntensification_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_17",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_17_SE003_ColorIntensification_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_17",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_17_SE003_ColorIntensification_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_17",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_17_SE003_ColorIntensification_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_17",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_17_SE003_ColorIntensification_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_17",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_18_SE003_Grey-to-White_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_18",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_18_SE003_Grey-to-White_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_18",
+      "target_symbols_in_vault": 13
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_18_SE003_Grey-to-White_Test09",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_18",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_18_SE003_Grey-to-White_Test10",
+      "selected_characters": 8,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_18",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_18_SE003_Grey-to-White_Test11",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_18",
+      "target_symbols_in_vault": 12
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_19_SE003_Grey-to-Color_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_19",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_19_SE003_Grey-to-Color_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_19",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_19_SE003_Grey-to-Color_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_19",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_19_SE003_Grey-to-Color_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_19",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_19_SE003_Grey-to-Color_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_19",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_20_SE003_Grey-to-Color_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_20",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_20_SE003_Grey-to-Color_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_20",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_20_SE003_Grey-to-Color_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_20",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_20_SE003_Grey-to-Color_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_20",
+      "target_symbols_in_vault": 10
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_20_SE003_Grey-to-Color_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_20",
+      "target_symbols_in_vault": 9
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_21_SE003_Grey-to-White_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_21",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_21_SE003_Grey-to-White_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_21",
+      "target_symbols_in_vault": 10
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_21_SE003_Grey-to-White_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_21",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_21_SE003_Grey-to-White_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_21",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_21_SE003_Grey-to-White_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_21",
+      "target_symbols_in_vault": 11
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_22_SE003_Grey-to-Color_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_22",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_22_SE003_Grey-to-Color_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_22",
+      "target_symbols_in_vault": 10
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_22_SE003_Grey-to-Color_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_22",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_22_SE003_Grey-to-Color_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_22",
+      "target_symbols_in_vault": 11
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_22_SE003_Grey-to-Color_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_22",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_23_SE003_ColorIntensification_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_23",
+      "target_symbols_in_vault": 9
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_23_SE003_ColorIntensification_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_23",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_23_SE003_ColorIntensification_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_23",
+      "target_symbols_in_vault": 10
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_23_SE003_ColorIntensification_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_23",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_23_SE003_ColorIntensification_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 7,
+      "sequence_count_min": 7,
+      "sequence_counts_per_character": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "session": "SE003",
+      "subject": "Q_23",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_24_SE003_Grey-to-White_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_24",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_24_SE003_Grey-to-White_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_24",
+      "target_symbols_in_vault": 9
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_24_SE003_Grey-to-White_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_24",
+      "target_symbols_in_vault": 12
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_24_SE003_Grey-to-White_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_24",
+      "target_symbols_in_vault": 12
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_24_SE003_Grey-to-White_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_24",
+      "target_symbols_in_vault": 13
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_25_SE003_ColorIntensification_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_25",
+      "target_symbols_in_vault": 10
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_25_SE003_ColorIntensification_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_25",
+      "target_symbols_in_vault": 10
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_25_SE003_ColorIntensification_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_25",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_25_SE003_ColorIntensification_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_25",
+      "target_symbols_in_vault": 11
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_25_SE003_ColorIntensification_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_25",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_26_SE003_Grey-to-Color_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_26",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_26_SE003_Grey-to-Color_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_26",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_26_SE003_Grey-to-Color_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_26",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_26_SE003_Grey-to-Color_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_26",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_26_SE003_Grey-to-Color_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_26",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_27_SE003_Grey-to-White_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 8,
+      "sequence_count_min": 8,
+      "sequence_counts_per_character": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "session": "SE003",
+      "subject": "Q_27",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_27_SE003_Grey-to-White_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 8,
+      "sequence_count_min": 8,
+      "sequence_counts_per_character": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "session": "SE003",
+      "subject": "Q_27",
+      "target_symbols_in_vault": 11
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_27_SE003_Grey-to-White_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 8,
+      "sequence_count_min": 8,
+      "sequence_counts_per_character": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "session": "SE003",
+      "subject": "Q_27",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_27_SE003_Grey-to-White_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 8,
+      "sequence_count_min": 8,
+      "sequence_counts_per_character": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "session": "SE003",
+      "subject": "Q_27",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_27_SE003_Grey-to-White_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 8,
+      "sequence_count_min": 8,
+      "sequence_counts_per_character": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "session": "SE003",
+      "subject": "Q_27",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_28_SE003_Grey-to-Color_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_28",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_28_SE003_Grey-to-Color_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_28",
+      "target_symbols_in_vault": 10
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_28_SE003_Grey-to-Color_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_28",
+      "target_symbols_in_vault": 9
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_28_SE003_Grey-to-Color_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_28",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_28_SE003_Grey-to-Color_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_28",
+      "target_symbols_in_vault": 11
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_29_SE003_Grey-to-White_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_29",
+      "target_symbols_in_vault": 11
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_29_SE003_Grey-to-White_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_29",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_29_SE003_Grey-to-White_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_29",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_29_SE003_Grey-to-White_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_29",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_29_SE003_Grey-to-White_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_29",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_30_SE003_ColorIntensification_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_30",
+      "target_symbols_in_vault": 10
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_30_SE003_ColorIntensification_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_30",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_30_SE003_ColorIntensification_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_30",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_30_SE003_ColorIntensification_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_30",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_30_SE003_ColorIntensification_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 9,
+      "sequence_count_min": 9,
+      "sequence_counts_per_character": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "session": "SE003",
+      "subject": "Q_30",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_31_SE003_Grey-to-Color_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_31",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_31_SE003_Grey-to-Color_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_31",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_31_SE003_Grey-to-Color_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_31",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_31_SE003_Grey-to-Color_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_31",
+      "target_symbols_in_vault": 13
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_31_SE003_Grey-to-Color_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_31",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_32_SE003_Grey-to-Color_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_32",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_32_SE003_Grey-to-Color_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_32",
+      "target_symbols_in_vault": 9
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_32_SE003_Grey-to-Color_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_32",
+      "target_symbols_in_vault": 9
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_32_SE003_Grey-to-Color_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_32",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_32_SE003_Grey-to-Color_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_32",
+      "target_symbols_in_vault": 11
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_33_SE003_Grey-to-Color_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_33",
+      "target_symbols_in_vault": 9
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_33_SE003_Grey-to-Color_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_33",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_33_SE003_Grey-to-Color_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_33",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_33_SE003_Grey-to-Color_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_33",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-Color",
+      "extraction_matches_vault": true,
+      "run_id": "Q_33_SE003_Grey-to-Color_Test11",
+      "selected_characters": 7,
+      "sequence_count_max": 10,
+      "sequence_count_min": 10,
+      "sequence_counts_per_character": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "session": "SE003",
+      "subject": "Q_33",
+      "target_symbols_in_vault": 10
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_34_SE003_Grey-to-White_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 5,
+      "sequence_count_min": 5,
+      "sequence_counts_per_character": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "session": "SE003",
+      "subject": "Q_34",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_34_SE003_Grey-to-White_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 5,
+      "sequence_count_min": 5,
+      "sequence_counts_per_character": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "session": "SE003",
+      "subject": "Q_34",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_34_SE003_Grey-to-White_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 5,
+      "sequence_count_min": 5,
+      "sequence_counts_per_character": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "session": "SE003",
+      "subject": "Q_34",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_34_SE003_Grey-to-White_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 5,
+      "sequence_count_min": 5,
+      "sequence_counts_per_character": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "session": "SE003",
+      "subject": "Q_34",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_34_SE003_Grey-to-White_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 5,
+      "sequence_count_min": 5,
+      "sequence_counts_per_character": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "session": "SE003",
+      "subject": "Q_34",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_35_SE003_Grey-to-White_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_35",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_35_SE003_Grey-to-White_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_35",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_35_SE003_Grey-to-White_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_35",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_35_SE003_Grey-to-White_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_35",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "Grey-to-White",
+      "extraction_matches_vault": true,
+      "run_id": "Q_35_SE003_Grey-to-White_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_35",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_36_SE003_ColorIntensification_Test06",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_36",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_36_SE003_ColorIntensification_Test07",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_36",
+      "target_symbols_in_vault": 9
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_36_SE003_ColorIntensification_Test08",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_36",
+      "target_symbols_in_vault": 7
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_36_SE003_ColorIntensification_Test09",
+      "selected_characters": 8,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_36",
+      "target_symbols_in_vault": 8
+    },
+    {
+      "condition": "ColorIntensification",
+      "extraction_matches_vault": true,
+      "run_id": "Q_36_SE003_ColorIntensification_Test10",
+      "selected_characters": 7,
+      "sequence_count_max": 6,
+      "sequence_count_min": 6,
+      "sequence_counts_per_character": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6
+      ],
+      "session": "SE003",
+      "subject": "Q_36",
+      "target_symbols_in_vault": 9
+    }
+  ],
+  "sequence_counts_per_character_by_condition": {
+    "ColorIntensification": {
+      "count": 396,
+      "histogram": {
+        "10": 144,
+        "5": 72,
+        "6": 108,
+        "7": 36,
+        "9": 36
+      },
+      "max": 10,
+      "median": 7.0,
+      "min": 5
+    },
+    "Grey-to-Color": {
+      "count": 432,
+      "histogram": {
+        "10": 144,
+        "6": 72,
+        "7": 72,
+        "8": 36,
+        "9": 108
+      },
+      "max": 10,
+      "median": 9.0,
+      "min": 6
+    },
+    "Grey-to-White": {
+      "count": 468,
+      "histogram": {
+        "10": 108,
+        "4": 36,
+        "5": 36,
+        "6": 36,
+        "7": 108,
+        "8": 72,
+        "9": 72
+      },
+      "max": 10,
+      "median": 8.0,
+      "min": 4
+    }
+  },
+  "session_condition_counts": {
+    "Q_01": {
+      "SE003": [
+        "ColorIntensification"
+      ]
+    },
+    "Q_02": {
+      "SE003": [
+        "Grey-to-Color"
+      ]
+    },
+    "Q_03": {
+      "SE003": [
+        "Grey-to-Color"
+      ]
+    },
+    "Q_04": {
+      "SE003": [
+        "ColorIntensification"
+      ]
+    },
+    "Q_05": {
+      "SE003": [
+        "Grey-to-White"
+      ]
+    },
+    "Q_06": {
+      "SE003": [
+        "Grey-to-White"
+      ]
+    },
+    "Q_07": {
+      "SE003": [
+        "Grey-to-White"
+      ]
+    },
+    "Q_08": {
+      "SE003": [
+        "ColorIntensification"
+      ]
+    },
+    "Q_09": {
+      "SE003": [
+        "Grey-to-Color"
+      ]
+    },
+    "Q_10": {
+      "SE003": [
+        "Grey-to-Color"
+      ]
+    },
+    "Q_11": {
+      "SE003": [
+        "Grey-to-White"
+      ]
+    },
+    "Q_12": {
+      "SE003": [
+        "ColorIntensification"
+      ]
+    },
+    "Q_13": {
+      "SE003": [
+        "ColorIntensification"
+      ]
+    },
+    "Q_14": {
+      "SE003": [
+        "ColorIntensification"
+      ]
+    },
+    "Q_15": {
+      "SE003": [
+        "Grey-to-White"
+      ]
+    },
+    "Q_16": {
+      "SE003": [
+        "Grey-to-White"
+      ]
+    },
+    "Q_17": {
+      "SE003": [
+        "ColorIntensification"
+      ]
+    },
+    "Q_18": {
+      "SE003": [
+        "Grey-to-White"
+      ]
+    },
+    "Q_19": {
+      "SE003": [
+        "Grey-to-Color"
+      ]
+    },
+    "Q_20": {
+      "SE003": [
+        "Grey-to-Color"
+      ]
+    },
+    "Q_21": {
+      "SE003": [
+        "Grey-to-White"
+      ]
+    },
+    "Q_22": {
+      "SE003": [
+        "Grey-to-Color"
+      ]
+    },
+    "Q_23": {
+      "SE003": [
+        "ColorIntensification"
+      ]
+    },
+    "Q_24": {
+      "SE003": [
+        "Grey-to-White"
+      ]
+    },
+    "Q_25": {
+      "SE003": [
+        "ColorIntensification"
+      ]
+    },
+    "Q_26": {
+      "SE003": [
+        "Grey-to-Color"
+      ]
+    },
+    "Q_27": {
+      "SE003": [
+        "Grey-to-White"
+      ]
+    },
+    "Q_28": {
+      "SE003": [
+        "Grey-to-Color"
+      ]
+    },
+    "Q_29": {
+      "SE003": [
+        "Grey-to-White"
+      ]
+    },
+    "Q_30": {
+      "SE003": [
+        "ColorIntensification"
+      ]
+    },
+    "Q_31": {
+      "SE003": [
+        "Grey-to-Color"
+      ]
+    },
+    "Q_32": {
+      "SE003": [
+        "Grey-to-Color"
+      ]
+    },
+    "Q_33": {
+      "SE003": [
+        "Grey-to-Color"
+      ]
+    },
+    "Q_34": {
+      "SE003": [
+        "Grey-to-White"
+      ]
+    },
+    "Q_35": {
+      "SE003": [
+        "Grey-to-White"
+      ]
+    },
+    "Q_36": {
+      "SE003": [
+        "ColorIntensification"
+      ]
+    }
+  },
+  "session_count_distribution": {
+    "1": 36
+  },
+  "source_run_counts_by_subject_session_split_condition": {
+    "Q_01": {
+      "SE001": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      }
+    },
+    "Q_02": {
+      "SE001": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      }
+    },
+    "Q_03": {
+      "SE001": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      }
+    },
+    "Q_04": {
+      "SE001": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      }
+    },
+    "Q_05": {
+      "SE001": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      }
+    },
+    "Q_06": {
+      "SE001": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      }
+    },
+    "Q_07": {
+      "SE001": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      }
+    },
+    "Q_08": {
+      "SE001": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      }
+    },
+    "Q_09": {
+      "SE001": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      }
+    },
+    "Q_10": {
+      "SE001": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      }
+    },
+    "Q_11": {
+      "SE001": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      }
+    },
+    "Q_12": {
+      "SE001": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      }
+    },
+    "Q_13": {
+      "SE001": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      }
+    },
+    "Q_14": {
+      "SE001": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      }
+    },
+    "Q_15": {
+      "SE001": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      }
+    },
+    "Q_16": {
+      "SE001": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      }
+    },
+    "Q_17": {
+      "SE001": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      }
+    },
+    "Q_18": {
+      "SE001": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      }
+    },
+    "Q_19": {
+      "SE001": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      }
+    },
+    "Q_20": {
+      "SE001": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      }
+    },
+    "Q_21": {
+      "SE001": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      }
+    },
+    "Q_22": {
+      "SE001": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      }
+    },
+    "Q_23": {
+      "SE001": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      }
+    },
+    "Q_24": {
+      "SE001": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      }
+    },
+    "Q_25": {
+      "SE001": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      }
+    },
+    "Q_26": {
+      "SE001": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      }
+    },
+    "Q_27": {
+      "SE001": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      }
+    },
+    "Q_28": {
+      "SE001": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      }
+    },
+    "Q_29": {
+      "SE001": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      }
+    },
+    "Q_30": {
+      "SE001": {
+        "Test": {
+          "Grey-to-Color": 5,
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5,
+          "Grey-to-White": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      }
+    },
+    "Q_31": {
+      "SE001": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      }
+    },
+    "Q_32": {
+      "SE001": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      }
+    },
+    "Q_33": {
+      "SE001": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      }
+    },
+    "Q_34": {
+      "SE001": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      }
+    },
+    "Q_35": {
+      "SE001": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      }
+    },
+    "Q_36": {
+      "SE001": {
+        "Test": {
+          "Grey-to-Color": 5
+        },
+        "Train": {
+          "Grey-to-Color": 5
+        }
+      },
+      "SE002": {
+        "Test": {
+          "Grey-to-White": 5
+        },
+        "Train": {
+          "Grey-to-White": 5
+        }
+      },
+      "SE003": {
+        "Test": {
+          "ColorIntensification": 5
+        },
+        "Train": {
+          "ColorIntensification": 5
+        }
+      }
+    }
+  },
+  "split": "SE003 Test only; same-session Train runs excluded; no classifier scores computed",
+  "stopping_depth_coverage": {
+    "characters_with_fewer_than_max_sequences_recorded": 900,
+    "characters_with_max_sequences_recorded": 396,
+    "depth_histogram": {
+      "10": 396,
+      "4": 36,
+      "5": 108,
+      "6": 216,
+      "7": 216,
+      "8": 108,
+      "9": 216
+    },
+    "locked_max_sequences": 10,
+    "right_censored_for_max_10_replay": true
+  },
+  "study": "StudyQ",
+  "text_volume": {
+    "clean_train_pool_definition": "Train labels outside held-out session SE003; sourced only from the dedicated Q training registry.",
+    "per_subject": {
+      "Q_01": {
+        "clean_train_pool_symbol_characters": 125,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 44,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_02": {
+        "clean_train_pool_symbol_characters": 117,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 36,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_03": {
+        "clean_train_pool_symbol_characters": 114,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 36,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_04": {
+        "clean_train_pool_symbol_characters": 116,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 39,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_05": {
+        "clean_train_pool_symbol_characters": 132,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 38,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_06": {
+        "clean_train_pool_symbol_characters": 134,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 46,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_07": {
+        "clean_train_pool_symbol_characters": 140,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 36,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_08": {
+        "clean_train_pool_symbol_characters": 115,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 43,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_09": {
+        "clean_train_pool_symbol_characters": 118,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 39,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_10": {
+        "clean_train_pool_symbol_characters": 128,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 46,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_11": {
+        "clean_train_pool_symbol_characters": 149,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 38,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_12": {
+        "clean_train_pool_symbol_characters": 119,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 36,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_13": {
+        "clean_train_pool_symbol_characters": 119,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 36,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_14": {
+        "clean_train_pool_symbol_characters": 132,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 40,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_15": {
+        "clean_train_pool_symbol_characters": 130,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 38,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_16": {
+        "clean_train_pool_symbol_characters": 127,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 48,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_17": {
+        "clean_train_pool_symbol_characters": 137,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 36,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_18": {
+        "clean_train_pool_symbol_characters": 144,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 47,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_19": {
+        "clean_train_pool_symbol_characters": 131,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 36,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_20": {
+        "clean_train_pool_symbol_characters": 109,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 41,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_21": {
+        "clean_train_pool_symbol_characters": 130,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 43,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_22": {
+        "clean_train_pool_symbol_characters": 144,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 42,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_23": {
+        "clean_train_pool_symbol_characters": 139,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 41,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_24": {
+        "clean_train_pool_symbol_characters": 121,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 53,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_25": {
+        "clean_train_pool_symbol_characters": 149,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 45,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_26": {
+        "clean_train_pool_symbol_characters": 125,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 36,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_27": {
+        "clean_train_pool_symbol_characters": 135,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 40,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_28": {
+        "clean_train_pool_symbol_characters": 134,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 45,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_29": {
+        "clean_train_pool_symbol_characters": 122,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 40,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_30": {
+        "clean_train_pool_symbol_characters": 132,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 39,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_31": {
+        "clean_train_pool_symbol_characters": 147,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 41,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_32": {
+        "clean_train_pool_symbol_characters": 158,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 45,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_33": {
+        "clean_train_pool_symbol_characters": 137,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 41,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_34": {
+        "clean_train_pool_symbol_characters": 134,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 37,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_35": {
+        "clean_train_pool_symbol_characters": 106,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 36,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      },
+      "Q_36": {
+        "clean_train_pool_symbol_characters": 138,
+        "clean_train_pool_text_entries": 10,
+        "clean_train_pool_whitespace_delimited_words": 10,
+        "session_count_in_dataset": 1,
+        "test_runs_in_manifest": 5,
+        "vault_symbol_characters": 40,
+        "vault_text_entries": 5,
+        "whitespace_delimited_words_in_vault": 5
+      }
+    },
+    "whitespace_tokenization_caveat": "Q ground-truth strings encode keyboard key labels; whitespace word counts may not represent natural-language words."
+  }
+}
