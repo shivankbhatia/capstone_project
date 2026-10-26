@@ -107,7 +107,7 @@ This is a separate, newly generated, **EEG-only** evaluation of clean M0; no LM 
 
 | Model / score mode | Outer validation | Epoch AUC | Calibrated row/column NLL | Full-repetition EEG-only char. acc. | Stopped EEG-only char. acc. | Mean sequences used |
 |---|---|---:|---:|---:|---:|---:|
-| Clean M0 streaming SGD, EEG-only | 17 held-out subjects; 83 RC/Train runs / 84,660 epochs / 498 characters total | .7869 | 1.6639 | 74.70% | 73.90% | 6.86 |
+| Clean M0 streaming SGD, EEG-only | 17 held-out subjects; 83 RC/Train runs / 84,660 epochs / 498 characters total | .7869 | 1.6639 | 74.30% | 73.90% | 6.86 |
 
 Evidence: `results/tables/study_d_classifier_loso.json` and foldwise OOF logits in `results/tables/study_d_classifier_loso_scores.npz`; runner: `scripts/run_study_d_classifier_loso.py`. The run used `tau=.80`, min 2/max 10; 17 fold temperatures range from 4.3012 to 4.9404. Cache SHA-256 is `7615c89e80b266d70403180d9f3880611d8201dd3c7e78384c912212b4f3093e`; manifest SHA-256 is `de2fd72215e6f2766cc66c629ebd08fd9a1c55b6dab40c63a2e7890a0a8bac7b`. The runner records `manifest_test_runs_loaded=false`. Against the 498-character run-grouped OOF EEG-only result at the same tau/min/max (79.52%), LOSO stopped accuracy is lower by 5.56 percentage points (73.90%). This is a descriptive cross-protocol comparison, not an independent paired significance test. This LOSO result estimates performance across held-out training subjects; do not substitute it for the one-shot frozen-manifest result or pool them.
 
@@ -251,6 +251,6 @@ No command is given for an EEGNet result because no result artifact is present; 
 7. D manifest population: 57 runs, 17 subjects, 338 characters (11 zero-coverage); M0 fused/EEG-only 78.40%/72.49%.
 8. D manifest M3a fused 74.26%; M3a−M0 −4.20 pp (subject-bootstrap 95% CI −10.25 to +1.08); M3a was rejected.
 9. Study Q is separate: 360 clean training runs; SE003 Test 180 runs/36 subjects/1,296 as-recorded characters; M0 EEG-only/fused 55.86%/59.41%; Q temperature 1.6921645662.
-10. Study D clean M0 LOSO is EEG-only (no LM/fusion): 17 subjects held out one at a time; 498 characters; AUC .7869; calibrated row/column NLL 1.6639; full/stopped accuracy 74.70/73.90%; 6.86 mean sequences.
+10. Study D clean M0 LOSO is EEG-only (no LM/fusion): 17 subjects held out one at a time; 498 characters; AUC .7869; calibrated row/column NLL 1.6639; full/stopped accuracy 74.30/73.90%; 6.86 mean sequences.
 11. LOSO stopped EEG-only accuracy 73.90% vs run-grouped OOF EEG-only 79.52% at the same policy: −5.56 pp, descriptive cross-protocol gap.
 12. Neither D OOF, D manifest, D LOSO, nor Q numbers should be pooled across studies or evaluation populations; all future priors consume the locked calibrated score interface.
