@@ -1,0 +1,41 @@
+{
+  "comparison": "candidate 0.1-30 Hz, baseline on minus reference no bandpass, baseline on",
+  "model": "M1_tuned_SWLDA",
+  "resampling_unit": "run_id; paired run resamples shared by both conditions",
+  "bootstrap_replicates": 10000,
+  "seed": 0,
+  "interval": "percentile 95% CI",
+  "n_runs": 83,
+  "n_epochs": 84660,
+  "n_characters": 498,
+  "reference": {
+    "label": "no bandpass, baseline on",
+    "scores": "results/tables/preprocessing_ablation_unfiltered_baseline_on_scores.npz",
+    "scores_sha256": "27487bcbb8498f4241a1981705d85ad2b3e3759d87954b918c12d3a6f59d6bb8",
+    "epoch_auc": 0.7355880604076278,
+    "character_accuracy": 0.6305220883534136
+  },
+  "candidate": {
+    "label": "0.1-30 Hz, baseline on",
+    "scores": "results/tables/preprocessing_ablation_filter0130_baseline_on_scores.npz",
+    "scores_sha256": "385d2150c1ff13371e4617d0a6510260ee48486e07b8cb2cdf072987c6524375",
+    "epoch_auc": 0.7380280237415525,
+    "character_accuracy": 0.6004016064257028
+  },
+  "difference_candidate_minus_reference": {
+    "epoch_auc": 0.0024399633339247107,
+    "epoch_auc_percentage_points": 0.24399633339247107,
+    "epoch_auc_ci95": [
+      -0.004043977986914189,
+      0.009303641305516575
+    ],
+    "character_accuracy": -0.030120481927710774,
+    "character_accuracy_percentage_points": -3.0120481927710774,
+    "character_accuracy_ci95": [
+      -0.07228915662650602,
+      0.012048192771084338
+    ]
+  },
+  "git_hash": "62ce8049375e1e3f232381f72727d933b0211d6c",
+  "git_dirty": true
+}

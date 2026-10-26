@@ -61,7 +61,7 @@ def _sequence_and_character_indices(epochs, run_id: str) -> tuple[np.ndarray, np
 def build_cache(
     epoch_dir: Path, manifest_path: Path, output: Path, *, source: str = "epochs",
     raw_dir: Optional[Path] = None, baseline_correction: bool = True,
-    l_freq: float = 0.1, h_freq: float = 30.0,
+    l_freq: Optional[float] = 0.1, h_freq: Optional[float] = 30.0,
 ) -> None:
     heldout = load_heldout_run_ids(manifest_path)
     all_paths = sorted(
@@ -167,9 +167,17 @@ def build_cache(
         h5.attrs["sfreq"] = sfreq
         h5.attrs["tmin"] = tmin
         h5.attrs["tmax"] = tmax
-        h5.attrs["source_filter"] = f"{l_freq if source == 'raw' else 0.1}-{h_freq if source == 'raw' else 30.0} Hz"
-        h5.attrs["l_freq"] = float(l_freq if source == "raw" else 0.1)
-        h5.attrs["h_freq"] = float(h_freq if source == "raw" else 30.0)
+        effective_l = l_freq if source == "raw" else 0.1
+        effective_h = h_freq if source == "raw" else 30.0
+        filter_applied = effective_l is not None or effective_h is not None
+        h5.attrs["source_filter"] = (
+            f"{effective_l}-{effective_h} Hz" if filter_applied else "none"
+        )
+        # HDF5 numeric attributes cannot represent Python None. -1 marks a
+        # disabled cutoff; source_filter/filter_applied carry the readable state.
+        h5.attrs["l_freq"] = float(effective_l) if effective_l is not None else -1.0
+        h5.attrs["h_freq"] = float(effective_h) if effective_h is not None else -1.0
+        h5.attrs["filter_applied"] = bool(filter_applied)
         h5.attrs["baseline_correction"] = bool(baseline_correction if source == "raw" else True)
     print(f"Wrote {total} epochs to {output}")
 
@@ -184,12 +192,19 @@ def main() -> None:
     parser.add_argument("--no-baseline-correction", action="store_true")
     parser.add_argument("--l-freq", type=float, default=0.1)
     parser.add_argument("--h-freq", type=float, default=30.0)
+    parser.add_argument(
+        "--no-bandpass", action="store_true",
+        help="Skip EEG bandpass filtering (only valid with --source raw).",
+    )
     args = parser.parse_args()
+    if args.no_bandpass and args.source != "raw":
+        parser.error("--no-bandpass requires --source raw")
     build_cache(
         args.epochs, args.manifest, args.output, source=args.source,
         raw_dir=args.raw_dir if args.source == "raw" else None,
         baseline_correction=not args.no_baseline_correction,
-        l_freq=args.l_freq, h_freq=args.h_freq,
+        l_freq=None if args.no_bandpass else args.l_freq,
+        h_freq=None if args.no_bandpass else args.h_freq,
     )
 
 

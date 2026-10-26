@@ -1,0 +1,41 @@
+{
+  "comparison": "candidate 1-12 Hz, baseline off minus reference 0.1-30 Hz, baseline off",
+  "model": "M1_tuned_SWLDA",
+  "resampling_unit": "run_id; paired run resamples shared by both conditions",
+  "bootstrap_replicates": 10000,
+  "seed": 0,
+  "interval": "percentile 95% CI",
+  "n_runs": 83,
+  "n_epochs": 84660,
+  "n_characters": 498,
+  "reference": {
+    "label": "0.1-30 Hz, baseline off",
+    "scores": "results/tables/preprocessing_ablation_filter0130_baseline_off_scores.npz",
+    "scores_sha256": "0f7054f3e7cec695388eca2e733cef5d8f173c90d9bbfe54c91a6805505d6e67",
+    "epoch_auc": 0.7350048601366644,
+    "character_accuracy": 0.6204819277108434
+  },
+  "candidate": {
+    "label": "1-12 Hz, baseline off",
+    "scores": "results/tables/preproc_ablation_filter1_12_baseline_off_scores.npz",
+    "scores_sha256": "168d1b0db967cefeb226497a4e1e535e7dd5e385e06ad9dd3430a54dd36db80a",
+    "epoch_auc": 0.7599422482433079,
+    "character_accuracy": 0.6706827309236948
+  },
+  "difference_candidate_minus_reference": {
+    "epoch_auc": 0.024937388106643477,
+    "epoch_auc_percentage_points": 2.4937388106643477,
+    "epoch_auc_ci95": [
+      0.019424899766401618,
+      0.03061273786578711
+    ],
+    "character_accuracy": 0.050200803212851364,
+    "character_accuracy_percentage_points": 5.020080321285136,
+    "character_accuracy_ci95": [
+      0.008032128514056224,
+      0.09236947791164658
+    ]
+  },
+  "git_hash": "62ce8049375e1e3f232381f72727d933b0211d6c",
+  "git_dirty": true
+}

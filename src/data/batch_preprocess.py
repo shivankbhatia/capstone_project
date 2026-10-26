@@ -175,9 +175,12 @@ def parse_bigp3bci_edf(edf_path, tmin=-0.1, tmax=0.8, l_freq=0.1, h_freq=30.0,
     # -------------------------------------------------------------------------
     # 2. FILTERING
     # -------------------------------------------------------------------------
-    if verbose:
-        print(f"Applying bandpass filter ({l_freq}-{h_freq} Hz) to {len(actual_eeg_channels)} EEG channels...")
-    raw.filter(l_freq=l_freq, h_freq=h_freq, picks=actual_eeg_channels, verbose=False)
+    if l_freq is not None or h_freq is not None:
+        if verbose:
+            print(f"Applying bandpass filter ({l_freq}-{h_freq} Hz) to {len(actual_eeg_channels)} EEG channels...")
+        raw.filter(l_freq=l_freq, h_freq=h_freq, picks=actual_eeg_channels, verbose=False)
+    elif verbose:
+        print("Skipping bandpass filter.")
 
     if notch_freq is not None:
         if verbose:

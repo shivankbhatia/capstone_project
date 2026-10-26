@@ -169,7 +169,8 @@ def _metrics(oof, meta):
 
 
 def run(cache_path: Path, config_path: Path, manifest_path: Path,
-        folds: int, max_fit_samples: int, scores_output: Path | None = None) -> dict:
+        folds: int, max_fit_samples: int, scores_output: Path | None = None,
+        model_names: tuple[str, ...] = ("M0_clean_SGD", "M1_tuned_SWLDA")) -> dict:
     cfg = json.loads(config_path.read_text(encoding="utf-8"))
     heldout = load_heldout_run_ids(manifest_path)
     score_arrays = {}
@@ -183,7 +184,7 @@ def run(cache_path: Path, config_path: Path, manifest_path: Path,
         n_folds = min(folds, len(set(meta["run_id"])))
         splitter = GroupKFold(n_splits=n_folds)
         out = {}
-        for name in ("M0_clean_SGD", "M1_tuned_SWLDA"):
+        for name in model_names:
             oof = np.full(len(meta["y"]), np.nan, dtype=np.float64)
             selected_params = []
             for fold, (train_idx, val_idx) in enumerate(
@@ -253,9 +254,14 @@ def main() -> None:
     parser.add_argument("--output", type=Path, default=ROOT / "results/tables/classifier_classical_inner.json")
     parser.add_argument("--scores-output", type=Path,
                         default=ROOT / "results/tables/classifier_classical_inner_scores.npz")
+    parser.add_argument(
+        "--models", nargs="+", choices=("M0_clean_SGD", "M1_tuned_SWLDA"),
+        default=("M0_clean_SGD", "M1_tuned_SWLDA"),
+        help="Models to run; defaults to both existing clean-pool models.",
+    )
     args = parser.parse_args()
     result = run(args.cache, args.config, args.manifest, args.folds, args.max_fit_samples,
-                 args.scores_output)
+                 args.scores_output, tuple(args.models))
     args.output.parent.mkdir(parents=True, exist_ok=True)
     output = json.loads(args.output.read_text(encoding="utf-8")) if args.output.exists() else {}
     output[args.config.stem] = result

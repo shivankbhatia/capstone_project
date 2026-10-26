@@ -29,6 +29,7 @@ results/tables/*.csv
 
 
 *.md
+!docs/02_preprocessing.md
 
 *.log
 
