@@ -30,6 +30,7 @@ results/tables/*.csv
 
 *.md
 !docs/02_preprocessing.md
+!docs/04_classifier.md
 
 *.log
 
