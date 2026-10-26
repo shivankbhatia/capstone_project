@@ -1,6 +1,6 @@
 # 04 — EEG classifier
 
-**Evidence snapshot:** source baseline `optimise` / `origin/optimise` at `7b37a5c0f0db728f0e7dc26bedcb3234217065cf`. The LOSO script and outputs in this snapshot were generated from that code baseline with the LOSO additions in the worktree; those new files are included with this documentation update. The worktree also has unrelated uncommitted changes to `README.md` and `prototype/app.js`, plus ignored, untracked `INVESTIGATION_SUMMARY.md`; they are not used as evidence. Dataset/cache inputs are external or ignored unless explicitly stated. The origin branch/tag listing below is based on the user's verified check dated 2026-10-26.
+**Evidence snapshot:** commit `386a78b` (`Add Study D classifier LOSO evidence`), based on `optimise` / `origin/optimise` commit `7b37a5c`. It commits the Study D LOSO runner, result JSON, score arrays, classifier documentation, and architecture diagram. The worktree also has unrelated uncommitted changes to `README.md` and `prototype/app.js`, plus ignored, untracked `INVESTIGATION_SUMMARY.md`; they are not used as evidence. Dataset/cache inputs are external or ignored unless explicitly stated. The origin branch/tag listing below is based on the user's verified check dated 2026-10-26.
 
 ## 1. Purpose, inputs, and outputs
 
