@@ -24,7 +24,7 @@
     <main class="app-shell">
       <header class="topbar">
         <a class="brand" href="#" aria-label="Neural Type home"><span class="brand-mark">N</span><span>NEURAL TYPE</span></a>
-        <div class="study-title"><span class="live-dot"></span>Study D replay <span>/</span> research prototype</div>
+        <div class="study-title">Study D replay <span>/</span> research prototype</div>
         <div class="top-actions">
           <span class="connection" id="connectionState"><i></i> Connecting backend</span>
           <button id="resetButton" class="icon-button" title="Reset session">↻</button>
@@ -51,7 +51,7 @@
             <div class="intent-meta"><span id="intentLength">—</span><span>•</span><span id="intentSource">Waiting for backend</span></div>
           </div>
           <div class="progress-wrap"><div class="progress-label"><span>Selection progress</span><span id="progressText">0 / 28</span></div><div class="progress-track"><span id="progressBar"></span></div></div>
-          <div class="baseline-card"><span class="eyebrow">REPLAY PROVENANCE</span><strong id="flashSaving">—</strong><p id="scanModeDescription">Uniform full-grid row/column replay; τ=.80, min 2, max 10.</p></div>
+          <div class="baseline-card"><span class="eyebrow">REPLAY PROVENANCE</span><strong id="replayProvenance">—</strong><p id="scanModeDescription">Uniform full-grid row/column replay; τ=.80, min 2, max 10.</p></div>
           <p class="quiet-note" id="evidenceNote">Loading evidence provenance from the backend.</p>
         </aside>
 
@@ -80,7 +80,7 @@
       </section>
 
       <section class="influence-panel">
-        <div class="influence-intro"><span class="section-number">04</span><div><span class="eyebrow">LANGUAGE-GUIDED FUSION</span><h2>Fixed LM prior</h2><p>RAG is disabled. The fixed-LM arm uses alpha .85 from the clean-M0 ablation ladder lock.</p></div></div>
+        <div class="influence-intro"><span class="section-number">04</span><div><span class="eyebrow">LANGUAGE MODEL FUSION</span><h2>Fixed LM prior</h2><p>RAG is disabled. The fixed-LM arm uses alpha .85 from the clean-M0 ablation ladder lock.</p></div></div>
         <div class="context-block"><span class="eyebrow">DECODED CONTEXT</span><p id="contextText">No decoded context yet</p><small id="contextExplanation">A uniform prior will be used until text is selected.</small></div>
         <div class="prediction-block"><div class="prediction-header"><span class="eyebrow">NEXT-CHARACTER PRIOR</span><span id="priorConfidence">—</span></div><div id="predictionChips" class="prediction-chips"></div></div>
         <div class="adaptation-block"><span class="eyebrow">FLASHING POLICY</span><div class="adaptation-value"><strong id="priorityTarget">Uniform replay</strong><span id="priorityDescription">Recorded order when available; otherwise fixed row then column.</span></div><div class="adaptation-bars"><span id="barOne"></span><span id="barTwo"></span><span id="barThree"></span><span id="barFour"></span></div></div>
@@ -88,7 +88,7 @@
 
       <section class="influence-panel" aria-labelledby="evidenceTitle">
         <div class="influence-intro"><span class="section-number">05</span><div><span class="eyebrow">COMMITTED EVIDENCE</span><h2 id="evidenceTitle">Evidence boundary</h2><p>These are committed study records, not live-prototype outcomes.</p></div></div>
-        <div class="context-block"><span class="eyebrow">STUDY D LADDER</span><p>70.80% → 75.81%</p><small>One-shot manifest, 339 covered characters. EEG-only versus fixed LM; Holm p=.861.</small></div>
+        <div class="context-block"><span class="eyebrow">STUDY D LADDER</span><p>70.80% → 75.81%</p><small>One-shot manifest, 339 covered characters. EEG-only versus fixed LM; not significant after Holm correction (p=.861).</small></div>
         <div class="prediction-block"><span class="eyebrow">STUDY Q FUSION</span><p>55.86% → 59.41%</p><small>One-shot SE003 Test, 1,296 as-recorded characters. No stopping, flashes, or ITR claim.</small></div>
         <div class="adaptation-block"><span class="eyebrow">SCHEDULER STATUS</span><div class="adaptation-value"><strong>G3 no-go</strong><span>D LOSO known-result error .179 exceeded the .05 limit. Uniform flashing retained.</span></div></div>
       </section>

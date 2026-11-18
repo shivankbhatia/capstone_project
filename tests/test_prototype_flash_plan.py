@@ -1,7 +1,11 @@
+import json
+
 import numpy as np
+import pandas as pd
 import pytest
 
 from prototype.server import ReplayService
+from run_pipeline import real_eeg_classifier_flash_stream
 
 
 def test_heldout_labels_require_explicit_service_opt_in(monkeypatch, tmp_path):
@@ -66,6 +70,52 @@ def test_service_uses_fallback_grid_without_processed_data(monkeypatch, tmp_path
     assert service.using_fallback_grid is True
     assert service.samples() == []
     assert service.simulate("A", "eeg_only")["source"] == "custom_simulation"
+
+
+def test_fallback_grid_keys_are_lm_mapped_or_alphanumeric():
+    with open("configs/studyd_grid_layout.json", encoding="utf-8") as file:
+        layout = json.load(file)
+    with open("configs/llm/special_key_map.json", encoding="utf-8") as file:
+        special = json.load(file)
+
+    keys = layout["StudyD"]["grid_map"]
+    assert all(key in special or key.isalnum() for key in keys)
+
+
+def test_real_flash_stream_preserves_epoch_stimulus_order(monkeypatch):
+    import run_pipeline
+
+    class Epochs:
+        def __init__(self, codes):
+            self.metadata = pd.DataFrame({
+                "stimulus_code": codes,
+                "char_index": [0] * len(codes),
+                "sequence_in_char": [1] * len(codes),
+            })
+
+        def __len__(self):
+            return len(self.metadata)
+
+        def __getitem__(self, rows):
+            return Epochs(self.metadata.iloc[list(rows)]["stimulus_code"].tolist())
+
+        def pick(self, *_args, **_kwargs):
+            return self
+
+        def get_data(self, copy=False):
+            return np.zeros((len(self.metadata), 1, 2))
+
+    class Classifier:
+        def calibrated_logits(self, values):
+            return np.arange(len(values), dtype=float)
+
+    path = "recorded-order-test.fif"
+    monkeypatch.setattr(run_pipeline, "_epoch_cache", {path: Epochs([10, 1, 11])})
+    monkeypatch.setattr(run_pipeline, "_adaptive_index_cache", {path: {(0, 1): np.array([0, 1, 2])}})
+
+    flashes = real_eeg_classifier_flash_stream(path, 0, 1, Classifier(), 9, 8, 17)
+
+    assert [flash["stimulus_code"] for flash in flashes] == [10, 1, 11]
 
 
 @pytest.mark.parametrize("method,args", [

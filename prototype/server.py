@@ -37,25 +37,13 @@ PROTOTYPE_DIR = ROOT / "prototype"
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 GRID_PATH = ROOT / "data/processed/grid_layout.json"
+FALLBACK_GRID_PATH = ROOT / "configs/studyd_grid_layout.json"
 REGISTRY_PATH = ROOT / "data/processed/ground_truth_registry.json"
 TEST_SPLIT_PATH = ROOT / "data/processed/test_sessions.json"
 GROUND_TRUTH_VAULT_PATH = ROOT / "data/evaluation/ground_truth_vault.json"
 MODEL_PATH = ROOT / "data/processed/clean_m0_epoch_scorer.pkl"
 FIXED_LM_ALPHA = 0.85
 SUPPORTED_ARMS = {"eeg_only", "fixed_lm"}
-
-# Demo-only keyboard used when the external processed-data volume is unavailable.
-# It is deliberately not a substitute for the EDF-derived Study D grid.
-FALLBACK_GRID = np.array([
-    list("ABCDEFGH"), list("IJKLMNOP"), list("QRSTUVWX"),
-    ["Y", "Z", "0", "1", "2", "3", "4", "5"],
-    ["6", "7", "8", "9", "Sp", "Prd", "Bs", "Enter"],
-    ["PgUp", "PgDn", "Home", "End", "Left", "Right", "Up", "Down"],
-    ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8"],
-    ["F9", "F10", "F11", "F12", "Tab", "Esc", "Ctrl", "Alt"],
-    ["Shift", "Caps", "Del", "Ins", "Help", "Menu", "Fn", "Pause"],
-], dtype=object)
-
 
 class ReplayService:
     """Thin adapter around the repository's evaluation components."""
@@ -72,10 +60,11 @@ class ReplayService:
 
     @staticmethod
     def _load_matrix():
-        if not GRID_PATH.exists():
-            return FALLBACK_GRID.copy(), 9, 8, True
         from run_pipeline import load_spelling_matrix
 
+        if not GRID_PATH.exists():
+            matrix, rows, columns = load_spelling_matrix(str(FALLBACK_GRID_PATH), study_name="StudyD")
+            return matrix, rows, columns, True
         matrix, rows, columns = load_spelling_matrix(str(GRID_PATH), study_name="StudyD")
         return matrix, rows, columns, False
 
@@ -274,7 +263,7 @@ class ReplayService:
                 target_evidence = float(eeg[target_index])
                 traces.append({
                     "sequence": sequence,
-                    "flash_mode": "recorded_order",
+                    "flash_mode": "recorded_order" if source == "study_d_replay" else "simulated_order",
                     "flashes": self._flash_plan(raw_flashes, prior, sequence),
                     "predicted_key": str(predicted_key),
                     "decoder_confidence": round(float(confidence), 4),
@@ -566,6 +555,10 @@ class Handler(SimpleHTTPRequestHandler):
         try:
             length = int(self.headers.get("Content-Length", "0"))
             payload = json.loads(self.rfile.read(length) or b"{}")
+            if not isinstance(payload, dict):
+                raise ValueError("JSON request body must be an object.")
+            if "scan_mode" in payload:
+                raise ValueError("scan_mode was removed; standard full-grid replay is the only shipped mode.")
             if path == "/api/replay":
                 return self._json(SERVICE.replay(
                     str(payload.get("session_id", "")),
