@@ -4,8 +4,8 @@
 The server has two deliberately distinct execution paths:
 
 * ``study_d_replay`` replays a processed Study-D session through the saved
-  SWLDA classifier, RAG prior, Bayesian fusion engine, and P300 decoder.
-* ``custom_simulation`` uses the same grid, language prior, fusion engine, and
+  SWLDA classifier, an optional fixed language-model prior, Bayesian fusion engine, and P300 decoder.
+* ``custom_simulation`` uses the same grid, optional language prior, fusion engine, and
   decoder, but generates target-conditioned EEG likelihoods.  Custom text has
   no recorded EEG, so this is labelled as a simulation in every response.
 
@@ -23,7 +23,6 @@ import json
 import mimetypes
 import os
 import sys
-from dataclasses import asdict
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -42,7 +41,20 @@ REGISTRY_PATH = ROOT / "data/processed/ground_truth_registry.json"
 TEST_SPLIT_PATH = ROOT / "data/processed/test_sessions.json"
 GROUND_TRUTH_VAULT_PATH = ROOT / "data/evaluation/ground_truth_vault.json"
 MODEL_PATH = ROOT / "data/processed/clean_m0_epoch_scorer.pkl"
-GLOBAL_BANK_PATH = ROOT / "data/rag/phrase_bank_global.csv"
+FIXED_LM_ALPHA = 0.85
+SUPPORTED_ARMS = {"eeg_only", "fixed_lm"}
+
+# Demo-only keyboard used when the external processed-data volume is unavailable.
+# It is deliberately not a substitute for the EDF-derived Study D grid.
+FALLBACK_GRID = np.array([
+    list("ABCDEFGH"), list("IJKLMNOP"), list("QRSTUVWX"),
+    ["Y", "Z", "0", "1", "2", "3", "4", "5"],
+    ["6", "7", "8", "9", "Sp", "Prd", "Bs", "Enter"],
+    ["PgUp", "PgDn", "Home", "End", "Left", "Right", "Up", "Down"],
+    ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8"],
+    ["F9", "F10", "F11", "F12", "Tab", "Esc", "Ctrl", "Alt"],
+    ["Shift", "Caps", "Del", "Ins", "Help", "Menu", "Fn", "Pause"],
+], dtype=object)
 
 
 class ReplayService:
@@ -50,7 +62,7 @@ class ReplayService:
 
     def __init__(self, allow_heldout_eval: bool = False) -> None:
         self.allow_heldout_eval = allow_heldout_eval
-        self.matrix, self.n_rows, self.n_cols = self._load_matrix()
+        self.matrix, self.n_rows, self.n_cols, self.using_fallback_grid = self._load_matrix()
         self.char_list = list(self.matrix.flatten())
         self._classifier = None
         self._predictor = None
@@ -60,9 +72,12 @@ class ReplayService:
 
     @staticmethod
     def _load_matrix():
+        if not GRID_PATH.exists():
+            return FALLBACK_GRID.copy(), 9, 8, True
         from run_pipeline import load_spelling_matrix
 
-        return load_spelling_matrix(str(GRID_PATH), study_name="StudyD")
+        matrix, rows, columns = load_spelling_matrix(str(GRID_PATH), study_name="StudyD")
+        return matrix, rows, columns, False
 
     def _load_classifier(self):
         if self._classifier is None:
@@ -83,7 +98,7 @@ class ReplayService:
         return self._fixed_block_indexing_cache[path]
 
     def _load_predictor(self):
-        """Load the real DistilGPT-2 + global RAG predictor once, lazily."""
+        """Load the fixed-LM prior once. RAG is intentionally unavailable here."""
         if self._predictor is not None:
             return self._predictor
         if self._predictor_error is not None:
@@ -91,21 +106,14 @@ class ReplayService:
 
         try:
             from src.models.llm_predictor import LLMPredictor
-            from src.models.rag_predictor import RAGPredictor
-
-            base = LLMPredictor(self.matrix)
-            self._predictor = RAGPredictor(
-                base,
-                phrase_bank_path=str(GLOBAL_BANK_PATH),
-                rag_weight=0.15,
-                retrieval_confidence_threshold=0.60,
-            )
+            self._predictor = LLMPredictor(self.matrix, local_files_only=True)
             return self._predictor
         except Exception as exc:  # Surface the genuine model failure to the UI.
-            self._predictor_error = f"Could not load the configured LLM/RAG predictor: {exc}"
+            self._predictor_error = f"Could not load the fixed language-model prior: {exc}"
             raise RuntimeError(self._predictor_error) from exc
 
     def health(self) -> dict[str, Any]:
+        fixed_lm_available = self._fixed_lm_available()
         return {
             "status": "ready",
             "grid": {
@@ -115,12 +123,29 @@ class ReplayService:
                 "keys": [str(key) for key in self.char_list],
             },
             "processed_data_available": REGISTRY_PATH.exists() and MODEL_PATH.exists(),
+            "using_fallback_grid": self.using_fallback_grid,
             "heldout_evaluation_enabled": self.allow_heldout_eval,
-            "language_model": "loads on first run",
+            "language_model": "available offline" if fixed_lm_available else "not available offline",
+            "fixed_lm_available_offline": fixed_lm_available,
+            "supported_arms": ["eeg_only", "fixed_lm"],
+            "fixed_lm": {"alpha": FIXED_LM_ALPHA, "provenance": "clean-M0 ablation ladder lock"},
             "custom_text_notice": "Custom text uses simulated target-conditioned EEG; Study-D replay uses recorded epochs.",
         }
 
+    @staticmethod
+    def _fixed_lm_available() -> bool:
+        """Preflight the fixed LM without downloading model weights."""
+        try:
+            from transformers import AutoModelForCausalLM, AutoTokenizer
+            AutoTokenizer.from_pretrained("distilgpt2", local_files_only=True)
+            AutoModelForCausalLM.from_pretrained("distilgpt2", local_files_only=True)
+            return True
+        except Exception:
+            return False
+
     def samples(self) -> list[dict[str, str]]:
+        if not REGISTRY_PATH.exists() or not TEST_SPLIT_PATH.exists():
+            return []
         registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
         held_out = set(json.loads(TEST_SPLIT_PATH.read_text(encoding="utf-8")))
         if self.allow_heldout_eval:
@@ -157,20 +182,13 @@ class ReplayService:
     def _prior(self, context: str) -> tuple[np.ndarray, dict[str, Any]]:
         predictor = self._load_predictor()
         prior = predictor.predict_next_char(context)
-        diagnostics = asdict(predictor.last_diagnostics)
         top = np.argsort(prior)[-4:][::-1]
         return prior, {
             "top": [
                 {"key": str(self.char_list[index]), "probability": round(float(prior[index]), 4)}
                 for index in top
             ],
-            "rag": {
-                "enabled": diagnostics["rag_enabled"],
-                "confidence": round(float(diagnostics["retrieval_confidence"]), 4),
-                "global_weight": round(float(diagnostics["global_gate_weight"]), 4),
-                "reason": diagnostics["reason"],
-                "matches": diagnostics["matched_phrases"][:3],
-            },
+            "arm": "fixed_lm",
         }
 
     def _keys_for_stimulus(self, stimulus_code: int) -> list[str]:
@@ -184,13 +202,7 @@ class ReplayService:
 
     def _flash_plan(self, flashes: list[dict[str, float]], prior: np.ndarray,
                     sequence: int) -> list[dict[str, Any]]:
-        """Attach visible RC groups and LLM/RAG-aware ordering to flash scores.
-
-        The first sequence is a complete row-first/column-second scan. Later
-        sequences prioritize groups with the most next-character prior mass.
-        Recorded EEG scores stay attached to their original stimulus code, so
-        reordering the visual decision plan never changes decoder evidence.
-        """
+        """Attach visible groups without changing the recorded flash order."""
         plan = []
         for flash in flashes:
             code = int(flash["stimulus_code"])
@@ -210,10 +222,6 @@ class ReplayService:
                 "classifier_target": bool(float(flash["target_probability"]) >= 0.5),
             })
 
-        if sequence == 1:
-            plan.sort(key=lambda flash: (flash["kind"] != "row", flash["group_number"]))
-        else:
-            plan.sort(key=lambda flash: (-flash["priority_mass"], flash["kind"] != "row", flash["group_number"]))
         return plan
 
     @staticmethod
@@ -230,7 +238,7 @@ class ReplayService:
         probabilities /= probabilities.sum()
         return probabilities
 
-    def _decode(self, message: str, evidence_provider, source: str,
+    def _decode(self, message: str, evidence_provider, source: str, arm: str,
                 session_id: str | None = None, confidence_threshold: float = 0.80,
                 min_sequences: int = 2, max_sequences: int = 10):
         from src.models.decoder import P300Decoder
@@ -238,7 +246,8 @@ class ReplayService:
 
         decoder = P300Decoder(self.matrix)
         fusion = BayesianFusionEngine(
-            num_classes=len(self.char_list), mode="fixed", base_alpha=0.1
+            num_classes=len(self.char_list), mode="fixed",
+            base_alpha=FIXED_LM_ALPHA if arm == "fixed_lm" else 0.0,
         )
         decoded = ""
         selections = []
@@ -248,8 +257,12 @@ class ReplayService:
         for char_index, target in enumerate(message):
             target_index = self._target_index(target)
             decoder.reset()
-            prior, prior_payload = self._prior(decoded)
-            decoder.accumulated_log_probs += fusion.get_initial_log_bias(prior)
+            if arm == "fixed_lm":
+                prior, prior_payload = self._prior(decoded)
+                decoder.accumulated_log_probs += fusion.get_initial_log_bias(prior)
+            else:
+                prior = np.full(len(self.char_list), 1 / len(self.char_list))
+                prior_payload = {"top": [], "arm": "eeg_only"}
             traces = []
             selected_key = None
             selected_confidence = 0.0
@@ -261,7 +274,7 @@ class ReplayService:
                 target_evidence = float(eeg[target_index])
                 traces.append({
                     "sequence": sequence,
-                    "flash_mode": "standard_row_column" if sequence == 1 else "llm_rag_ranked",
+                    "flash_mode": "recorded_order",
                     "flashes": self._flash_plan(raw_flashes, prior, sequence),
                     "predicted_key": str(predicted_key),
                     "decoder_confidence": round(float(confidence), 4),
@@ -293,6 +306,7 @@ class ReplayService:
         correct = sum(item["correct"] for item in selections)
         return {
             "source": source,
+            "arm": arm,
             "session_id": session_id,
             "target": message,
             "decoded": decoded,
@@ -314,16 +328,16 @@ class ReplayService:
             ),
         }
 
-    def replay(self, session_id: str, scan_mode: str = "standard",
+    def replay(self, session_id: str, arm: str = "fixed_lm",
                confidence_threshold: float = 0.80, min_sequences: int = 2,
                max_sequences: int = 10) -> dict[str, Any]:
-        if scan_mode not in {"compact", "standard"}:
-            raise ValueError("scan_mode must be 'compact' or 'standard'.")
+        if arm not in SUPPORTED_ARMS:
+            raise ValueError("arm must be 'eeg_only' or 'fixed_lm'.")
         if not 0.0 <= confidence_threshold <= 1.0:
             raise ValueError("confidence_threshold must be between 0 and 1.")
         if min_sequences < 1 or max_sequences < min_sequences:
             raise ValueError("Require 1 <= min_sequences <= max_sequences.")
-        cache_key = (session_id, scan_mode, confidence_threshold, min_sequences, max_sequences)
+        cache_key = (session_id, arm, confidence_threshold, min_sequences, max_sequences)
         if cache_key in self._replay_cache:
             return self._replay_cache[cache_key]
         available = {sample["id"]: sample["target"] for sample in self.samples()}
@@ -335,34 +349,29 @@ class ReplayService:
         eeg_path = ROOT / "data/processed/StudyD" / f"{session_id}-epo.fif"
         classifier = self._load_classifier()
 
-        if scan_mode == "compact":
-            result = self._decode_row_focus(
-                available[session_id], str(eeg_path), classifier, session_id
-            )
-        else:
-            effective_max_sequences = (
-                min(max_sequences, 15)
-                if self._uses_fixed_block_indexing(eeg_path)
-                else max_sequences
-            )
+        effective_max_sequences = (
+            min(max_sequences, 15)
+            if self._uses_fixed_block_indexing(eeg_path)
+            else max_sequences
+        )
 
-            def evidence(char_index, _target, _target_index, sequence):
-                posterior = real_eeg_classifier_stream(
-                    str(eeg_path), char_index, sequence, classifier, self.char_list,
-                    self.n_rows, self.n_cols, self.n_rows + self.n_cols,
-                )
-                flashes = real_eeg_classifier_flash_stream(
-                    str(eeg_path), char_index, sequence, classifier,
-                    self.n_rows, self.n_cols, self.n_rows + self.n_cols,
-                )
-                return posterior, flashes
-
-            result = self._decode(
-                available[session_id], evidence, "study_d_replay", session_id,
-                confidence_threshold=confidence_threshold,
-                min_sequences=min_sequences,
-                max_sequences=effective_max_sequences,
+        def evidence(char_index, _target, _target_index, sequence):
+            posterior = real_eeg_classifier_stream(
+                str(eeg_path), char_index, sequence, classifier, self.char_list,
+                self.n_rows, self.n_cols, self.n_rows + self.n_cols,
             )
+            flashes = real_eeg_classifier_flash_stream(
+                str(eeg_path), char_index, sequence, classifier,
+                self.n_rows, self.n_cols, self.n_rows + self.n_cols,
+            )
+            return posterior, flashes
+
+        result = self._decode(
+            available[session_id], evidence, "study_d_replay", arm, session_id,
+            confidence_threshold=confidence_threshold,
+            min_sequences=min_sequences,
+            max_sequences=effective_max_sequences,
+        )
         self._replay_cache[cache_key] = result
         return result
 
@@ -489,7 +498,9 @@ class ReplayService:
             raise ValueError("No recorded epoch for that flash.")
         return trace
 
-    def simulate(self, message: str) -> dict[str, Any]:
+    def simulate(self, message: str, arm: str = "fixed_lm") -> dict[str, Any]:
+        if arm not in SUPPORTED_ARMS:
+            raise ValueError("arm must be 'eeg_only' or 'fixed_lm'.")
         message = message.strip().upper()
         if not message:
             raise ValueError("Enter a sentence or word to simulate.")
@@ -513,7 +524,7 @@ class ReplayService:
                 flashes.append({"stimulus_code": code, "target_probability": score})
             return posterior, flashes
 
-        return self._decode(message, evidence, "custom_simulation")
+        return self._decode(message, evidence, "custom_simulation", arm)
 
 
 SERVICE = ReplayService()
@@ -558,10 +569,12 @@ class Handler(SimpleHTTPRequestHandler):
             if path == "/api/replay":
                 return self._json(SERVICE.replay(
                     str(payload.get("session_id", "")),
-                    str(payload.get("scan_mode", "compact")),
+                    str(payload.get("arm", "fixed_lm")),
                 ))
             if path == "/api/simulate":
-                return self._json(SERVICE.simulate(str(payload.get("message", ""))))
+                return self._json(SERVICE.simulate(
+                    str(payload.get("message", "")), str(payload.get("arm", "fixed_lm"))
+                ))
             return self._json({"error": "Not found"}, HTTPStatus.NOT_FOUND)
         except ValueError as exc:
             return self._json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)

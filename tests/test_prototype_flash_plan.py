@@ -19,7 +19,7 @@ def test_heldout_labels_require_explicit_service_opt_in(monkeypatch, tmp_path):
         ReplayService(allow_heldout_eval=True).samples()
 
 
-def test_first_sequence_is_row_then_column_and_exposes_classifier_score():
+def test_flash_plan_preserves_recorded_order_and_exposes_classifier_score():
     service = ReplayService()
     prior = np.full(len(service.char_list), 1 / len(service.char_list))
 
@@ -33,12 +33,12 @@ def test_first_sequence_is_row_then_column_and_exposes_classifier_score():
         sequence=1,
     )
 
-    assert [flash["label"] for flash in plan] == ["ROW 1", "COLUMN 1", "COLUMN 2"]
-    assert plan[0]["keys"] == list("ABCDEFGH")
-    assert plan[0]["classifier_target"] is True
+    assert [flash["label"] for flash in plan] == ["COLUMN 1", "ROW 1", "COLUMN 2"]
+    assert plan[1]["keys"] == list("ABCDEFGH")
+    assert plan[1]["classifier_target"] is True
 
 
-def test_later_sequence_orders_groups_by_language_prior_mass():
+def test_later_sequence_does_not_order_groups_by_language_prior_mass():
     service = ReplayService()
     prior = np.zeros(len(service.char_list))
     prior[service.char_list.index("F")] = 1.0  # F is in row 1 and column 6.
@@ -53,5 +53,25 @@ def test_later_sequence_orders_groups_by_language_prior_mass():
         sequence=2,
     )
 
-    assert plan[0]["label"] == "ROW 1"
-    assert plan[1]["label"] == "COLUMN 6"
+    assert [flash["label"] for flash in plan] == ["COLUMN 2", "ROW 1", "COLUMN 6"]
+
+
+def test_service_uses_fallback_grid_without_processed_data(monkeypatch, tmp_path):
+    monkeypatch.setattr("prototype.server.GRID_PATH", tmp_path / "missing-grid.json")
+    monkeypatch.setattr("prototype.server.REGISTRY_PATH", tmp_path / "missing-registry.json")
+    monkeypatch.setattr("prototype.server.TEST_SPLIT_PATH", tmp_path / "missing-split.json")
+
+    service = ReplayService()
+
+    assert service.using_fallback_grid is True
+    assert service.samples() == []
+    assert service.simulate("A", "eeg_only")["source"] == "custom_simulation"
+
+
+@pytest.mark.parametrize("method,args", [
+    ("replay", ("sample", "compact")),
+    ("simulate", ("A", "rag")),
+])
+def test_removed_arms_are_rejected(method, args):
+    with pytest.raises(ValueError, match="arm must be"):
+        getattr(ReplayService(), method)(*args)

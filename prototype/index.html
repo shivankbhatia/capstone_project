@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Neural Type — Adaptive P300 Speller</title>
+    <title>Neural Type P300 Speller Prototype</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -24,7 +24,7 @@
     <main class="app-shell">
       <header class="topbar">
         <a class="brand" href="#" aria-label="Neural Type home"><span class="brand-mark">N</span><span>NEURAL TYPE</span></a>
-        <div class="study-title"><span class="live-dot"></span>Study D replay <span>/</span> adaptive P300 BCI</div>
+        <div class="study-title"><span class="live-dot"></span>Study D replay <span>/</span> research prototype</div>
         <div class="top-actions">
           <span class="connection" id="connectionState"><i></i> Connecting backend</span>
           <button id="resetButton" class="icon-button" title="Reset session">↻</button>
@@ -34,7 +34,7 @@
       <section class="command-bar" aria-label="Simulation controls">
         <label class="scenario-select"><span class="eyebrow">EVIDENCE SOURCE</span><select id="sourceSelect"><option value="replay">Study D held-out replay</option><option value="custom">Custom-text simulation</option></select></label>
         <div class="control-divider"></div>
-        <label class="scenario-select"><span class="eyebrow">SCAN MODE</span><select id="scanMode"><option value="compact">Compact row shortlist</option><option value="standard">Standard full grid</option></select></label>
+        <label class="scenario-select"><span class="eyebrow">RESEARCH ARM</span><select id="armSelect"><option value="fixed_lm">Fixed LM fusion α=.85</option><option value="eeg_only">EEG only</option></select></label>
         <div class="control-divider"></div>
         <label class="target-control"><span class="eyebrow" id="targetLabel">STUDY D SAMPLE</span><select id="sampleSelect" aria-label="Study D sample"></select><input id="customMessage" maxlength="80" value="PLEASE HELP" aria-label="Custom sentence to simulate" /></label>
         <div class="control-divider"></div>
@@ -51,18 +51,18 @@
             <div class="intent-meta"><span id="intentLength">—</span><span>•</span><span id="intentSource">Waiting for backend</span></div>
           </div>
           <div class="progress-wrap"><div class="progress-label"><span>Selection progress</span><span id="progressText">0 / 28</span></div><div class="progress-track"><span id="progressBar"></span></div></div>
-          <div class="baseline-card"><span class="eyebrow">DECODER EFFICIENCY</span><strong id="flashSaving">—</strong><p id="scanModeDescription">compact scan: rows 1–5, then shortlisted keys</p></div>
+          <div class="baseline-card"><span class="eyebrow">REPLAY PROVENANCE</span><strong id="flashSaving">—</strong><p id="scanModeDescription">Uniform full-grid row/column replay; τ=.80, min 2, max 10.</p></div>
           <p class="quiet-note" id="evidenceNote">Loading evidence provenance from the backend.</p>
         </aside>
 
         <section class="center-stage">
-          <div class="stage-heading"><div><span class="eyebrow">02 / ACTIVE SELECTION</span><h1>Adaptive P300 keyboard</h1></div><div class="phase-badge" id="phaseBadge"><span></span> Awaiting start</div></div>
+          <div class="stage-heading"><div><span class="eyebrow">02 / ACTIVE SELECTION</span><h1>P300 keyboard replay</h1></div><div class="phase-badge" id="phaseBadge"><span></span> Awaiting start</div></div>
           <div class="keyboard-card">
             <button id="focusToggle" class="focus-toggle" type="button" aria-pressed="false">Focus current flash</button>
             <div class="keyboard-status"><div><span class="status-label">CURRENT DECISION</span><strong id="currentStimulus">—</strong></div><div><span class="status-label">TARGET EVIDENCE</span><strong id="evidenceScore">0.00</strong></div><div><span class="status-label">SEQUENCES</span><strong id="flashCount">0</strong></div></div>
-            <div class="speed-dial"><div class="speed-dial-label"><span class="eyebrow">GLOBAL RAG PRIOR</span><span id="speedDialStatus">Backend RAG diagnostics appear here</span></div><div id="speedDialOptions" class="speed-dial-options"></div></div>
+            <div class="speed-dial"><div class="speed-dial-label"><span class="eyebrow">FIXED LM PRIOR</span><span id="speedDialStatus">Shown only in the fixed-LM arm</span></div><div id="speedDialOptions" class="speed-dial-options"></div></div>
             <div id="keyboard" class="keyboard" aria-label="P300 character keyboard"></div>
-            <div class="keyboard-footer"><span><i class="legend-dot priority"></i> LLM-prioritized</span><span><i class="legend-dot detected"></i> EEG evidence</span><span class="scan-copy" id="scanCopy">Ready to begin</span></div>
+            <div class="keyboard-footer"><span><i class="legend-dot priority"></i> LM prior display</span><span><i class="legend-dot detected"></i> EEG evidence</span><span class="scan-copy" id="scanCopy">Ready to begin</span></div>
           </div>
           <div class="signal-card">
             <div class="signal-header"><div><span class="eyebrow" id="signalLabel">EEG / P300 RESPONSE</span><h2>Classifier evidence</h2></div><div class="signal-stat"><span>posterior</span><strong id="signalValue">0.0</strong></div></div>
@@ -80,10 +80,17 @@
       </section>
 
       <section class="influence-panel">
-        <div class="influence-intro"><span class="section-number">04</span><div><span class="eyebrow">LANGUAGE-GUIDED FUSION</span><h2>RAG prior, visible</h2><p>The backend exposes the global RAG prior before Bayesian fusion accumulates EEG evidence.</p></div></div>
+        <div class="influence-intro"><span class="section-number">04</span><div><span class="eyebrow">LANGUAGE-GUIDED FUSION</span><h2>Fixed LM prior</h2><p>RAG is disabled. The fixed-LM arm uses alpha .85 from the clean-M0 ablation ladder lock.</p></div></div>
         <div class="context-block"><span class="eyebrow">DECODED CONTEXT</span><p id="contextText">No decoded context yet</p><small id="contextExplanation">A uniform prior will be used until text is selected.</small></div>
         <div class="prediction-block"><div class="prediction-header"><span class="eyebrow">NEXT-CHARACTER PRIOR</span><span id="priorConfidence">—</span></div><div id="predictionChips" class="prediction-chips"></div></div>
-        <div class="adaptation-block"><span class="eyebrow">FLASH ADAPTATION</span><div class="adaptation-value"><strong id="priorityTarget">—</strong><span id="priorityDescription">Waiting to prioritize</span></div><div class="adaptation-bars"><span id="barOne"></span><span id="barTwo"></span><span id="barThree"></span><span id="barFour"></span></div></div>
+        <div class="adaptation-block"><span class="eyebrow">FLASHING POLICY</span><div class="adaptation-value"><strong id="priorityTarget">Uniform replay</strong><span id="priorityDescription">Recorded order when available; otherwise fixed row then column.</span></div><div class="adaptation-bars"><span id="barOne"></span><span id="barTwo"></span><span id="barThree"></span><span id="barFour"></span></div></div>
+      </section>
+
+      <section class="influence-panel" aria-labelledby="evidenceTitle">
+        <div class="influence-intro"><span class="section-number">05</span><div><span class="eyebrow">COMMITTED EVIDENCE</span><h2 id="evidenceTitle">Evidence boundary</h2><p>These are committed study records, not live-prototype outcomes.</p></div></div>
+        <div class="context-block"><span class="eyebrow">STUDY D LADDER</span><p>70.80% → 75.81%</p><small>One-shot manifest, 339 covered characters. EEG-only versus fixed LM; Holm p=.861.</small></div>
+        <div class="prediction-block"><span class="eyebrow">STUDY Q FUSION</span><p>55.86% → 59.41%</p><small>One-shot SE003 Test, 1,296 as-recorded characters. No stopping, flashes, or ITR claim.</small></div>
+        <div class="adaptation-block"><span class="eyebrow">SCHEDULER STATUS</span><div class="adaptation-value"><strong>G3 no-go</strong><span>D LOSO known-result error .179 exceeded the .05 limit. Uniform flashing retained.</span></div></div>
       </section>
     </main>
     <dialog id="flashFocusOverlay" aria-live="polite"><span class="eyebrow" id="flashFocusLabel">CURRENT FLASH</span><div id="flashFocusKeys" class="flash-focus-keys"></div><span class="flash-focus-hint">Focus mode · press Escape to return to the full keyboard</span></dialog>
