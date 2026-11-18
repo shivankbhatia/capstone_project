@@ -1,0 +1,431 @@
+% Evidence-led manuscript assembled from repository Components 2--8.
+% The Dataset Descriptor and final prototype documentation are pending.
+% Elsevier final two-column journal layout, as selected by the authors.
+\documentclass[final,5p,times,twocolumn,authoryear]{elsarticle}
+\usepackage{amsmath,amssymb,booktabs,graphicx,hyperref}
+\journal{Manuscript draft}
+
+\newcommand{\figureplaceholder}[2]{%
+  \fbox{\parbox[c][#2][c]{0.91\columnwidth}{\centering\small\textbf{Figure asset pending}\\[4pt]#1}}}
+\newcommand{\widefigureplaceholder}[2]{%
+  \fbox{\parbox[c][#2][c]{0.92\textwidth}{\centering\small\textbf{Figure asset pending}\\[4pt]#1}}}
+
+\begin{document}
+\begin{frontmatter}
+\title{An EEG P300 Speller with Language-Prior Fusion, Retrieval Interfaces, and Evidence-Tiered Evaluation}
+\author[inst1]{Author names pending}
+\address[inst1]{Affiliations pending}
+
+\begin{abstract}
+P300 spellers translate stimulus-locked EEG responses into selections on a visual keyboard, but reliable character selection commonly requires repeated stimuli. We describe the design, implementation, and evidence-tiered evaluation of an EEG P300 spelling pipeline that combines calibrated flash-level evidence with a grid-aligned causal-language-model prior and sequential decoding. The system supports the 72-key ($9\times8$) bigP3BCI Study D layout and adaptive recordings, in which selection boundaries are derived from trigger pulses rather than a fixed number of flashes. A leakage audit replaced historical Study D results affected by overlap with a later held-out manifest with a clean run-level protocol. On the frozen 57-run Study D classifier manifest, a clean streaming-SGD model was retained over an xDAWN--LDA candidate (78.40\% versus 74.26\% fused accuracy; paired M3a--M0 difference $-4.20$ percentage points, 95\% subject-bootstrap CI $-10.25$ to $+1.08$; Holm-adjusted $p=.266$). In a separate five-rung replay on 339 covered characters, a fixed DistilGPT-2 prior increased descriptive accuracy from 70.80\% to 75.81\% and reduced mean sequences from 4.92 to 3.79, although the paired accuracy contrast did not survive Holm correction. A separate Study Q SE003 one-shot test found 59.41\% fused versus 55.86\% EEG-only accuracy at recorded depth. Retrieval and adaptive scheduling are implemented interfaces, not established benefits: retrieval lacks participant-text validation and adaptive scheduling failed a simulator gate. The manuscript preserves these boundaries between development, frozen evaluation, simulation, and software checks.
+\end{abstract}
+
+\begin{keyword}
+P300 speller \sep EEG \sep brain--computer interface \sep language model \sep Bayesian fusion \sep sequential decoding
+\end{keyword}
+\end{frontmatter}
+
+\section{Introduction}
+P300 brain--computer interfaces (BCIs) allow a user to select an item from a visual interface by detecting an event-related EEG response after its associated stimulus is flashed. In the classical row/column speller, a desired key belongs to one flashed row and one flashed column, and repeated stimulus sequences improve the signal-to-noise ratio available for selection \citep{farwell1988,krusienski2008}. The need for repetition creates a practical tension: stopping early can reduce time per character but may increase errors, while collecting more evidence can improve certainty at the cost of slower communication.
+
+Language is a structured domain, so an estimated distribution over plausible next keys can be used as a prior rather than treating every key as equally likely. Earlier P300-speller studies have integrated statistical language models, Bayesian inference, and dynamic data collection \citep{speier2012,orhan2013context,delgado2015,mainsah2014lm,throckmorton2013bayesian}. More recently, ChatBCI demonstrated context-driven LLM word prediction in an online P300-speller interface \citep{hong2026chatbci}, while broader analyses have examined LLM-assisted P300 spelling under cross-subject training and oracle-bound frameworks \citep{parthasarathy2024evaluation,parthasarathy2026nearoptimal}. However, a language prior must remain distinguishable from EEG evidence, and claims about speed, personalization, or adaptive flashing require evaluation protocols that do not select their settings on the same held-out data used for reporting.
+
+This manuscript documents the development of a modular P300 spelling pipeline in that spirit. It is framed around the actual research progression: preprocessing and event construction, leakage audit and split correction, classifier comparison, language-prior fusion, retrieval interfaces, sequential stopping, and stimulus scheduling. It reports the locked configurations and negative findings alongside the positive results. The dataset descriptor and final prototype documentation were unavailable when this draft was assembled; no missing information is inferred.
+
+The contributions supported by the present evidence are:
+\begin{itemize}
+\item an auditable preprocessing and replay path for 72-key Study D recordings, including adaptive selections and group-flash metadata;
+\item a clean, run-level split protocol that quarantines historical manifest-overlap results and retains a final streaming-SGD EEG scorer after a one-shot finalist comparison;
+\item a grid-aligned full-string language prior and sequential log-posterior decoder, evaluated separately in Study D and Study Q; and
+\item explicit implementation and claim boundaries for RAG personalization, a browser prototype, and adaptive scheduling.
+\end{itemize}
+
+\section{Related work}
+The foundational row/column P300 speller showed that event-related potentials can act as a direct communication channel \citep{farwell1988,mcfarland2011bci}. Later studies compared P300 classifier families and examined preprocessing choices that affect SWLDA performance \citep{krusienski2006comparison,krusienski2008}. Language-informed approaches have incorporated n-gram and word-level information into Bayesian or graphical-model decoding \citep{speier2012,orhan2013context,delgado2015}; particle filtering extended this line to richer sequential language models \citep{speier2015particle}. Dynamic stopping was formalized as Bayesian data collection \citep{throckmorton2013bayesian} and later combined with a language prior in online P300 spelling \citep{mainsah2014lm}.
+
+Recent work has broadened the design space from character priors to contextual word prediction and LLM-mediated interfaces. ChatBCI is particularly relevant because it couples a P300 speller GUI with context-driven word suggestions in online use \citep{hong2026chatbci}. Related P300 studies assess GPT-style models, cross-subject training, word prediction, and theoretical performance bounds \citep{parthasarathy2020optimizing,parthasarathy2024evaluation,parthasarathy2026nearoptimal}. Outside BCI, retrieval-augmented generation provides a useful formal basis for non-parametric contextual evidence \citep{lewis2020rag}, and AAC studies highlight character-level conversion of subword LMs, domain adaptation, and the user-centred constraints of personalization \citep{pereira2024praact,gaines2025aac,valencia2023less}.
+
+The present system differs in emphasis rather than claiming a new universal decoding principle. It converts a causal language model into a probability vector over the deployed grid, combines it with calibrated EEG evidence in the log domain, and documents which components have actually been evaluated. The prototype makes the information flow visible, but no prototype interaction result is treated as a clinical or performance outcome.
+
+\section{Methods}
+\subsection{System overview}
+The system has six connected stages: (i) EDF acquisition and trigger decoding, (ii) preprocessing and epochs, (iii) a calibrated flash-level classifier, (iv) row/column or group-flash grid posteriors, (v) an optional language/RAG prior, and (vi) sequential accumulation, stopping, and key selection. Study D uses a 9-by-8 grid. Study Q uses a separate group-flash membership-mask interface and has independent training, calibration, and test locks.
+
+\begin{figure*}[t]
+\centering
+\widefigureplaceholder{\textit{Architecture diagram to insert.} Show EDF trigger channels and grid metadata flowing to preprocessing; calibrated flash scores flowing to row/column or group posteriors; then optional LM/RAG prior, log-domain fusion, sequential stopping, and the GUI/output. Label Study D and Study Q as separate evaluation paths.}{3.7cm}
+\caption{Planned system-architecture figure. This slot should be replaced by a repository-authored vector diagram; it should not imply that the scheduler or RAG interface has established outcome benefits.}
+\label{fig:architecture-placeholder}
+\end{figure*}
+
+\subsection{Data representation and event construction}
+The documented primary corpus is bigP3BCI Study D, which uses 72 possible classes arranged in a $9\times8$ layout rather than a hard-coded 6-by-6 matrix. EDF recordings include channels prefixed \texttt{EEG\_}, grid-cell channels encoding labels and coordinates, and trigger channels \texttt{StimulusBegin}, \texttt{StimulusType}, \texttt{StimulusCode}, and \texttt{CurrentTarget}. Adaptive files additionally require \texttt{SelectedTarget}. Participant demographics, recording protocol, and data-access details await the Dataset Descriptor.
+
+The parser identifies rising edges of \texttt{StimulusBegin}, reads the binary target/non-target label from \texttt{StimulusType}, and retains \texttt{StimulusCode} in metadata. Preserving the stimulus code is necessary because the binary event label cannot identify which row, column, or group was flashed. For group flashes, membership is reconstructed from grid-cell activity. Fixed row/column runs recover text from target-flash blocks; adaptive runs instead use nonzero \texttt{SelectedTarget} rising pulses, which preserve adjacent repeated selections that code-transition parsing can merge.
+
+The standard parser configuration uses a 0.1--30 Hz bandpass, epochs from $-0.1$ to 0.8 s, and baseline correction. The locked Study D manifest path differs: it parses at 1--12 Hz with baseline correction disabled, then applies a 0--0.8 s classifier feature window and decimation by two. The final 2026-10-06 batch pass generated matching epoch outputs for all 307 canonical Study D EDF files; earlier failed attempts remain in the provenance record.
+
+Preprocessing choices were evaluated before the final classifier decision with matched M1 probes on the same clean pool (83 runs, 84,660 epochs, and 498 characters). The bandpass and baseline probes were paired run-cluster bootstrap comparisons with 10,000 replicates and seed 0. Their intervals should be read as descriptive uncertainty intervals for the M1 protocol, not as equivalence tests or direct M0 results. Both the filter-versus-no-filter and baseline-on-versus-off intervals crossed zero. In contrast, the matched baseline-off 1--12 Hz probe exceeded the 0.1--30 Hz probe in both epoch AUC and character accuracy. This result informed the locked preprocessing path, while leaving the final classifier choice to the later nested and manifest evaluations.
+
+\begin{table*}[t]
+\centering\small
+\caption{Matched clean-pool preprocessing probes using M1 tuned SWLDA (83 runs, 84,660 epochs, 498 characters). Differences are candidate minus reference and use paired run-cluster percentile bootstrap intervals. These are preprocessing-development results, not final M0 estimates.}\label{tab:preprocessing}
+\begin{tabular}{p{.25\textwidth}p{.24\textwidth}rr}
+\toprule
+Probe & Contrast & Epoch AUC difference, 95\% CI (points) & Character-accuracy difference, 95\% CI (points)\\
+\midrule
+P7: bandpass & 0.1--30 Hz minus no bandpass, baseline on in both arms & +0.24, $-0.40$ to +0.93 & $-3.01$, $-7.23$ to +1.20\\
+P8: baseline & Baseline on minus baseline off, 0.1--30 Hz in both arms & +0.30, $-0.35$ to +0.98 & $-2.01$, $-6.63$ to +2.81\\
+P9: selected frequency range & 1--12 Hz minus 0.1--30 Hz, baseline off in both arms & +2.49, +1.94 to +3.06 & +5.02, +0.80 to +9.24\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{Leakage control and evidence tiers}
+The historical Study D classifier pool comprised 102 runs and overlapped the later frozen 57-run manifest in 19 runs. Therefore, historical held-out numbers and a historical stopping sweep are superseded rather than reinterpreted as clean estimates. The corrected protocol trains on 83 clean RC/Train runs, uses frozen manifests and hashes, places held-out labels in a separate vault, and requires explicit access guards for one-shot evaluators. A recorded historical exposure of some manifest identifiers and target strings is acknowledged; no held-out EEG was used for tuning or model selection. The protocol consequently does not claim zero metadata exposure.
+
+\begin{table*}[t]
+\centering\small
+\caption{Evidence tiers used throughout the manuscript. Results are not pooled across rows.}\label{tab:evidence-tiers}
+\begin{tabular}{p{.22\textwidth}p{.25\textwidth}p{.42\textwidth}}
+\toprule
+Tier & Population and role & Permitted interpretation \\
+\midrule
+Nested OOF development & Clean Study D RC/Train, or clean Study Q training sessions & Model, weight, and policy development only; not an independent test estimate.\\
+Frozen Study D manifest & 57 runs, 17 subjects; evaluator-specific 338 or 339 character denominator & One-shot locked replay only. The 338-versus-339 discrepancy is unresolved and must be retained.\\
+Study Q SE003 Test & 180 runs, 36 subjects, 1,296 as-recorded characters & One-shot external result at recorded depth; no stopping, flashes-per-character, or ITR claim.\\
+Development/simulation/software & Public-domain RAG benchmark, synthetic dry run, scheduler simulator, GUI smoke test & Implementation or development evidence only; not participant personalization or scheduler efficacy.\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+Study Q remains distinct: its clean training pool contains 360 SE001/SE002 runs, and its frozen SE003 Test manifest contains 180 runs from 36 subjects. The Test evaluator is guarded by a run-once marker. For Study D, the classifier-manifest evaluator reports 338 scored characters and 11 zero-coverage terminal characters among 349 records, whereas the ablation ladder reports 339 covered characters. Their cause is unverified, and their numbers are not interchangeable.
+
+\paragraph{Audit consequence.} The overlap audit did not estimate a numerical correction for the historical leakage, because the historical classifier calibration was not refit under the clean policy. It did permit a same-manifest descriptive audit: the contaminated historical SWLDA artifact achieved 68.93\% fused accuracy versus 78.40\% for clean M0, and 70.18\% versus 86.84\% on the 19 overlapping RC/Train manifest runs. This comparison uses the new evaluator and clean M0 stopping policy, so it is not a reconstruction of the historical 58.9\% headline and is excluded from finalist inference. The historical claim is therefore quarantined rather than adjusted post hoc.
+
+\subsection{EEG classification and calibration}
+The paper-facing Study D model, M0, is a streaming \texttt{SGDClassifier} with logistic loss, $L_2$ penalty, $\alpha=.01$, averaging, class weights $\{0:1,1:5\}$, and five streaming passes. It uses all common channels. A scalar row/column sequence-NLL temperature of 4.1869360663 was fitted on clean run-grouped OOF scores. Flash scores are aggregated into separate row and column distributions; their outer product yields a grid posterior.
+
+Nested clean-OOF screening compared M0 with shrinkage LDA (M2), xDAWN plus LDA (M3a), xDAWN tangent-space logistic regression (M3b), and an M2+M3a stack. M3a had the highest fused nested-OOF point estimate (82.53\% versus 81.93\% for M0 at $\alpha=.1$ on 498 characters), but its paired advantage did not survive the declared correction. The pre-evaluation finalist comparison then tested M3a against M0 on the frozen manifest. M0 was retained after that one-shot result. Models without a recorded, clean evaluation artifact are not interpreted as negative findings.
+
+\begin{table*}[t]
+\centering\small
+\caption{Nested clean Study D model screen (83 RC/Train runs, 17 subjects, 498 characters). All stopped-character values use the nested run-grouped OOF setting at $\alpha=.1$; they are development evidence only.}\label{tab:model-screen}
+\begin{tabular}{lrrrl}
+\toprule
+Model & Epoch AUC & Fused accuracy (\%) & Row/column NLL & Selection interpretation\\
+\midrule
+M0: streaming SGD & .8028 & 81.93 & 1.6281 & Baseline and final paper-facing classifier\\
+M2: shrinkage LDA & .7954 & 80.32 & 1.6207 & No character-accuracy advantage; no manifest comparison\\
+M3a: xDAWN + LDA & .8155 & 82.53 & --- & Pre-evaluation finalist; tested on manifest\\
+M3b: xDAWN + tangent + LR & .8030 & 79.32 & 1.5580 & Better NLL did not yield higher stopped accuracy\\
+M2+M3a stack & .8243 & 82.13 & 1.4674 & Rejected by pre-set rule: 0.28 points below M3a in fused accuracy\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+The nested-calibration exercise and the frozen manifest answer different questions. Fold-specific nested sequence temperatures were fit inside outer-training folds; M0 values were 6.1522, 6.5459, and 5.9135 across the three outer folds. The final M0 temperature of 4.1869360663 was instead fitted on full clean-pool run-grouped OOF sequence scores. A parity audit compared the manifest-style and inner-fusion evaluator implementations over the same 498 characters at $\alpha=0$, .1, and .85. It found zero decision, stopping-depth, or maximum-sequence mismatches. At $\alpha=.1$, both implementations yielded 81.93\% fused accuracy; the earlier 87.15\% saved value is quarantined because its cache provenance could not be verified.
+
+\begin{table}[t]
+\centering\small
+\caption{Study D classifier selection evidence. OOF and manifest values are separate populations.}\label{tab:classifier}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lrrl}
+\toprule
+Evaluation & M0 & M3a & Interpretation \\
+\midrule
+Nested OOF fused accuracy & 81.93\% & 82.53\% & Development; no surviving paired accuracy advantage\\
+Frozen-manifest fused accuracy & 78.40\% & 74.26\% & M0 retained for the primary endpoint\\
+Frozen-manifest sequences/char. & 3.82 & 2.95 & M3a faster by this secondary measure only\\
+Frozen-manifest ITR (bits/min) & 32.09 & 38.25 & Not an accuracy improvement\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\subsection{Language prior and log-domain fusion}
+The base prior is DistilGPT-2. Given typed context, the predictor separates completed text from the current partial word, maps special keyboard labels through a key map, scores every complete candidate continuation conditionally, and normalizes scores across the deployed grid. Empty context yields a uniform prior. This full-string continuation method superseded a first-token/prefix implementation; no verified before/after comparison exists.
+
+For EEG probability $p_E(c)$, language probability $p_L(c)$, and weight $\alpha$, fixed fusion is
+\begin{equation}
+p(c\mid E,L)=\operatorname{softmax}\left[\log p_E(c)+\alpha\log p_L(c)\right].
+\label{eq:fusion}
+\end{equation}
+EEG probabilities are safely clipped for numerical stability. Unmapped language keys with zero probability are excluded rather than epsilon-clipped. In the deployed sequential path, the language term is added once as an initial log bias; valid sequence log-posteriors are subsequently accumulated. It is therefore incorrect to describe this path as independently re-fusing a prior after every sequence.
+
+Two adaptive formulations exist in the implementation and are not interchangeable. The standalone fusion method can scale the prior by normalized EEG entropy. In contrast, the clean-M0 ablation ladder uses the sequential decoder's initial-bias path, whose effective RAG-rung weight is $1.5\,[1-H(p_L)/\log(K)]$, where $H(p_L)$ is language-prior entropy and $K$ is the number of grid keys. Thus, the ladder's adaptive weight responds to language-prior confidence, not classifier confidence. This distinction is retained in the interpretation of the RAG rungs.
+
+The fixed LM weight for the first ladder rung was selected on a deterministic salted-SHA-256 20\% split of clean training-pool OOF runs (14 runs, 84 validation characters). A 101-point grid from 0 to 5 in increments of .05 minimized sequence NLL at $\alpha=.85$ (NLL .296513). This fit is deliberately separate from the classifier-manifest configuration, whose fixed fusion weight is $\alpha=.1$. The two weights, their stopping-policy selections, and their evaluation populations are not pooled.
+
+\subsection{Retrieval interface, personalization boundary, and prototype GUI}
+The RAG predictor retrieves prefix-compatible entries from phrase banks and blends their grid-level continuation distribution with the base prior. Global Study D phrase banks derive from training-split targets only. Subject-aware retrieval is protected by data-sufficiency and retrieval-confidence gates. The ablation ladder's RAG rungs change multiple elements together---bank source, weighting form, and maximum weight---and cannot isolate a causal RAG or personalization effect.
+
+No committed evidence includes participant-authored natural-language text. Study D targets and Study Q's five repeated typed-key phrases do not test personalization. The public-domain development benchmark contains four authors and 24 held-out character cases per author; macro next-character NLL was 4.463 nats for LM-only and 3.763 for the gated blend, while macro top-3 was .323 and .479. Some author-level results degraded, and the bounded-degradation gate failed. A synthetic self-generated dry run tested local splitting and scoring only. The locked 700-token chronological participant protocol remains pending, so RAG is excluded from live claims.
+
+The development benchmark used chronological author-specific splits: the first 60\% of each capped public-domain text built the bank, the next 20\% tuned the gates, and the final 20\% supplied evaluation cases. Each author contributed 24 held-out character cases (96 overall), and evaluation text was never added back to the bank. The aggregate improvement therefore establishes that the offline code path can express useful continuation information on this small proxy corpus; it does not establish a participant effect. The per-author results are necessary because the aggregate conceals degradation under domain shift.
+
+\begin{table*}[t]
+\centering\small
+\caption{Public-domain chronological RAG development benchmark. Each row contains 24 held-out character cases and is development-only; no row is participant evidence.}\label{tab:rag-development}
+\begin{tabular}{lrrrr}
+\toprule
+Author & LM-only NLL & LM + global-bank NLL & LM + author-bank NLL & Gated-blend NLL\\
+\midrule
+Arthur Conan Doyle & 3.800 & 2.917 & 3.248 & 2.902\\
+Herman Melville & 4.739 & 5.052 & 5.227 & 4.723\\
+Jane Austen & 4.901 & 4.113 & 4.508 & 3.587\\
+Mary Shelley & 4.411 & 4.522 & 3.995 & 3.839\\
+Macro mean & 4.463 & 4.151 & 4.245 & 3.763\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+The locked worst-case degradation bound allowed at most .1 nats per character increase in NLL and a .05 top-1 accuracy drop. It failed in the development benchmark: author-bank Melville increased NLL by .489, and Mary Shelley incurred a .125 top-1 decrease. A separate topic-switch diagnostic trained an Austen bank and scored Melville text; subject-bank NLL was 5.217 versus 4.739 for LM-only. The synthetic end-to-end dry run separately split a 2,030-token generated sample into 1,218 bank-training, 406 gate-tuning, and 406 evaluation tokens; all 12 tested next-key priors were finite and normalized, and the evaluation tail was not added to the bank. These outcomes validate data-flow behavior only.
+
+The preregistered participant protocol remains the criterion for a future personalization claim. It requires at least 700 participant-authored whitespace tokens, a chronological 60/20/20 bank/tuning/evaluation split, participant-level paired inference with Holm correction, and a comparison of base LM, global bank, subject bank, and gated blend. It also specifies NLL, top-$k$ accuracy, rank, reciprocal rank, and top-3 keystroke-savings metrics. None of these participant analyses has run.
+
+The browser prototype provides an inspectable GUI for Study D replay or custom-text simulation. It displays user intent, the 72-key P300 keyboard, classifier evidence, decoded output, context, and grid-level RAG diagnostics. Its available smoke artifact is explicitly software-only (one six-character recorded replay, 2/6 correct, not used for tuning and not included in locked ladder metrics). Thus the GUI figure documents interface functionality rather than performance.
+
+\begin{figure*}[t]
+\centering
+\IfFileExists{figures/gui_prototype.png}{%
+  \includegraphics[width=.92\textwidth]{figures/gui_prototype.png}%
+}{%
+  \widefigureplaceholder{\textit{GUI screenshot to insert.} Export the approved screenshot of the \texttt{Neural Type} prototype to \texttt{paper/figures/gui\_prototype.png}. The image should show the intent panel, 72-key keyboard, evidence trace, decoder output, and language-prior panel.}{7.0cm}%
+}
+\caption{Prototype GUI for replay and simulation inspection. The interface exposes decoder state and prior diagnostics. It is shown as an implementation artifact, not evidence that compact scanning, RAG, or adaptive scheduling improves outcomes.}
+\label{fig:gui}
+\end{figure*}
+
+\subsection{Sequential decoding, stopping, and scheduling}
+After the prior bias is initialized, the decoder adds the log grid posterior of each valid sequence. It stops when at least $m$ sequences have been observed and the maximum posterior probability is at least $\tau$, or when the configured maximum number of sequences is reached. The Study D policy selected using clean nested OOF at fixed $\alpha=.85$ was $\tau=.80$, $m=2$, and a maximum of 10 sequences; it had 84.34\% stopped OOF accuracy and 4.91 mean sequences. A distinct $\alpha=.1$ candidate selected $\tau=.70$ and reduced OOF sequences from 6.45 to 5.73 without pooled accuracy change, but it was not manifest-evaluated.
+
+The target-blind scheduler prototype supports uniform, LM-guided, LM+RAG, and closed-loop modes, group masks, an exploration floor, and an idealized information-gain variant. A target-blind API test passed, which is software evidence only. In a leave-subject-out simulator, depth curves passed but the Study D known-result error was .17895, above the .05 criterion. G3 is therefore no-go, the four-scheduler outcome simulation was not run, and uniform flashing remains the live policy.
+
+For completeness, the scheduler accepts only observable state: the current posterior, flashed codes, grid dimensions, and optional LM/RAG priors. For a candidate group $g_i$, its mass is the sum of the relevant character distribution over the group; for a binary group mask this is $m_i=\mathbf{g}_i^\top\mathbf{d}$. Uniform mode assigns equal candidate weights, LM-guided mode uses masses from the language prior, LM+RAG averages language and RAG masses, and closed-loop mode uses the normalized elementwise product of posterior, LM prior, and RAG prior. An optional information-gain variant replaces a group mass $p$ with $H_2(p)=-p\log_2p-(1-p)\log_2(1-p)$. Eligible group weights are mixed with an exploration floor $\lambda$ as $P(i)=\lambda/N+(1-\lambda)w_i$.
+
+The simulator used leave-one-subject-out sampling of independent target and non-target flash logits from the remaining subjects, 20 repetitions, and seed 20261008. It was a validation gate, not an outcome experiment. Table~\ref{tab:simulator} records why the apparent depth-curve agreement does not license scheduler selection for Study D.
+
+\begin{table*}[t]
+\centering\small
+\caption{Leave-subject-out EEG-simulator validation. ``Simulated'' denotes sampled logits, not measured EEG. G3 requires the known-result error to be at most .05.}\label{tab:simulator}
+\begin{tabular}{lrrrl}
+\toprule
+Study & Subjects / characters & Depth-curve MAE & Maximum depth error & Known-result validation and decision\\
+\midrule
+Study D & 17 / 498 & .0792 & .1359 & Curve criteria pass; simulated .9370 versus manifest reference .7581 gives error .17895: G3 no-go\\
+Study Q & 36 / 2,592 & .0282 & .0511 & Simulated .7167 versus locked reference .6875 gives error .02919: gate passes\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+The Study D failure is not dismissed as a population mismatch: within its own clean OOF setting, the simulator also overestimated accuracy (.9370 simulated versus .8193 observed; +.1178). The i.i.d. sampling assumption omits within-character temporal dependence, adaptation, fatigue, and nonstationary artifacts. The locked four-mode simulation---uniform, LM-guided, LM+RAG, and closed loop---therefore remains not run. Its planned metrics (matched-accuracy flashes per character, ITR, false lock-in, low-prior-target recovery, and non-uniform-density calibration) are future endpoints, not results in this paper.
+
+\begin{figure}[t]
+\centering
+\figureplaceholder{\textit{Sequential-decoding workflow to insert.} Depict one-time LM bias, sequence posterior accumulation, confidence check, minimum/maximum sequence guards, and final selected key. Add a separate dashed branch identifying the scheduler as future work/no-go.}{4.6cm}
+\caption{Planned decoder and stopping workflow. The figure should distinguish the evaluated stopping rule from the unvalidated adaptive-scheduler prototype.}
+\label{fig:decoder-placeholder}
+\end{figure}
+
+\subsection{Metrics and statistical analysis}
+Character accuracy is the fraction of correctly decoded usable characters. Variable-time information transfer rate (ITR) uses the Wolpaw expression for $N=72$ classes, accuracy $p$, and observed mean character time $T$:
+\begin{equation}
+\mathrm{ITR}=\frac{60}{T}\left[\log_2N+p\log_2p+(1-p)\log_2\left(\frac{1-p}{N-1}\right)\right],
+\label{eq:itr}
+\end{equation}
+with zero-probability terms omitted and negative values floored at zero. ITR/5 is labeled only as a WPM approximation; it is distinct from the time-derived WPM implementation.
+
+For locked Study D and Q comparisons, methods are aggregated within subject and compared using two-sided paired Wilcoxon tests, percentile subject-bootstrap confidence intervals, and the declared Holm family. The Study D ladder used 10,000 bootstrap replicates (seed 0); the finalist manifest used 20,000 (seed 42); and Study Q Test used 10,000 (seed 1907). Preprocessing probes instead resampled paired runs. A result that does not survive its specified correction is not evidence of equivalence.
+
+The inferential unit follows the estimand. Manifest decoding comparisons use per-subject paired summaries because all conditions produce an aggregate result for each shared subject. Preprocessing probes resample paired run identifiers and recompute both arms, preserving run pairing. The ladder family was prespecified as comparisons 1v0, 2v1, 3v1, 4v1, and 4v2. The classifier-finalist family covers the primary fused-accuracy finalist comparison; sequence NLL is reported separately. Study Q Test correction is applied across its evaluator condition strata. These families are not global corrections across all studies or all development work.
+
+\begin{table*}[t]
+\centering\small
+\caption{Statistical conventions for central analyses. All confidence intervals are percentile intervals for the stated mean difference unless otherwise indicated.}\label{tab:statistics}
+\begin{tabular}{p{.24\textwidth}p{.16\textwidth}rrp{.27\textwidth}}
+\toprule
+Analysis & Resampling unit & Replicates & Seed & Test and multiplicity family\\
+\midrule
+Study D clean-M0 ladder & Subject & 10,000 & 0 & Two-sided paired Wilcoxon; Holm across five planned rung comparisons\\
+Study D classifier manifest & Subject & 20,000 & 42 & Two-sided paired Wilcoxon; primary finalist-versus-M0 fused accuracy family\\
+Study Q SE003 Test & Subject & 10,000 & 1907 & Two-sided paired Wilcoxon; Holm across condition strata\\
+Preprocessing P7--P9 & Paired run & 10,000 & 0 & No null test or multiplicity family; descriptive paired bootstrap\\
+Study Q nested fusion & Subject & 20,000 & 104729 & Two-sided Wilcoxon; training-only analysis\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\section{Experiments and results}
+\subsection{Preprocessing and classifier experiments}
+Matched M1 preprocessing probes used 83 clean runs, 84,660 epochs, and 498 characters. Neither 0.1--30 Hz filtering versus no bandpass nor baseline correction on versus off showed a detectable run-level difference because their paired bootstrap intervals spanned zero. At baseline off, 1--12 Hz exceeded 0.1--30 Hz in the M1 probe by 2.49 AUC points (95\% CI 1.94--3.06) and 5.02 character-accuracy points (0.80--9.24). These experiments support the locked filtering choice indirectly; they are not final M0 classifier results.
+
+On the frozen classifier manifest, M3a minus M0 fused accuracy was $-4.20$ points (95\% subject-bootstrap CI $-10.25$ to $+1.08$; Wilcoxon $p=.266$, Holm $p=.266$). Four subjects favored M3a, six tied, and seven favored M0. The primary accuracy decision consequently retained M0 even though M3a had shorter sequences and higher variable-time ITR.
+
+The manifest artifact also provides the corresponding EEG-only results: M0 achieved 72.49\% and M3a 60.95\% over the 338 scored characters. On the 19 RC/Train manifest runs, M0 fused/EEG-only accuracy was 86.84\%/79.82\%, compared with 81.58\%/69.30\% for M3a. For the pooled Dyn and DynBigram subgroup (38 runs and 224 scored characters), the values were 74.11\%/68.75\% for M0 and 70.54\%/56.70\% for M3a. The artifact does not report separate Dyn and DynBigram accuracy rows, so none are inferred here. This condition pattern describes the locked evaluator population; it does not demonstrate why the M3a point estimate changed relative to nested OOF.
+
+\begin{table*}[t]
+\centering\small
+\caption{Frozen Study D classifier-manifest result, reported with the evaluator's available strata. Dyn and DynBigram are pooled in the source artifact.}\label{tab:manifest-strata}
+\begin{tabular}{lrrlrr}
+\toprule
+Stratum & Runs & Scored characters & M0 fused / EEG-only (\%) & M3a fused / EEG-only (\%) & Interpretation\\
+\midrule
+Overall & 57 & 338 & 78.40 / 72.49 & 74.26 / 60.95 & Primary one-shot comparison; 11 zero-coverage terminals excluded\\
+RC/Train & 19 & 114 & 86.84 / 79.82 & 81.58 / 69.30 & Reported stratum\\
+Dyn + DynBigram & 38 & 224 & 74.11 / 68.75 & 70.54 / 56.70 & Pooled stratum; separate condition results not reported\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{Language-prior and RAG ablation ladder}
+The clean-M0 ladder was replayed once on 57 Study D runs from 17 subjects, with 339 covered characters per rung. Rung 1 used fixed DistilGPT-2 fusion at $\alpha=.85$. Rungs 2--4 used LM-entropy-adaptive weighting and RAG interfaces, and should be interpreted as bundles rather than isolated RAG, weighting, or personalization tests.
+
+\begin{table*}[t]
+\centering\small
+\caption{Frozen clean-M0 Study D ablation ladder. All values are descriptive replay summaries on the same 57-run, 17-subject, 339-character ladder population.}\label{tab:ladder}
+\begin{tabular}{llrrrr}
+\toprule
+Rung & Locked condition & Accuracy (\%) & Flashes/char. & Sequences/char. & ITR (bits/min)\\
+\midrule
+0 & EEG only & 70.80 & 80.22 & 4.92 & 22.27\\
+1 & Fixed LM prior, $\alpha=.85$ & 75.81 & 62.05 & 3.79 & 31.92\\
+2 & LM-entropy adaptive + global RAG & 76.11 & 58.80 & 3.59 & 33.89\\
+3 & LM-entropy adaptive + subject-only RAG & 75.52 & 63.04 & 3.86 & 31.24\\
+4 & LM-entropy adaptive + gated RAG blend & 76.11 & 58.80 & 3.59 & 33.89\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+Rung 1 minus Rung 0 had a mean paired subject accuracy difference of +3.79 points (95\% CI $-1.29$ to +9.08; Wilcoxon $p=.172$, Holm $p=.861$). No planned ladder comparison survived Holm correction. Rung 4 deferred to the global bank for 312/339 characters (92.04\%) and exactly matched Rung 2 in the recorded artifact. These results support a descriptive accuracy--flash trade-off for fixed fusion but not a confirmed RAG or personalization benefit.
+
+The complete paired ladder family further resolves the interpretation. Rung 2 minus Rung 1 was $-0.29$ points (95\% CI $-2.71$ to +2.06; Holm $p=1.000$); Rung 3 minus Rung 1 was $-1.04$ points (95\% CI $-3.72$ to +1.13; Holm $p=1.000$); Rung 4 minus Rung 1 was $-0.29$ points (95\% CI $-2.72$ to +2.17; Holm $p=1.000$); and Rung 4 minus Rung 2 was exactly 0.00 points (Holm $p=1.000$). The subject-level better/tied/worse counts were 8/4/5 for Rung 1 versus 0, 5/7/5 for Rung 2 versus 1, 3/10/4 for Rung 3 versus 1, 5/7/5 for Rung 4 versus 1, and 0/17/0 for Rung 4 versus 2. These comparisons identify neither a statistically confirmed retrieval effect nor an independently estimable adaptive-weight effect, because the ladder bundles several changes after Rung 1.
+
+\begin{table*}[t]
+\centering\small
+\caption{Prespecified paired Study D ladder comparisons. Differences are candidate minus reference in paired subject accuracy.}\label{tab:ladder-inference}
+\begin{tabular}{lrrrl}
+\toprule
+Comparison & Mean difference (points) & Better / tied / worse subjects & 95\% bootstrap CI (points) & Holm-adjusted $p$\\
+\midrule
+1 vs 0 & +3.79 & 8 / 4 / 5 & $-1.29$ to +9.08 & .861\\
+2 vs 1 & $-0.29$ & 5 / 7 / 5 & $-2.71$ to +2.06 & 1.000\\
+3 vs 1 & $-1.04$ & 3 / 10 / 4 & $-3.72$ to +1.13 & 1.000\\
+4 vs 1 & $-0.29$ & 5 / 7 / 5 & $-2.72$ to +2.17 & 1.000\\
+4 vs 2 & 0.00 & 0 / 17 / 0 & 0.00 to 0.00 & 1.000\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{figure}[t]
+\centering
+\IfFileExists{../results/figures/ablation_comparison.png}{%
+  \includegraphics[width=\columnwidth]{../results/figures/ablation_comparison.png}%
+}{\figureplaceholder{Ablation-comparison image unavailable.}{4cm}}
+\caption{Repository ablation-comparison visualization, where available. Interpret alongside Table~\ref{tab:ladder}: the planned paired comparisons did not survive Holm correction.}
+\label{fig:ablation}
+\end{figure}
+
+\subsection{Cross-study result: Study Q}
+Study Q is a different dataset and flash paradigm and is retained as a separate analysis. In training-only nested session OOF (2,592 characters), EEG-only and fixed fusion at $\alpha=.1$ achieved 60.26\% and 68.75\%, respectively. On the independent one-shot SE003 Test at recorded depth, EEG-only accuracy was 55.86\% and fused accuracy was 59.41\%, a +3.55-point paired subject effect (95\% CI +2.47 to +4.78; Holm-adjusted Wilcoxon $p=3.95\times10^{-5}$). Twenty-seven subjects improved, nine tied, and none worsened. The Test artifact does not define stopping, flashes-per-character, or ITR estimands, so none is reported here.
+
+The Study Q inner result must not be read as a direct predictor of the SE003 Test estimate. The nested analysis begins each run with empty context and then appends the mapped target symbol after scoring it, producing a teacher-forced grid-key history rather than a free-typed natural-language history. The training-only result had 1,562 correct EEG-only selections and 1,782 fused selections, with mean sequence counts of 9.74 and 9.58, respectively. On SE003 Test, all recorded-depth buckets retained a positive mean fusion effect. By test condition, fused accuracy was 65.66\% for ColorIntensification, 56.71\% for Grey-to-Color, and 56.62\% for Grey-to-White. These condition rows are test strata, not distinct trials for a new model-selection procedure.
+
+\subsection{Stopping, scheduling, and prototype status}
+The locked stopping policy is supported by clean OOF selection evidence, not by a new flashing experiment. The $\alpha=.1$ policy candidate was not used in the manifest replay. The scheduler's leave-subject-out simulator failed the Study D known-result validation gate, and its four-mode simulation remains not run. The dynamic-stopping Pareto graphic is included as a development visualization only; it must not be interpreted as evidence for adaptive scheduling.
+
+The stopping-policy chronology is central to the final configuration. A historical sweep selected a threshold on held-out Study D sessions and is superseded. The clean replacement selected $\tau=.80$, minimum two sequences, and maximum ten sequences with M0 and fixed $\alpha=.85$ on nested OOF. It obtained 84.34\% stopped accuracy, 4.912 mean sequences, and zero decision flips relative to the default policy over the 498-character clean OOF population. The candidate re-selection at the classifier lock's $\alpha=.1$ selected $\tau=.70$ with the same 81.93\% accuracy but 5.731 rather than 6.450 mean sequences. Of 14 changed decisions, six were corrected, six regressed, and two remained wrong. This candidate is a useful sensitivity analysis, not a manifest-tested replacement for the lock.
+
+\begin{table*}[t]
+\centering\small
+\caption{Stopping-policy evidence and disposition. The paper/live policy is the clean $\alpha=.85$ selection; other rows are historical or candidate analyses.}\label{tab:stopping-policy}
+\begin{tabular}{p{.21\textwidth}p{.27\textwidth}p{.23\textwidth}p{.20\textwidth}}
+\toprule
+Policy & Population and configuration & Result & Disposition\\
+\midrule
+Historical selected policy & Held-out Study D sessions; historical classifier and held-out-informed threshold selection & Historical output retained for audit only & Superseded\\
+$\tau=.80$, min 2, max 10 & Clean M0, $\alpha=.85$, nested run-grouped OOF; 498 characters & 84.34\% accuracy; 4.912 mean sequences; zero flips & Final policy-selection evidence\\
+$\tau=.70$, min 2, max 10 & Clean M0, $\alpha=.1$, nested OOF; 498 characters & 81.93\% accuracy; 5.731 versus 6.450 mean sequences at $\tau=.80$ & Candidate only; not manifest evaluated\\
+$\tau=.60$, min 2, max 10 & Study Q clean nested OOF with fixed fusion; 2,592 characters & 68.75\% accuracy; 9.093 versus 9.583 mean sequences at $\tau=.80$ & Candidate only; not applied to Test\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{figure}[t]
+\centering
+\IfFileExists{../results/figures/dynamic_stopping_threshold_pareto.png}{%
+  \includegraphics[width=\columnwidth]{../results/figures/dynamic_stopping_threshold_pareto.png}%
+}{\figureplaceholder{Dynamic-stopping development figure unavailable.}{4cm}}
+\caption{Repository dynamic-stopping visualization, if present. It represents development or historical analysis as labeled by its source artifact; the validated live policy remains uniform flashing.}
+\label{fig:stopping}
+\end{figure}
+
+\section{Discussion}
+The strongest Study D classifier conclusion is a selection decision rather than a universal ranking of model families: on its frozen manifest and primary accuracy endpoint, clean M0 was preferable to the pre-evaluation M3a candidate. The reversal between nested OOF and manifest point estimates is compatible with sensitivity to the shift between RC/Train and the manifest's dynamic conditions, but it does not identify condition shift as a causal explanation. It demonstrates the importance of separating development screens from a locked evaluator.
+
+Fixed language-prior fusion produced a descriptively favorable accuracy--flash trade-off in the Study D ladder and a positive paired result on the independent Study Q SE003 Test. The evidence should not be collapsed into a pooled participant result: the studies have different populations, flash paradigms, stopping definitions, and evaluation tiers. The ladder's RAG rungs add multiple changes simultaneously; their lack of corrected significance cannot be attributed to one component, and their point estimates cannot establish personalization.
+
+The prototype makes the architecture inspectable but does not change those evidence boundaries. Its compact row-shortlist setting and custom-text simulation must not be confused with the final live policy. Likewise, target-blind scheduler API tests establish only an interface property. The scheduler simulator omits within-character dependence, adaptation, fatigue, and nonstationary artifacts; because it failed G3, no matched-accuracy flash saving, scheduler ITR, false-lock-in, or participant benefit is claimed.
+
+Important limitations remain. The Study D 338-versus-339 denominator discrepancy is unresolved. The classifier-manifest artifact does not record a training-cache hash, and byte-level exported-scorer provenance is unverified. A dataset descriptor, final prototype document, participant-text evaluation, and a corrected scheduler simulator are required before a complete translational claim can be made.
+
+\section{Conclusion}
+We present an evidence-led P300 speller pipeline that connects robust event reconstruction, clean partitioning, calibrated EEG classification, a grid-aligned language prior, and sequential decoding. The current operational research configuration retains clean M0, uses the documented calibration and stopping lock, evaluates fixed language fusion, and maintains uniform flashing. RAG personalization and adaptive scheduling remain implemented research interfaces, not demonstrated outcome improvements. Future work should complete the pending documentation, evaluate the preregistered participant-text protocol, resolve the Study D denominator discrepancy, and validate a corrected scheduler before considering adaptive flashing in live use.
+
+\section*{Declarations}
+\textbf{Ethics approval and consent to participate:} pending final dataset/prototype documentation. \textbf{Data and code availability:} code and locked artifacts are documented in this repository; raw-data availability and licensing await the Dataset Descriptor. \textbf{Competing interests:} pending author declarations. \textbf{Funding and author contributions:} pending.
+
+\appendix
+\section{Locked configurations and reproducibility record}
+This appendix records the fixed configurations needed to interpret the reported outcomes. It is included because apparently similar values in the project correspond to different data populations, fusion weights, stopping rules, and evaluators. A result is traceable to its evidence tier only when those fields remain attached.
+
+\begin{table*}[t]
+\centering\small
+\caption{Final and candidate configurations relevant to the manuscript.}\label{tab:locks}
+\begin{tabular}{p{.20\textwidth}p{.28\textwidth}p{.37\textwidth}}
+\toprule
+Scope & Frozen or recorded configuration & Interpretation boundary\\
+\midrule
+Study D paper-facing classifier & Clean M0 streaming SGD; 1--12 Hz; baseline off; 0--0.8 s feature window; decimation 2; all common channels; temperature 4.1869360663 & Final classifier configuration after one-shot M3a comparison\\
+Study D classifier manifest & $\alpha=.1$; $\tau=.80$; minimum 2 and maximum 10 sequences & 57 runs, 17 subjects, 338 scored characters plus 11 zero-coverage terminals\\
+Study D ablation ladder & M0; Rung 1 fixed $\alpha=.85$; Rungs 2--4 LM-entropy scale 1.5 and RAG weights .7/1.0/.7; $\tau=.80$, min 2, max 10 & Separate 339-character ladder evaluator; not interchangeable with classifier-manifest estimates\\
+Study Q classifier & Group-flash membership scoring; training-only OOF temperature 1.6921645662; fixed $\alpha=.1$ & Separate session-held-out protocol and population\\
+Study Q Test & Frozen SE003 Test, recorded sequence depth & 1,296 characters; stopping, flash, and ITR estimands not defined\\
+Scheduler & Uniform live flashing; four alternative modes in prototype only & G3 no-go; no outcome-simulation or participant scheduler claim\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+The key protocol locks are the Study D held-out manifest, finalist lock, ablation lock, Study Q classifier lock and manifest, RAG lock, and scheduler lock. The one-shot evaluators verify their manifest hashes and require explicit held-out access. The Study Q evaluator also creates an exclusive run-once marker before reading labels. These safeguards establish the evaluation boundary but do not erase the recorded historical exposure of a small number of manifest target strings; that deviation is retained in the main text.
+
+\section{Experiment register and claim status}
+Table~\ref{tab:experiment-register} summarizes the chronological experimental record that supports the manuscript. It is not a list of interchangeable score rows: status identifies whether a result supports selection, frozen evaluation, implementation validation, or only historical audit.
+
+\begin{table*}[t]
+\centering\small
+\caption{Condensed experiment register. ``Final'' means final for the named evidence tier, not necessarily a clinical or cross-study conclusion.}\label{tab:experiment-register}
+\begin{tabular}{p{.09\textwidth}p{.27\textwidth}p{.30\textwidth}p{.23\textwidth}}
+\toprule
+ID & Question and population & Principal finding & Status\\
+\midrule
+P7--P9 & Matched M1 preprocessing probes, clean Study D pool & 1--12 Hz baseline-off probe improved over 0.1--30 Hz; other matched intervals crossed zero & Final descriptive development probes\\
+L1 & Audit of historical Study D classifier pool & 19 of 102 historical runs overlapped the later 57-run manifest; clean pool has 83 runs & Final audit\\
+L3 & M3a versus M0 on frozen Study D manifest & M3a--M0 $=-4.20$ points; CI includes zero; M0 retained & Final one-shot decision\\
+L5 & OOF evaluator parity, 498 characters & Zero decision, stopping-depth, and maximum-sequence mismatches & Final implementation audit\\
+E5.2 & Fixed LM weight fit, 14 runs and 84 characters & $\alpha=.85$ selected by sequence NLL on clean OOF validation split & Final fit only\\
+E5.3 & Study D stopping selection, 498 OOF characters & $\tau=.80$, min 2, max 10 selected at $\alpha=.85$ & Final selection evidence\\
+E5.5 & Study D five-rung manifest ladder & Fixed LM descriptive gain; no planned comparison survives Holm correction & Final one-shot replay\\
+R6.1 & Four-author public-domain RAG benchmark & Better macro gated NLL/top-3 but per-author degradation and gate failure & Development only\\
+R6.6 & Participant-text personalization protocol & No participant text available; no participant metric run & Pending; G2 no-go\\
+S6 & D/Q leave-subject-out simulator validation & D known-result gate fails; scheduler remains no-go & Final no-go evidence\\
+S7 & Four-scheduler matched-accuracy simulation & Not run after D validation failure & Future work\\
+Q1 & Study Q SE003 one-shot test & Fused 59.41\% versus EEG-only 55.86\% at recorded depth & Final one-shot evaluation\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\section{Reporting limitations}
+Several limitations are deliberate reporting constraints rather than omissions. The 338-versus-339 Study D denominator discrepancy is unresolved. The Study D manifest artifact lacks a recorded training-cache hash, and the serialized scorer's byte hash is not recorded in the lock. Study D OOF, Study D manifest, Study Q OOF, Study Q Test, simulator, and software-test values are distinct evidence tiers. The historical Focus Scan and held-out-tuned stopping sweep are not included as current results because their selection path was invalidated by the leakage audit. Finally, RAG personalization requires participant-authored text and the locked chronological protocol; public-domain and synthetic checks cannot substitute for it.
+
+\bibliographystyle{elsarticle-harv}
+\bibliography{references}
+\end{document}

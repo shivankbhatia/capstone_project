@@ -1,0 +1,122 @@
+<mxfile host="app.diagrams.net" modified="2026-11-18T00:00:00.000Z" agent="Codex" version="26.0.16" type="device">
+  <diagram id="p300-llm-system" name="P300-LLM Speller Architecture">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="EEG P300 Speller: System Architecture and Evidence Boundaries" style="text;html=1;align=center;verticalAlign=middle;fontSize=24;fontStyle=1;fontColor=#17211D;" vertex="1" parent="1">
+          <mxGeometry x="250" y="20" width="1100" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="Solid path: evaluated decoding pipeline. Dashed path: implemented research interfaces not yet demonstrated as outcome improvements." style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontColor=#55635B;" vertex="1" parent="1">
+          <mxGeometry x="200" y="58" width="1200" height="25" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="inputLane" value="1. EEG RECORDINGS AND METADATA" style="swimlane;html=1;horizontal=1;startSize=30;rounded=1;fillColor=#F4F8F5;strokeColor=#8BAA95;fontColor=#1D5B38;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="30" y="105" width="250" height="580" as="geometry"/>
+        </mxCell>
+        <mxCell id="dInput" value="&lt;b&gt;Study D EDF recordings&lt;/b&gt;&lt;br&gt;32-channel EEG&lt;br&gt;9 x 8 keyboard (72 keys)&lt;br&gt;&lt;br&gt;StimulusBegin, StimulusType,&lt;br&gt;StimulusCode, CurrentTarget&lt;br&gt;Adaptive files: SelectedTarget" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5D8E6C;fontSize=13;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="inputLane">
+          <mxGeometry x="15" y="55" width="220" height="190" as="geometry"/>
+        </mxCell>
+        <mxCell id="qInput" value="&lt;b&gt;Study Q recordings&lt;/b&gt;&lt;br&gt;Separate dataset and split&lt;br&gt;Group-flash membership masks&lt;br&gt;&lt;br&gt;Do not pool Study D and Q&lt;br&gt;results as one population." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5D8E6C;fontSize=13;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="inputLane">
+          <mxGeometry x="15" y="275" width="220" height="145" as="geometry"/>
+        </mxCell>
+        <mxCell id="vault" value="&lt;b&gt;Split and label safeguards&lt;/b&gt;&lt;br&gt;Run-level manifests&lt;br&gt;Training labels / evaluation vault&lt;br&gt;One-shot held-out access guards" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9E8;strokeColor=#D2A94E;fontSize=13;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="inputLane">
+          <mxGeometry x="15" y="455" width="220" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="preLane" value="2. PREPROCESSING AND EVENT CONSTRUCTION" style="swimlane;html=1;horizontal=1;startSize=30;rounded=1;fillColor=#F5F8FB;strokeColor=#7797B3;fontColor=#274E70;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="315" y="105" width="285" height="580" as="geometry"/>
+        </mxCell>
+        <mxCell id="parse" value="&lt;b&gt;Parse raw EEG&lt;/b&gt;&lt;br&gt;Identify EEG, trigger, and grid channels&lt;br&gt;Read native sample clock" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6E94B7;fontSize=13;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="preLane">
+          <mxGeometry x="20" y="55" width="245" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="events" value="&lt;b&gt;Build stimulus events&lt;/b&gt;&lt;br&gt;Detect flash onset&lt;br&gt;Target / non-target label&lt;br&gt;Keep stimulus code and group mask" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6E94B7;fontSize=13;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="preLane">
+          <mxGeometry x="20" y="175" width="245" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="epochs" value="&lt;b&gt;Epoch and annotate&lt;/b&gt;&lt;br&gt;EEG epoch: -0.1 to 0.8 s&lt;br&gt;Adaptive character and sequence IDs&lt;br&gt;Selection pulses preserve repeats" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6E94B7;fontSize=13;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="preLane">
+          <mxGeometry x="20" y="315" width="245" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="lockedPrep" value="&lt;b&gt;Locked Study D feature path&lt;/b&gt;&lt;br&gt;1--12 Hz; baseline off&lt;br&gt;0--0.8 s features; decimation 2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF3FB;strokeColor=#6E94B7;fontSize=13;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="preLane">
+          <mxGeometry x="20" y="465" width="245" height="85" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="eegLane" value="3. CALIBRATED EEG EVIDENCE" style="swimlane;html=1;horizontal=1;startSize=30;rounded=1;fillColor=#F4F7FB;strokeColor=#7287B2;fontColor=#364D84;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="635" y="105" width="280" height="580" as="geometry"/>
+        </mxCell>
+        <mxCell id="m0" value="&lt;b&gt;Clean M0 flash classifier&lt;/b&gt;&lt;br&gt;Streaming SGD classifier&lt;br&gt;Target vs non-target flash evidence&lt;br&gt;&lt;br&gt;Final Study D paper-facing model" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#697FAD;fontSize=13;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="eegLane">
+          <mxGeometry x="18" y="60" width="245" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="cal" value="&lt;b&gt;Calibrate and aggregate&lt;/b&gt;&lt;br&gt;Temperature-scaled flash scores&lt;br&gt;Row / column softmax, or&lt;br&gt;group-mask posterior for Study Q" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#697FAD;fontSize=13;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="eegLane">
+          <mxGeometry x="18" y="230" width="245" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="gridPost" value="&lt;b&gt;EEG grid posterior&lt;/b&gt;&lt;br&gt;Probability for every key&lt;br&gt;from row/column outer product&lt;br&gt;or group-flash membership evidence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9EEFA;strokeColor=#697FAD;fontSize=13;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="eegLane">
+          <mxGeometry x="18" y="390" width="245" height="110" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="languageLane" value="4. CONTEXT AND LANGUAGE PRIOR" style="swimlane;html=1;horizontal=1;startSize=30;rounded=1;fillColor=#FBF7EE;strokeColor=#B9914C;fontColor=#815B18;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="950" y="105" width="290" height="580" as="geometry"/>
+        </mxCell>
+        <mxCell id="context" value="&lt;b&gt;Decoded text context&lt;/b&gt;&lt;br&gt;Completed text + partial word&lt;br&gt;Special-key mapping&lt;br&gt;Empty context = uniform prior" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#B9914C;fontSize=13;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="languageLane">
+          <mxGeometry x="18" y="55" width="255" height="105" as="geometry"/>
+        </mxCell>
+        <mxCell id="lm" value="&lt;b&gt;Base language-model prior&lt;/b&gt;&lt;br&gt;DistilGPT-2 full-string&lt;br&gt;continuation scoring&lt;br&gt;Normalize over the 72 keys" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#B9914C;fontSize=13;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="languageLane">
+          <mxGeometry x="18" y="205" width="255" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="rag" value="&lt;b&gt;Optional RAG prior&lt;/b&gt;&lt;br&gt;Prefix-compatible phrase bank&lt;br&gt;Global or subject bank; confidence gates&lt;br&gt;&lt;br&gt;Implemented; not a validated personalization benefit" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9E8;strokeColor=#D2A94E;dashed=1;fontSize=13;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="languageLane">
+          <mxGeometry x="18" y="380" width="255" height="130" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="decodeLane" value="5. FUSION, SEQUENTIAL DECODING, AND OUTPUT" style="swimlane;html=1;horizontal=1;startSize=30;rounded=1;fillColor=#F4F9F6;strokeColor=#5F9B70;fontColor=#245A34;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="1275" y="105" width="295" height="580" as="geometry"/>
+        </mxCell>
+        <mxCell id="fusion" value="&lt;b&gt;One-time prior bias&lt;/b&gt;&lt;br&gt;log posterior = log EEG + alpha log LM&lt;br&gt;Optional gated RAG blend&lt;br&gt;Prior is added once before accumulation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5F9B70;fontSize=13;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="decodeLane">
+          <mxGeometry x="18" y="55" width="260" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="seq" value="&lt;b&gt;Sequential evidence accumulation&lt;/b&gt;&lt;br&gt;Add one log grid posterior per valid sequence&lt;br&gt;Normalize to estimate confidence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5F9B70;fontSize=13;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="decodeLane">
+          <mxGeometry x="18" y="215" width="260" height="105" as="geometry"/>
+        </mxCell>
+        <mxCell id="stop" value="&lt;b&gt;Stopping rule&lt;/b&gt;&lt;br&gt;Stop after at least 2 sequences when&lt;br&gt;max posterior >= 0.80; otherwise stop at 10" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F5EC;strokeColor=#5F9B70;fontSize=13;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="decodeLane">
+          <mxGeometry x="18" y="360" width="260" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="output" value="&lt;b&gt;Selected key and typed text&lt;/b&gt;&lt;br&gt;Update context for next decision&lt;br&gt;Display posterior and replay state in GUI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E9F5EC;strokeColor=#5F9B70;fontSize=13;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="decodeLane">
+          <mxGeometry x="18" y="500" width="260" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="schedulerLane" value="STIMULUS SCHEDULER: FUTURE RESEARCH ONLY" style="swimlane;html=1;horizontal=1;startSize=30;rounded=1;fillColor=#FFF8F7;strokeColor=#C87D70;fontColor=#933D31;fontStyle=1;fontSize=14;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="315" y="730" width="925" height="175" as="geometry"/>
+        </mxCell>
+        <mxCell id="uniform" value="&lt;b&gt;Current live policy&lt;/b&gt;&lt;br&gt;Uniform flashing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C87D70;fontSize=13;align=center;verticalAlign=middle;" vertex="1" parent="schedulerLane">
+          <mxGeometry x="25" y="65" width="180" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="candidateSched" value="&lt;b&gt;Prototype candidate modes&lt;/b&gt;&lt;br&gt;Uniform, LM-guided, LM+RAG, closed loop&lt;br&gt;Group masks and exploration floor supported" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9F8;strokeColor=#C87D70;dashed=1;fontSize=13;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="schedulerLane">
+          <mxGeometry x="260" y="48" width="315" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="nogoflag" value="&lt;b&gt;Evidence boundary&lt;/b&gt;&lt;br&gt;Study D simulator validation failed G3.&lt;br&gt;No scheduler accuracy, ITR, or flash-saving claim." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF0EE;strokeColor=#C87D70;dashed=1;fontSize=13;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="schedulerLane">
+          <mxGeometry x="630" y="48" width="270" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="legend" value="Legend: green/blue solid boxes = locked or evaluated processing path; amber dashed box = optional RAG interface with no participant-personalization claim; red dashed box = scheduler prototype/future work." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AAB5AF;fontSize=12;align=left;spacingLeft=10;spacingTop=7;" vertex="1" parent="1">
+          <mxGeometry x="30" y="930" width="1540" height="42" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#4F7B5B;endArrow=block;endFill=1;" edge="1" parent="1" source="dInput" target="parse"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#4F7B5B;endArrow=block;endFill=1;" edge="1" parent="1" source="qInput" target="parse"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#557FA4;endArrow=block;endFill=1;" edge="1" parent="1" source="parse" target="events"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#557FA4;endArrow=block;endFill=1;" edge="1" parent="1" source="events" target="epochs"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#557FA4;endArrow=block;endFill=1;" edge="1" parent="1" source="epochs" target="m0"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#596E9C;endArrow=block;endFill=1;" edge="1" parent="1" source="m0" target="cal"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#596E9C;endArrow=block;endFill=1;" edge="1" parent="1" source="cal" target="gridPost"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#A67832;endArrow=block;endFill=1;" edge="1" parent="1" source="context" target="lm"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#A67832;endArrow=block;endFill=1;" edge="1" parent="1" source="lm" target="fusion"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#596E9C;endArrow=block;endFill=1;" edge="1" parent="1" source="gridPost" target="fusion"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#4F7B5B;endArrow=block;endFill=1;" edge="1" parent="1" source="fusion" target="seq"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#4F7B5B;endArrow=block;endFill=1;" edge="1" parent="1" source="seq" target="stop"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#4F7B5B;endArrow=block;endFill=1;" edge="1" parent="1" source="stop" target="output"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e14" value="next selected key becomes context" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=1.5;strokeColor=#A67832;endArrow=block;endFill=1;fontSize=11;fontColor=#815B18;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="output" target="context"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=1.5;strokeColor=#C87D70;endArrow=block;endFill=0;" edge="1" parent="1" source="output" target="candidateSched"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeWidth=1.5;strokeColor=#C87D70;endArrow=block;endFill=0;" edge="1" parent="1" source="rag" target="candidateSched"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
