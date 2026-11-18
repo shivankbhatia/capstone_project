@@ -34,6 +34,7 @@ results/tables/*.csv
 !docs/04_classifier.md
 !docs/05_language_model_prior.md
 !docs/06_rag_personalization.md
+!docs/08_evaluation_statistics.md
 
 *.log
 
