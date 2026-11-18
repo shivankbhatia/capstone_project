@@ -122,7 +122,7 @@ Every row gives direction as candidate minus reference; missing metadata is expl
 | EEG simulator / simulation | Subject/character as artifact records; D=17, Q=36 | Curve/known-result gates; no multiplicity family recorded | 20 simulation repeats; 20261008 | Simulated − observed/reference | G3 no-go; not measured EEG. |
 | `personalization_ablation_studyd.json` / legacy | **UNVERIFIED** | Legacy tracker analysis; **UNVERIFIED** | **UNVERIFIED** | Tracker-specific | **LEGACY/SUPERSEDED**; own status `superseded_audit_only`. |
 
-Inconsistencies: (1) subject/run/hierarchical resampling and seeds differ by analysis—acceptable-by-design if fully named; (2) 338 versus 339 remains open; (3) alpha `.85` versus `.1` are separate policy analyses; (4) `ITR/5` was called “WPM” in `docs/05_language_model_prior.md` before this protocol—use “WPM approximation (ITR/5)” instead; (5) the rung-4 `PERSONALIZATION_RUNGS` label is stale relative to frozen `personalized_gated_rag`—open code-label issue.
+Inconsistencies: (1) subject/run/hierarchical resampling and seeds differ by analysis—acceptable-by-design if fully named; (2) 338 versus 339 remains open; (3) alpha `.85` versus `.1` are separate policy analyses; (4) `ITR/5` must be labeled “WPM approximation (ITR/5)”, distinct from time-derived WPM; (5) the rung-4 `PERSONALIZATION_RUNGS` label is stale relative to frozen `personalized_gated_rag`—open code-label issue.
 
 ## 9. Paper reporting standards
 
