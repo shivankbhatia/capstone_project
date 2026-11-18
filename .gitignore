@@ -29,6 +29,7 @@ results/tables/*.csv
 
 
 *.md
+!docs/07_stopping_scheduling.md
 !docs/02_preprocessing.md
 !docs/04_classifier.md
 !docs/05_language_model_prior.md
