@@ -1,4 +1,6 @@
-# Component 6 — Retrieval-augmented prior and personalization
+# Component 6 — Retrieval-augmented prior and personalization (FINAL)
+
+**Status:** FINAL after review against the repository code, locks, tracked banks, and result artifacts on 2026-11-18.
 
 ## Purpose and interface
 
@@ -104,7 +106,7 @@ The Rung 4 deferral statistic is 312/339 covered characters (92.04%). In the art
 
 None of the paired comparisons survives Holm correction. Rungs 2–4 are unsupported bundles on this Study D population; their small descriptive differences do not establish an RAG or personalization benefit. The Rung 2 versus Rung 1 comparison also changes RAG-bank presence, LM-entropy-adaptive weighting form, and maximum weight scale (fixed alpha `.85` versus adaptive scale up to `1.5`), so it cannot attribute an effect to any one change.
 
-**Paper summary:** the fixed LM prior gave a descriptive `+3.79 pp` change, which was not significant after Holm correction (`p=.861`). Nothing in Rungs 2–4 significantly improved on the fixed-prior result. Report Rungs 2–4 as RAG bundles and describe the ladder as showing no significant stepwise benefit; do not attribute the fixed-prior difference to RAG or call it calibrated-classifier-confidence adaptation.
+**Paper summary:** the fixed LM prior gave a descriptive `+3.79 pp` change, which was not significant after Holm correction (`p=.861`). This is the `1v0` comparison in `results/tables/ablation_ladder_clean_m0.json` (`holm_p=0.861493`). Nothing in Rungs 2–4 significantly improved on the fixed-prior result. Report Rungs 2–4 as RAG bundles and describe the ladder as showing no significant stepwise benefit; do not attribute the fixed-prior difference to RAG or call it calibrated-classifier-confidence adaptation.
 
 ## Why Study D and Study Q do not test personalization
 
