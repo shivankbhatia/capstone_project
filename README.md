@@ -926,10 +926,17 @@ for the backend pipeline, not a separate browser-only decoder. Start it from
 the repository root:
 
 ```bash
-.venv/bin/python prototype/server.py
+.venv/bin/python prototype/server.py --allow-heldout-eval
 ```
 
 Then open [http://127.0.0.1:8000](http://127.0.0.1:8000).
+
+`data/processed` may be a symlink to an external SSD; restart the server after
+mounting the drive. The prototype's replay dropdown uses held-out Study D
+sessions, so it is empty unless `--allow-heldout-eval` is supplied. That option
+explicitly enables the GUI to read held-out targets from the evaluation label
+vault. Without it, custom-text simulation remains available but held-out replay
+is disabled.
 
 Two execution paths are intentionally distinguished in the interface:
 

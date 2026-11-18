@@ -1,0 +1,43 @@
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Helvetica, Arial, sans-serif","fontSize":"14px","primaryColor":"#F2F4F7","primaryBorderColor":"#000000","lineColor":"#000000"}}}%%
+flowchart LR
+  classDef process fill:#F2F4F7,stroke:#000000,stroke-width:1px,color:#000000;
+  classDef artifact fill:#E6EBF1,stroke:#000000,stroke-width:1px,color:#000000;
+  classDef decision fill:#EDF1F5,stroke:#000000,stroke-width:1px,color:#000000;
+
+  edf(["Study D EDF"])
+  events["Flash event extraction<br/>StimulusBegin rising edge"]
+  flash{"Group flash?<br/>max code > rows + cols"}
+  rc[/"Row/column code mapping<br/>(row−1)*n_cols+col"/]
+  masks["Group flash masks<br/>cell channels; window 8"]
+  maskcheck{"Group grid/masks valid?<br/>cell count; lit count; tiling"}
+  fixed["Fixed row/column runs<br/>CurrentTarget; 20-flash vote"]
+  fixedcheck{"Agreement / block valid?<br/>≥0.9; complete block"}
+  adaptive["Adaptive Dyn and DynBigram<br/>SelectedTarget rising pulses"}
+  coverage{"Group sequence valid?<br/>coverage ≥95%; complete"}
+  output[/"Event labels and segments<br/>StimulusType; code; char/seq"/]
+  issues["Warnings and exceptions<br/>warn, drop, or raise"]
+
+  edf --> events
+  events --> flash
+  flash -->|"row/column"| rc
+  flash -->|"group flash"| masks
+  masks --> maskcheck
+  rc --> output
+  maskcheck -->|"pass"| output
+  maskcheck -->|"fail"| issues
+
+  events --> fixed
+  fixed --> fixedcheck
+  fixedcheck -->|"pass"| output
+  fixedcheck -->|"warn/drop"| issues
+  events --> adaptive
+  adaptive -->|"row/column"| output
+  adaptive -->|"group flash"| coverage
+  maskcheck -->|"group flash"| coverage
+  coverage -->|"pass"| output
+  coverage -->|"fail"| issues
+  events -->|"no edges"| issues
+
+  class edf,rc,output artifact;
+  class events,masks,fixed,adaptive,issues process;
+  class flash,maskcheck,fixedcheck,coverage decision;
