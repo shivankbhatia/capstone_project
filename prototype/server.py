@@ -21,6 +21,7 @@ from __future__ import annotations
 import hashlib
 import json
 import mimetypes
+import errno
 import os
 import sys
 import threading
@@ -515,4 +516,11 @@ if __name__ == "__main__":
     SERVICE = ReplayService(allow_heldout_eval=args.allow_heldout_eval)
     port = int(os.environ.get("P300_PROTOTYPE_PORT", "8000"))
     print(f"Neural Type prototype: http://127.0.0.1:{port}")
-    ThreadingHTTPServer(("127.0.0.1", port), Handler).serve_forever()
+    try:
+        ThreadingHTTPServer(("127.0.0.1", port), Handler).serve_forever()
+    except OSError as exc:
+        if exc.errno == errno.EADDRINUSE:
+            raise SystemExit(
+                f"Port {port} is already in use. Set P300_PROTOTYPE_PORT to another local port."
+            ) from exc
+        raise
