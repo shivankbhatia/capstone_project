@@ -23,6 +23,7 @@ import json
 import mimetypes
 import os
 import sys
+import threading
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -38,12 +39,15 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 GRID_PATH = ROOT / "data/processed/grid_layout.json"
 FALLBACK_GRID_PATH = ROOT / "configs/studyd_grid_layout.json"
+SPECIAL_KEY_MAP_PATH = ROOT / "configs/llm/special_key_map.json"
+LOCKED_SPECIAL_KEY_MAP_SHA256 = "eb1eadd6e21ab4c290611a97284a4745e9bd329ec1a9c85c2f3f70d19397088e"
 REGISTRY_PATH = ROOT / "data/processed/ground_truth_registry.json"
 TEST_SPLIT_PATH = ROOT / "data/processed/test_sessions.json"
 GROUND_TRUTH_VAULT_PATH = ROOT / "data/evaluation/ground_truth_vault.json"
 MODEL_PATH = ROOT / "data/processed/clean_m0_epoch_scorer.pkl"
 FIXED_LM_ALPHA = 0.85
 SUPPORTED_ARMS = {"eeg_only", "fixed_lm"}
+MAX_REQUEST_BYTES = 16 * 1024
 
 class ReplayService:
     """Thin adapter around the repository's evaluation components."""
@@ -57,6 +61,8 @@ class ReplayService:
         self._predictor_error = None
         self._replay_cache: dict[tuple[str, str], dict[str, Any]] = {}
         self._fixed_block_indexing_cache: dict[str, bool] = {}
+        self._load_lock = threading.Lock()
+        self._cache_lock = threading.Lock()
 
     @staticmethod
     def _load_matrix():
@@ -69,8 +75,9 @@ class ReplayService:
         return matrix, rows, columns, False
 
     def _load_classifier(self):
-        if self._classifier is None:
-            self._classifier = joblib.load(MODEL_PATH)
+        with self._load_lock:
+            if self._classifier is None:
+                self._classifier = joblib.load(MODEL_PATH)
         return self._classifier
 
     def _uses_fixed_block_indexing(self, eeg_path: Path) -> bool:
@@ -88,21 +95,22 @@ class ReplayService:
 
     def _load_predictor(self):
         """Load the fixed-LM prior once. RAG is intentionally unavailable here."""
-        if self._predictor is not None:
-            return self._predictor
-        if self._predictor_error is not None:
-            raise RuntimeError(self._predictor_error)
-
-        try:
-            from src.models.llm_predictor import LLMPredictor
-            self._predictor = LLMPredictor(self.matrix, local_files_only=True)
-            return self._predictor
-        except Exception as exc:  # Surface the genuine model failure to the UI.
-            self._predictor_error = f"Could not load the fixed language-model prior: {exc}"
-            raise RuntimeError(self._predictor_error) from exc
+        with self._load_lock:
+            if self._predictor is not None:
+                return self._predictor
+            if self._predictor_error is not None:
+                raise RuntimeError(self._predictor_error)
+            try:
+                from src.models.llm_predictor import LLMPredictor
+                self._predictor = LLMPredictor(self.matrix, local_files_only=True)
+                return self._predictor
+            except Exception as exc:  # Surface the genuine model failure to the UI.
+                self._predictor_error = f"Could not load the fixed language-model prior: {exc}"
+                raise RuntimeError(self._predictor_error) from exc
 
     def health(self) -> dict[str, Any]:
         fixed_lm_available = self._fixed_lm_available()
+        special_key_map_hash = hashlib.sha256(SPECIAL_KEY_MAP_PATH.read_bytes()).hexdigest()
         return {
             "status": "ready",
             "grid": {
@@ -118,6 +126,10 @@ class ReplayService:
             "fixed_lm_available_offline": fixed_lm_available,
             "supported_arms": ["eeg_only", "fixed_lm"],
             "fixed_lm": {"alpha": FIXED_LM_ALPHA, "provenance": "clean-M0 ablation ladder lock"},
+            "locked_special_key_map": {
+                "sha256": special_key_map_hash,
+                "matches_lock": special_key_map_hash == LOCKED_SPECIAL_KEY_MAP_SHA256,
+            },
             "custom_text_notice": "Custom text uses simulated target-conditioned EEG; Study-D replay uses recorded epochs.",
         }
 
@@ -327,8 +339,9 @@ class ReplayService:
         if min_sequences < 1 or max_sequences < min_sequences:
             raise ValueError("Require 1 <= min_sequences <= max_sequences.")
         cache_key = (session_id, arm, confidence_threshold, min_sequences, max_sequences)
-        if cache_key in self._replay_cache:
-            return self._replay_cache[cache_key]
+        with self._cache_lock:
+            if cache_key in self._replay_cache:
+                return self._replay_cache[cache_key]
         available = {sample["id"]: sample["target"] for sample in self.samples()}
         if session_id not in available:
             raise ValueError("Choose a session from the provided held-out Study-D samples.")
@@ -361,115 +374,9 @@ class ReplayService:
             min_sequences=min_sequences,
             max_sequences=effective_max_sequences,
         )
-        self._replay_cache[cache_key] = result
+        with self._cache_lock:
+            self._replay_cache[cache_key] = result
         return result
-
-    def _decode_row_focus(self, message: str, eeg_path: str, classifier,
-                          session_id: str) -> dict[str, Any]:
-        """Replay a compact two-pass scan over the active top five rows.
-
-        Pass one presents rows 1--5 once.  Pass two presents the individual
-        keys in the best row, plus the runner-up when its row posterior is
-        within ``ROW_CLOSE_MARGIN``.  Rows 6--9 remain visible in the UI but
-        deliberately receive no evidence or flashes.
-        """
-        from run_pipeline import real_eeg_classifier_flash_stream
-
-        ACTIVE_ROWS = min(5, self.n_rows)
-        ROW_CLOSE_MARGIN = 0.08
-        decoded, selections, total_flashes = "", [], 0
-        for char_index, target in enumerate(message):
-            prior, prior_payload = self._prior(decoded)
-            grid_prior = prior.reshape(self.n_rows, self.n_cols)
-            flashes = real_eeg_classifier_flash_stream(
-                eeg_path, char_index, 1, classifier, self.n_rows, self.n_cols,
-                self.n_rows + self.n_cols,
-            )
-            scores = {int(flash["stimulus_code"]): float(flash["target_probability"])
-                      for flash in flashes}
-            active_row_prior = grid_prior[:ACTIVE_ROWS].sum(axis=1)
-            row_log = np.log(np.clip(active_row_prior, 1e-9, 1.0))
-            row_flashes = []
-            row_likelihoods = {}
-            for row in range(ACTIVE_ROWS):
-                code = row + 1
-                probability = np.clip(scores.get(code, 0.5), 1e-6, 1 - 1e-6)
-                row_likelihoods[row] = probability
-                row_log[row] += np.log(probability) - np.log1p(-probability)
-                row_flashes.append({
-                    "stimulus_code": code, "kind": "row", "group_number": code,
-                    "keys": [str(key) for key in self.matrix[row, :]],
-                    "label": f"ROW {code}", "priority_mass": round(float(active_row_prior[row]), 5),
-                    "target_probability": round(float(probability), 4),
-                    "classifier_target": bool(probability >= 0.5),
-                })
-            row_post = np.exp(row_log - row_log.max())
-            row_post /= row_post.sum()
-            ranked_rows = list(np.argsort(row_post)[::-1])
-            selected_rows = [int(ranked_rows[0])]
-            if len(ranked_rows) > 1 and row_post[ranked_rows[0]] - row_post[ranked_rows[1]] <= ROW_CLOSE_MARGIN:
-                selected_rows.append(int(ranked_rows[1]))
-
-            candidate_log = np.full((self.n_rows, self.n_cols), -np.inf)
-            key_flashes = []
-            for row in selected_rows:
-                for col in range(self.n_cols):
-                    code = self.n_rows + col + 1
-                    probability = np.clip(scores.get(code, 0.5), 1e-6, 1 - 1e-6)
-                    candidate_log[row, col] = (
-                        np.log(max(grid_prior[row, col], 1e-9))
-                        + np.log(row_likelihoods[row]) - np.log1p(-row_likelihoods[row])
-                        + np.log(probability) - np.log1p(-probability)
-                    )
-                    key = str(self.matrix[row, col])
-                    key_flashes.append({
-                        "stimulus_code": code, "kind": "key", "group_number": col + 1,
-                        "keys": [key], "label": f"ROW {row + 1} · {key}",
-                        "priority_mass": round(float(grid_prior[row, col]), 5),
-                        "target_probability": round(float(probability), 4),
-                        "classifier_target": bool(probability >= 0.5),
-                    })
-            flat_log = candidate_log.ravel()
-            posterior = np.exp(flat_log - np.max(flat_log))
-            posterior /= posterior.sum()
-            selected_index = int(np.argmax(posterior))
-            selected_key = self.char_list[selected_index]
-            selected_text = " " if selected_key == "Sp" else ("." if selected_key == "Prd" else str(selected_key))
-            decoded += selected_text
-            target_row, target_col = divmod(self._target_index(target), self.n_cols)
-            confidence = float(posterior[selected_index])
-            used = len(row_flashes) + len(key_flashes)
-            total_flashes += used
-            selections.append({
-                "index": char_index, "target_key": self._grid_key(target),
-                "target_character": target, "predicted_key": str(selected_key),
-                "predicted_character": selected_text,
-                "correct": (selected_index == self._target_index(target)),
-                "confidence": round(confidence, 4), "sequences": 2,
-                "flashes_used": used, "active_rows": [row + 1 for row in selected_rows],
-                "trace": [
-                    {"sequence": 1, "flash_mode": "rows_1_to_5_shortlist", "flashes": row_flashes,
-                     "predicted_key": f"ROW {selected_rows[0] + 1}",
-                     "decoder_confidence": round(float(row_post[selected_rows[0]]), 4),
-                     "target_evidence": round(float(row_post[target_row]) if target_row < ACTIVE_ROWS else 0.0, 4)},
-                    {"sequence": 2, "flash_mode": "shortlisted_row_keys", "flashes": key_flashes,
-                     "predicted_key": str(selected_key), "decoder_confidence": round(confidence, 4),
-                     "target_evidence": round(float(posterior[self._target_index(target)]), 4)},
-                ], "prior": prior_payload,
-            })
-        correct = sum(item["correct"] for item in selections)
-        count = len(selections)
-        return {
-            "source": "study_d_row_focus_replay", "session_id": session_id,
-            "target": message, "decoded": decoded, "selections": selections,
-            "summary": {"characters": count, "correct": correct,
-                        "accuracy": round(100 * correct / count, 2) if count else 0.0,
-                        "sequences": total_flashes,
-                        "mean_flashes_per_character": round(total_flashes / count, 2) if count else 0.0,
-                        "mean_sequences_per_character": round(total_flashes / count, 2) if count else 0.0,
-                        "maximum_sequences_per_character": 21},
-            "evidence_notice": "Compact replay: rows 1–5 flash once, then only key(s) in the shortlisted row(s) flash. Bottom rows remain visible but inactive.",
-        }
 
     def flash_trace(self, session_id: str, char_index: int, sequence: int,
                     stimulus_code: int) -> dict[str, Any]:
@@ -531,6 +438,9 @@ class Handler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _error(self, status: HTTPStatus, message: str):
+        return self._json({"error": message}, status)
+
     def do_GET(self):
         path = urlparse(self.path).path
         try:
@@ -547,13 +457,26 @@ class Handler(SimpleHTTPRequestHandler):
             if path == "/":
                 self.path = "/index.html"
             return super().do_GET()
-        except Exception as exc:
-            return self._json({"error": str(exc)}, HTTPStatus.INTERNAL_SERVER_ERROR)
+        except ValueError as exc:
+            return self._error(HTTPStatus.BAD_REQUEST, str(exc))
+        except RuntimeError:
+            return self._error(HTTPStatus.SERVICE_UNAVAILABLE, "Requested data or model is unavailable.")
+        except Exception:
+            return self._error(HTTPStatus.INTERNAL_SERVER_ERROR, "Unexpected server error.")
 
     def do_POST(self):
         path = urlparse(self.path).path
         try:
-            length = int(self.headers.get("Content-Length", "0"))
+            if self.headers.get("Content-Type", "").split(";", 1)[0] != "application/json":
+                return self._error(HTTPStatus.UNSUPPORTED_MEDIA_TYPE, "Content-Type must be application/json.")
+            try:
+                length = int(self.headers.get("Content-Length", ""))
+            except ValueError as exc:
+                raise ValueError("Content-Length must be an integer.") from exc
+            if length < 0:
+                raise ValueError("Content-Length must not be negative.")
+            if length > MAX_REQUEST_BYTES:
+                return self._error(HTTPStatus.REQUEST_ENTITY_TOO_LARGE, "Request body is too large.")
             payload = json.loads(self.rfile.read(length) or b"{}")
             if not isinstance(payload, dict):
                 raise ValueError("JSON request body must be an object.")
@@ -569,10 +492,12 @@ class Handler(SimpleHTTPRequestHandler):
                     str(payload.get("message", "")), str(payload.get("arm", "fixed_lm"))
                 ))
             return self._json({"error": "Not found"}, HTTPStatus.NOT_FOUND)
-        except ValueError as exc:
-            return self._json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
-        except Exception as exc:
-            return self._json({"error": str(exc)}, HTTPStatus.INTERNAL_SERVER_ERROR)
+        except (ValueError, json.JSONDecodeError) as exc:
+            return self._error(HTTPStatus.BAD_REQUEST, str(exc))
+        except RuntimeError:
+            return self._error(HTTPStatus.SERVICE_UNAVAILABLE, "Requested data or model is unavailable.")
+        except Exception:
+            return self._error(HTTPStatus.INTERNAL_SERVER_ERROR, "Unexpected server error.")
 
     def log_message(self, format, *args):
         print(f"[prototype] {format % args}")

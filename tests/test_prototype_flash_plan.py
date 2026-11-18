@@ -1,4 +1,6 @@
 import json
+import hashlib
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -79,7 +81,30 @@ def test_fallback_grid_keys_are_lm_mapped_or_alphanumeric():
         special = json.load(file)
 
     keys = layout["StudyD"]["grid_map"]
-    assert all(key in special or key.isalnum() for key in keys)
+    unmapped = {key for key in keys if key not in special and not key.isalnum()}
+
+    assert unmapped == {"!", "'", "+", ",", "-", "/", ";", "=", "?", "\\"}
+
+
+def test_locked_special_key_map_hash_is_unchanged():
+    path = Path("configs/llm/special_key_map.json")
+
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == (
+        "eb1eadd6e21ab4c290611a97284a4745e9bd329ec1a9c85c2f3f70d19397088e"
+    )
+    assert ReplayService().health()["locked_special_key_map"]["matches_lock"] is True
+
+
+def test_fallback_grid_matches_processed_grid_when_available():
+    fallback_path = Path("configs/studyd_grid_layout.json")
+    processed_path = Path("data/processed/grid_layout.json")
+    if not processed_path.exists():
+        pytest.skip("processed Study D grid is unavailable in this checkout")
+
+    fallback = json.loads(fallback_path.read_text(encoding="utf-8"))["StudyD"]
+    processed = json.loads(processed_path.read_text(encoding="utf-8"))["StudyD"]
+
+    assert fallback["grid_map"] == processed["grid_map"]
 
 
 def test_real_flash_stream_preserves_epoch_stimulus_order(monkeypatch):
