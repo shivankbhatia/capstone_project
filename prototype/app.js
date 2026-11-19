@@ -98,7 +98,10 @@ function showFlashFocus(flash) {
   els.focusLabel.textContent = `${flash.label} · CURRENT FLASH`;
   els.focusKeys.innerHTML = '';
   flash.keys.forEach(key => {
-    const node = document.createElement('div'); node.className = 'flash-focus-key'; node.textContent = displayKey(key); els.focusKeys.appendChild(node);
+    const node = document.createElement('div');
+    node.className = 'flash-focus-key';
+    node.textContent = displayKey(key);
+    els.focusKeys.appendChild(node);
   });
   if (!els.focusOverlay.open) els.focusOverlay.showModal();
 }
@@ -110,7 +113,9 @@ function toggleFlashFocus(force) {
 }
 function updateArm() {
   const fixedLm = els.arm.value === 'fixed_lm';
-  els.scanModeDescription.textContent = fixedLm ? 'Fixed LM fusion α=.85; clean-M0 ablation ladder lock; τ=.80, min 2, max 10.' : 'EEG-only arm; τ=.80, min 2, max 10.';
+  els.scanModeDescription.textContent = fixedLm
+    ? 'Fixed LM fusion α=.85; clean-M0 ablation ladder lock; τ=.80, min 2, max 10.'
+    : 'EEG-only arm; τ=.80, min 2, max 10.';
 }
 function appendKeyboardKey(key) {
   if (els.source.value === 'replay' || state.running) return;
@@ -123,15 +128,25 @@ function appendKeyboardKey(key) {
 function buildKeyboard(keys) {
   els.keyboard.innerHTML = '';
   keys.forEach(key => {
-    const button = document.createElement('button'); button.type = 'button'; button.className = `key${key.length > 1 ? ' special' : ''}`; button.dataset.key = key; button.textContent = displayKey(key); button.setAttribute('aria-label', `Add ${displayKey(key)} to simulated text`); button.addEventListener('click', () => appendKeyboardKey(key)); els.keyboard.appendChild(button);
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = `key${key.length > 1 ? ' special' : ''}`;
+    button.dataset.key = key;
+    button.textContent = displayKey(key);
+    button.setAttribute('aria-label', `Add ${displayKey(key)} to simulated text`);
+    button.addEventListener('click', () => appendKeyboardKey(key));
+    els.keyboard.appendChild(button);
   });
 }
 function currentTarget() {
-  return els.source.value === 'replay' ? els.samples.selectedOptions[0]?.dataset.target || '' : els.source.value === 'aac' ? 'I NEED WATER' : els.custom.value.toUpperCase();
+  if (els.source.value === 'replay') return els.samples.selectedOptions[0]?.dataset.target || '';
+  return els.source.value === 'aac' ? 'I NEED WATER' : els.custom.value.toUpperCase();
 }
 function updateTargetPreview() {
   const target = currentTarget(),
-  source = els.source.value === 'replay' ? 'held-out Study D replay' : els.source.value === 'aac' ? 'AAC simulation preset' : 'custom simulated EEG';
+  source = els.source.value === 'replay'
+    ? 'held-out Study D replay'
+    : els.source.value === 'aac' ? 'AAC simulation preset' : 'custom simulated EEG';
   els.targetText.textContent = target || 'Choose a sample';
   els.intentLength.textContent = `${target.length} characters`;
   els.intentSource.textContent = source;
@@ -144,7 +159,11 @@ function setSourceMode() {
   els.targetLabel.textContent = replay ? 'STUDY D SAMPLE' : aac ? 'AAC PRESET' : 'CUSTOM SENTENCE';
   reset();
   updateTargetPreview();
-  els.evidenceNote.textContent = replay ? 'Choose a held-out session to replay its recorded EEG classifier evidence.' : aac ? 'AAC communication preset uses simulated target-conditioned EEG likelihoods; no recorded EEG or participant result is claimed.' : 'Custom text uses simulated target-conditioned EEG likelihoods; no recorded EEG is claimed.';
+  els.evidenceNote.textContent = replay
+    ? 'Choose a held-out session to replay its recorded EEG classifier evidence.'
+    : aac
+      ? 'AAC communication preset uses simulated target-conditioned EEG likelihoods; no recorded EEG or participant result is claimed.'
+      : 'Custom text uses simulated target-conditioned EEG likelihoods; no recorded EEG is claimed.';
   els.signalLabel.textContent = replay ? 'EEG / P300 RESPONSE' : 'SIMULATED EEG / DECODER POSTERIOR';
 }
 function renderPrior(selection) {
@@ -152,11 +171,19 @@ function renderPrior(selection) {
   const fixedLm = selection.prior.arm === 'fixed_lm';
   document.querySelectorAll('.key').forEach(node => node.classList.remove('priority'));
   top.forEach(item => cell(item.key)?.classList.add('priority'));
-  els.chips.innerHTML = fixedLm ? top.map((item, i) => `<span class="chip ${i === 0 ? 'top' : ''}">${displayKey(item.key)} <b>${Math.round(item.probability * 100)}%</b></span>`).join('') : '<span class="chip">EEG-only arm: no language-model prior</span>';
+  els.chips.innerHTML = fixedLm
+    ? top.map((item, i) => {
+      const chipClass = i === 0 ? 'top' : '';
+      const probability = Math.round(item.probability * 100);
+      return `<span class="chip ${chipClass}">${displayKey(item.key)} <b>${probability}%</b></span>`;
+    }).join('')
+    : '<span class="chip">EEG-only arm: no language-model prior</span>';
   els.prior.textContent = fixedLm ? `top LM prior ${Math.round((top[0]?.probability || 0) * 100)}%` : 'EEG-only';
   els.priority.textContent = 'Uniform replay';
   els.priorityDesc.textContent = 'Recorded order when available; otherwise fixed row then column. RAG is disabled.';
-  els.ragOptions.innerHTML = fixedLm ? '<span class="chip">Fixed LM α=.85 · RAG disabled</span>' : '<span class="chip">No language prior</span>';
+  els.ragOptions.innerHTML = fixedLm
+    ? '<span class="chip">Fixed LM α=.85 · RAG disabled</span>'
+    : '<span class="chip">No language prior</span>';
   els.ragStatus.textContent = fixedLm ? 'Fixed LM prior · α=.85' : 'EEG-only arm';
   els.bars.forEach((bar, i) => {
     bar.style.height = `${Math.max(5, Math.round((top[i]?.probability || 0) * 100))}px`;
@@ -170,7 +197,9 @@ function render() {
   els.progress.textContent = `${state.selection} / ${result?.selections.length || target.length}`;
   els.bar.style.width = `${result?.selections.length ? (state.selection / result.selections.length) * 100 : 0}%`;
   els.context.textContent = decoded || 'No decoded context yet';
-  els.explanation.textContent = result?.arm === 'fixed_lm' ? 'The fixed LM prior is computed from decoder output, not the intended target.' : 'EEG-only arm: no language-model prior is applied.';
+  els.explanation.textContent = result?.arm === 'fixed_lm'
+    ? 'The fixed LM prior is computed from decoder output, not the intended target.'
+    : 'EEG-only arm: no language-model prior is applied.';
   els.provenance.textContent = result ? `${result.summary.mean_sequences_per_character} sequences / char` : '—';
 }
 function drawWave() {
@@ -205,7 +234,13 @@ function drawWave() {
 async function fetchFlashTrace(sessionId, charIndex, sequence, stimulusCode) {
   const key = `${sessionId}:${charIndex}:${sequence}:${stimulusCode}`;
   if (traceCache.has(key)) return traceCache.get(key);
-  const response = await fetch(`/api/flash_trace?session_id=${encodeURIComponent(sessionId)}&char_index=${charIndex}&sequence=${sequence}&stimulus_code=${stimulusCode}`);
+  const query = new URLSearchParams({
+    session_id: sessionId,
+    char_index: charIndex,
+    sequence,
+    stimulus_code: stimulusCode
+  });
+  const response = await fetch(`/api/flash_trace?${query}`);
   if (!response.ok) return null;
   const trace = await response.json();
   traceCache.set(key, trace);
@@ -234,7 +269,9 @@ function drawRealWave(trace) {
   maxAbs = Math.max(1, ...amplitudes.map(Math.abs));
   ctx.beginPath();
   amplitudes.forEach((value, index) => {
-    const x = (index / Math.max(1, count - 1)) * width, y = height * .55 - (value / maxAbs) * (height * .4); index ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    const x = (index / Math.max(1, count - 1)) * width;
+    const y = height * .55 - (value / maxAbs) * (height * .4);
+    index ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
   });
   ctx.strokeStyle = '#278359';
   ctx.lineWidth = 1.7;
@@ -256,7 +293,8 @@ function showFlash() {
   showFlashFocus(flash);
   state.evidence = flash.target_probability;
   if (els.source.value === 'replay' && state.result.session_id) {
-    fetchFlashTrace(state.result.session_id, state.selection, trace.sequence, flash.stimulus_code).then(traceData => traceData ? drawRealWave(traceData) : drawWave());
+    fetchFlashTrace(state.result.session_id, state.selection, trace.sequence, flash.stimulus_code)
+      .then(traceData => traceData ? drawRealWave(traceData) : drawWave());
   }
   else {
     drawWave();
@@ -301,7 +339,11 @@ function confirmSelection() {
   els.lastDetail.textContent = `${selection.sequences} sequence(s) · decoder confidence ${Math.round(selection.confidence * 100)}%`;
   els.confidence.textContent = `${Math.round(selection.confidence * 100)}% confidence`;
   els.state.textContent = 'Decoder selection confirmed';
-  addEvent(`Decoder selected ${displayKey(selection.predicted_key)} after ${selection.sequences} sequence(s).`, selection.correct ? 'Confirmed' : 'Mismatch');
+  const outcome = selection.correct ? 'Confirmed' : 'Mismatch';
+  addEvent(
+    `Decoder selected ${displayKey(selection.predicted_key)} after ${selection.sequences} sequence(s).`,
+    outcome
+  );
   state.selection += 1;
   render();
   state.timer = setTimeout(beginSelection, 620 / Number(els.speed.value));
@@ -444,15 +486,25 @@ async function initialise() {
     const fixedLmOption = els.arm.querySelector('option[value="fixed_lm"]');
     fixedLmOption.disabled = !health.fixed_lm_available_offline;
     if (!health.fixed_lm_available_offline && els.arm.value === 'fixed_lm') els.arm.value = 'eeg_only';
-    els.samples.innerHTML = samples.samples.length ? samples.samples.map(sample => `<option value="${sample.id}" data-target="${escapeHtml(sample.target)}">${sample.id} · ${sample.target}</option>`).join('') : '<option value="">No Study D replay samples available</option>';
+    els.samples.innerHTML = samples.samples.length
+      ? samples.samples.map(sample => (
+        `<option value="${sample.id}" data-target="${escapeHtml(sample.target)}">${sample.id} · ${sample.target}</option>`
+      )).join('')
+      : '<option value="">No Study D replay samples available</option>';
     els.connection.innerHTML = '<i></i> Backend connected';
     els.connection.title = health.custom_text_notice;
     updateTargetPreview();
     reset();
     updateArm();
     if (!samples.samples.length) {
-      els.scan.textContent = health.using_fallback_grid ? 'No processed Study D data found. Custom simulation is available on a built-in demo keyboard.' : health.heldout_evaluation_enabled ? 'No replay sessions found. Check data/processed/StudyD and the held-out session manifest.' : 'Held-out targets are hidden. Restart with --allow-heldout-eval to load Study D replay samples.';
-      els.evidenceNote.textContent = health.fixed_lm_available_offline ? 'Study D replay requires the explicit held-out evaluation option and processed data. Custom text is labelled simulated.' : 'Fixed LM is unavailable offline; EEG-only custom simulation remains available and is labelled simulated.';
+      els.scan.textContent = health.using_fallback_grid
+        ? 'No processed Study D data found. Custom simulation is available on a built-in demo keyboard.'
+        : health.heldout_evaluation_enabled
+          ? 'No replay sessions found. Check data/processed/StudyD and the held-out session manifest.'
+          : 'Held-out targets are hidden. Restart with --allow-heldout-eval to load Study D replay samples.';
+      els.evidenceNote.textContent = health.fixed_lm_available_offline
+        ? 'Study D replay requires the explicit held-out evaluation option and processed data. Custom text is labelled simulated.'
+        : 'Fixed LM is unavailable offline; EEG-only custom simulation remains available and is labelled simulated.';
     }
   }
   catch (error) {
