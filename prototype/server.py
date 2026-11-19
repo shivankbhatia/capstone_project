@@ -48,6 +48,8 @@ GROUND_TRUTH_VAULT_PATH = ROOT / "data/evaluation/ground_truth_vault.json"
 MODEL_PATH = ROOT / "data/processed/clean_m0_epoch_scorer.pkl"
 FIXED_LM_ALPHA = 0.85
 SUPPORTED_ARMS = {"eeg_only", "fixed_lm"}
+SUPPORTED_SCENARIOS = {"custom", "aac_simulation"}
+AAC_SIMULATION_MESSAGE = "I NEED WATER"
 MAX_REQUEST_BYTES = 16 * 1024
 
 class ReplayService:
@@ -395,9 +397,13 @@ class ReplayService:
             raise ValueError("No recorded epoch for that flash.")
         return trace
 
-    def simulate(self, message: str, arm: str = "fixed_lm") -> dict[str, Any]:
+    def simulate(self, message: str, arm: str = "fixed_lm", scenario: str = "custom") -> dict[str, Any]:
         if arm not in SUPPORTED_ARMS:
             raise ValueError("arm must be 'eeg_only' or 'fixed_lm'.")
+        if scenario not in SUPPORTED_SCENARIOS:
+            raise ValueError("scenario must be 'custom' or 'aac_simulation'.")
+        if scenario == "aac_simulation":
+            message = AAC_SIMULATION_MESSAGE
         message = message.strip().upper()
         if not message:
             raise ValueError("Enter a sentence or word to simulate.")
@@ -421,7 +427,9 @@ class ReplayService:
                 flashes.append({"stimulus_code": code, "target_probability": score})
             return posterior, flashes
 
-        return self._decode(message, evidence, "custom_simulation", arm)
+        result = self._decode(message, evidence, "custom_simulation", arm)
+        result["scenario"] = scenario
+        return result
 
 
 SERVICE = ReplayService()
@@ -490,7 +498,8 @@ class Handler(SimpleHTTPRequestHandler):
                 ))
             if path == "/api/simulate":
                 return self._json(SERVICE.simulate(
-                    str(payload.get("message", "")), str(payload.get("arm", "fixed_lm"))
+                    str(payload.get("message", "")), str(payload.get("arm", "fixed_lm")),
+                    str(payload.get("scenario", "custom")),
                 ))
             return self._json({"error": "Not found"}, HTTPStatus.NOT_FOUND)
         except (ValueError, json.JSONDecodeError) as exc:
