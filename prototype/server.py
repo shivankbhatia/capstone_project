@@ -514,7 +514,11 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     SERVICE = ReplayService(allow_heldout_eval=args.allow_heldout_eval)
-    port = int(os.environ.get("P300_PROTOTYPE_PORT", "8000"))
+    port_text = os.environ.get("P300_PROTOTYPE_PORT", "8000")
+    try:
+        port = int(port_text)
+    except ValueError as exc:
+        raise SystemExit("P300_PROTOTYPE_PORT must be a numeric local port.") from exc
     print(f"Neural Type prototype: http://127.0.0.1:{port}")
     try:
         ThreadingHTTPServer(("127.0.0.1", port), Handler).serve_forever()
