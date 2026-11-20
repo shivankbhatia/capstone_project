@@ -1,0 +1,972 @@
+{
+  "label": "StudyG",
+  "phase": "Train",
+  "files": 120,
+  "audit_only": true,
+  "target_flashes_per_selection": 20,
+  "scorer": null,
+  "git_commit": "2423e453e7fa594694fe273fd4ed5befa4e29f86",
+  "runs": [
+    {
+      "run_id": "G_01_SE001_CB_Train01",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_01_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_01_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_01_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_01_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_01_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_02_SE001_CB_Train01",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_02_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_02_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_02_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_02_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_02_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_03_SE001_CB_Train01",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_03_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_03_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_03_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_03_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_03_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_04_SE001_CB_Train01",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_04_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_04_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_04_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_04_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_04_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_05_SE001_CB_Train01",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_05_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_05_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_05_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_05_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_05_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_06_SE001_CB_Train01",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_06_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_06_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_06_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_06_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_06_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_07_SE001_CB_Train01",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_07_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_07_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_07_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_07_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_07_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_08_SE001_CB_Train01",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_08_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_08_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_08_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_08_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_08_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_09_SE001_CB_Train01",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_09_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_09_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_09_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_09_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_09_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_10_SE001_CB_Train01",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_10_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_10_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_10_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_10_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_10_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_11_SE001_CB_Train01",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_11_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_11_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_11_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_11_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_11_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_12_SE001_CB_Train01",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_12_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_12_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_12_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_12_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_12_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_13_SE001_CB_Train01",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_13_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_13_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_13_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_13_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_13_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_14_SE001_CB_Train01",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_14_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_14_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_14_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_14_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_14_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_15_SE001_CB_Train01",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_15_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_15_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_15_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_15_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_15_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_16_SE001_CB_Train01",
+      "epochs": 840,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 7
+    },
+    {
+      "run_id": "G_16_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_16_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_16_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_16_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_16_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_17_SE001_CB_Train01",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_17_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_17_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_17_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_17_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_17_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_18_SE001_CB_Train01",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_18_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_18_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_18_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_18_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_18_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_19_SE001_CB_Train01",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_19_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_19_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_19_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_19_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_19_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_20_SE001_CB_Train02",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_20_SE001_CB_Train03",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_20_SE001_CB_Train04",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_20_SE001_CB_Train05",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_20_SE001_CB_Train06",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    },
+    {
+      "run_id": "G_20_SE001_CB_Train07",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    }
+  ],
+  "failures": []
+}

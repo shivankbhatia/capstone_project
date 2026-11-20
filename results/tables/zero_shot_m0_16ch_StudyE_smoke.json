@@ -1,0 +1,73 @@
+{
+  "label": "StudyE",
+  "phase": "Train",
+  "files": 1,
+  "audit_only": false,
+  "target_flashes_per_selection": 20,
+  "scorer": "data/processed/m0_16ch_epoch_scorer.pkl",
+  "git_commit": "2423e453e7fa594694fe273fd4ed5befa4e29f86",
+  "runs": [
+    {
+      "run_id": "E_01_SE001_CB_Train01",
+      "epochs": 720,
+      "flashes_per_seq": 12,
+      "group_flash": true,
+      "channels": 16,
+      "characters": 6
+    }
+  ],
+  "failures": [],
+  "epoch_auc_pooled": 0.8179040404040404,
+  "epoch_auc_per_subject": {
+    "E_01": 0.8179040404040404
+  },
+  "invalid_target_intersections": 0,
+  "accuracy_by_depth": {
+    "1": {
+      "characters": 6,
+      "accuracy": 0.0
+    },
+    "2": {
+      "characters": 6,
+      "accuracy": 0.3333333333333333
+    },
+    "3": {
+      "characters": 6,
+      "accuracy": 0.3333333333333333
+    },
+    "4": {
+      "characters": 6,
+      "accuracy": 0.16666666666666666
+    },
+    "5": {
+      "characters": 6,
+      "accuracy": 0.5
+    },
+    "6": {
+      "characters": 6,
+      "accuracy": 0.6666666666666666
+    },
+    "7": {
+      "characters": 6,
+      "accuracy": 0.6666666666666666
+    },
+    "8": {
+      "characters": 6,
+      "accuracy": 0.8333333333333334
+    },
+    "9": {
+      "characters": 6,
+      "accuracy": 0.6666666666666666
+    },
+    "10": {
+      "characters": 6,
+      "accuracy": 0.8333333333333334
+    }
+  },
+  "character_accuracy_per_subject_at_max_depth": {
+    "E_01": {
+      "characters": 6,
+      "accuracy": 0.8333333333333334
+    }
+  }
+}
